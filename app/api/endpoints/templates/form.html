@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить статью</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"] {
+            height: 50px;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .character-count {
+            text-align: right;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Новая статья</h1>
+            <p>Поделитесь своими мыслями с миром</p>
+        </div>
+        
+        <div class="form-container">
+            <form action="/submit-article" method="POST">
+                <div class="form-group">
+                    <label for="author">👤 Автор:</label>
+                    <input type="text" id="author" name="author" 
+                           placeholder="Введите ваше имя" required
+                           maxlength="100">
+                    <div class="character-count">
+                        <span id="author-count">0</span>/100
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="title">👤 Автор:</label>
+                    <input type="text" id="title" name="title" 
+                           placeholder="Название статьи" required
+                           maxlength="100">
+                    <div class="character-count">
+                        <span id="author-count">0</span>/100
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">📖 Текст статьи:</label>
+                    <textarea id="content" name="content" 
+                              placeholder="Напишите вашу статью здесь..." 
+                              required></textarea>
+                    <div class="character-count">
+                        <span id="content-count">0</span> символов
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    📤 Опубликовать статью
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Ваша статья будет доступна всем читателям после публикации</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
