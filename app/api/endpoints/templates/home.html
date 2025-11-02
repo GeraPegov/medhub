@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .search-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .search-input {
+            border: none;
+            outline: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 20px;
+            width: 250px;
+            background: #f5f5f5;
+        }
+        
+        .search-input:focus {
+            background: #fff;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .search-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        
+        .search-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .search-button:active {
+            transform: scale(0.95);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .article-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        
+        .article-header {
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .article-title {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-item::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .article-content {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        
+        .author {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .date {
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .search-container {
+                position: static;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .search-input {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <form class="search-form" action="/articles/search" method="get">
+            <input 
+                type="text" 
+                name="query" 
+                class="search-input" 
+                placeholder="🔍 Поиск по названию..."
+                required
+            >
+            <button type="submit" class="search-button">Найти</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h1>📝 Список статей</h1>
+        
+        <div class="article-card">
+            <div class="article-header">
+                <h2 class="article-title">{{ articles.title }}</h2>
+                <div class="article-meta">
+                    <div class="meta-item">
+                        <span class="author">{{ articles.author }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="date">{{ articles.date_add }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>{{ articles.article }}</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

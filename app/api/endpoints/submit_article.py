@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Form, Depends
 from app.services.article_manager import ArticleManager
-from app.dependencies.article import start_session
+from app.dependencies.depends_submit_article import start_session
 
 router = APIRouter()
 
