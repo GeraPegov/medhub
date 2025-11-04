@@ -1,9 +1,11 @@
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.database import AsyncSessionLocal
 from app.domain.repositories import IArticleRepository
 from app.repositories.article_repository import ArticleRepository
 from app.services.article_manager import ArticleManager
-from fastapi import Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import AsyncSessionLocal
+
 
 async def get_db():
     async with AsyncSessionLocal() as session:

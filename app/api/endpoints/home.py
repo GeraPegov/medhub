@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Request, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+
 from app.dependencies.depends_submit_article import get_article_manager
+from app.domain.logging import logger
 from app.services.article_manager import ArticleManager
-
-
 
 router = APIRouter()
 

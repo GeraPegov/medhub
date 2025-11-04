@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
-from app.services.article_manager import ArticleManager
+from fastapi.templating import Jinja2Templates
+
 from app.dependencies.depends_submit_article import get_article_manager
 from app.dependencies.parse_article import parse_article_form
-from fastapi.templating import Jinja2Templates
 from app.models.dto import ArticleCreateDTO
+from app.services.article_manager import ArticleManager
 
 router = APIRouter()
 
@@ -29,4 +30,3 @@ async def create_article(
         name="search_results.html",
         context={"request": request, "articles": articles, "title": dto.title}
     )
-    

@@ -1,8 +1,10 @@
 from datetime import date
-from sqlalchemy import Integer, String, Text, Date, func
+
+from sqlalchemy import Date, Integer, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.core.database import Base
+
 
 class Article(Base):
     __tablename__ = 'article'

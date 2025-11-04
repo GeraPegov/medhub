@@ -1,9 +1,9 @@
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.repositories import IArticleRepository
-from app.domain.entities import ArticleEntity
 from app.core.models.article import Article
+from app.domain.entities import ArticleEntity
+from app.domain.repositories import IArticleRepository
 
 
 class ArticleRepository(IArticleRepository):
@@ -28,7 +28,7 @@ class ArticleRepository(IArticleRepository):
             date_add=article.date_add
         )]
 
-    
+
     async def last_article(self):
         result = await self.session.execute(
             select(Article).order_by(Article.id.desc()).limit(1)
@@ -55,8 +55,12 @@ class ArticleRepository(IArticleRepository):
                 author=article.author,
                 date_add=article.date_add)
                 for article in orm_articles
-        ] 
+        ]
 
-            
+    async def log_in(self, dto):
+        pass
+
+
+
 
 
