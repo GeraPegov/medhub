@@ -4,7 +4,7 @@ from app.services.article_manager import ArticleManager
 from app.dependencies.depends_submit_article import get_article_manager
 from app.dependencies.parse_article import parse_article_form
 from fastapi.templating import Jinja2Templates
-from app.models.pydantic import ArticleCreateDTO
+from app.models.dto import ArticleCreateDTO
 
 router = APIRouter()
 

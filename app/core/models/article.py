@@ -12,4 +12,4 @@ class Article(Base):
     author: Mapped[str] = mapped_column(String(64))
     date_add: Mapped[date] = mapped_column(Date, server_default=func.now())
     title: Mapped[str] = mapped_column(String(255))
-    article: Mapped[str] = mapped_column(Text)
+    content: Mapped[str] = mapped_column(Text)
