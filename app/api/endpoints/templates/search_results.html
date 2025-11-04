@@ -109,9 +109,48 @@
             text-decoration: none;
             border-radius: 5px;
         }
+        
+        .home-button-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .home-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .home-button:active {
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body>
+    <div class="home-button-container">
+        <a href="/" class="home-button">
+            🏠 Домой
+        </a>
+    </div>
+
+
     <div class="container">
         <h1>🔍 Результаты поиска: "{{ title }}"</h1>
         
@@ -139,7 +178,7 @@
             <div class="no-results">
                 <h2>Ничего не найдено 😔</h2>
                 <p>Попробуйте изменить запрос</p>
-                <a href="/articles" class="back-link">Вернуться назад</a>
+                <a href="/" class="back-link">Вернуться назад</a>
             </div>
         {% endif %}
     </div>

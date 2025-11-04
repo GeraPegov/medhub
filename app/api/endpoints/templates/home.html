@@ -140,7 +140,46 @@
             color: #888;
         }
 
+        .add-article-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .add-article-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-article-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .add-article-button:active {
+            transform: translateY(0);
+        }
+
         @media (max-width: 768px) {
+            .add-article-container {
+                position: static;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: center;
+            }
+            
             .search-container {
                 position: static;
                 margin-bottom: 20px;
@@ -155,6 +194,12 @@
     </style>
 </head>
 <body>
+    <div class="add-article-container">
+        <a href="/articles/submit" class="add-article-button">
+            ➕ Добавить статью
+        </a>
+    </div>
+    
     <div class="search-container">
         <form class="search-form" action="/articles/search" method="get">
             <input 

@@ -1,16 +1,32 @@
-from fastapi import APIRouter, Form, Depends
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse
 from app.services.article_manager import ArticleManager
-from app.dependencies.depends_submit_article import start_session
+from app.dependencies.depends_submit_article import get_article_manager
+from app.dependencies.parse_article import parse_article_form
+from fastapi.templating import Jinja2Templates
+from app.models.pydantic import ArticleCreateDTO
 
 router = APIRouter()
 
-@router.post('/submit-article')
-async def add_article_in_db(
-    author: str = Form(),
-    title: str = Form(),
-    content: str = Form(),
-    manager: ArticleManager = Depends(start_session),
+templates = Jinja2Templates('app/api/endpoints/templates')
+
+
+@router.get("/articles/submit", response_class=HTMLResponse)
+async def add(request: Request):
+    return templates.TemplateResponse(
+        name="add_article.html",
+        context={"request": request})
+
+
+@router.post('/articles/submit/add')
+async def create_article(
+    request: Request,
+    dto: ArticleCreateDTO = Depends(parse_article_form),
+    manager: ArticleManager = Depends(get_article_manager)
 ):
-    await manager.add_article(author, title, content)
-    return 'thank you'
+    articles = await manager.add_article(dto)
+    return templates.TemplateResponse(
+        name="search_results.html",
+        context={"request": request, "articles": articles, "title": dto.title}
+    )
     

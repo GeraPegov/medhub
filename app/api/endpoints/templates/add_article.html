@@ -112,11 +112,13 @@
             transform: translateY(0);
         }
 
-        .character-count {
+        .counter {
+            display: block;
             text-align: right;
-            color: #666;
-            font-size: 0.9em;
+            font-size: 0.85em;
+            color: #888;
             margin-top: 5px;
+            transition: color 0.3s ease;
         }
 
         .form-footer {
@@ -151,35 +153,45 @@
         </div>
         
         <div class="form-container">
-            <form action="/submit-article" method="POST">
+            <form action="/articles/submit/add" method="POST">
                 <div class="form-group">
                     <label for="author">👤 Автор:</label>
-                    <input type="text" id="author" name="author" 
-                           placeholder="Введите ваше имя" required
-                           maxlength="100">
-                    <div class="character-count">
-                        <span id="author-count">0</span>/100
-                    </div>
+                    <input 
+                        type="text" 
+                        id="author"
+                        name="author" 
+                        maxlength="100" 
+                        required
+                        placeholder="Введите имя автора"
+                        oninput="updateCounter('author', 'authorCounter', 100)"
+                    >
+                    <span id="authorCounter" class="counter">0/100</span>
                 </div>
 
                 <div class="form-group">
-                    <label for="title">👤 Название статьи:</label>
-                    <input type="text" id="title" name="title" 
-                           placeholder="Введите название" required
-                           maxlength="100">
-                    <div class="character-count">
-                        <span id="author-count">0</span>/100
-                    </div>
+                    <label for="title">📌 Название статьи:</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        placeholder="Введите название"
+                        maxlength="100"
+                        required
+                        oninput="updateCounter('title', 'titleCounter', 100)"
+                    >
+                    <span id="titleCounter" class="counter">0/100</span>
                 </div>
 
                 <div class="form-group">
                     <label for="content">📖 Текст статьи:</label>
-                    <textarea id="content" name="content" 
-                              placeholder="Напишите вашу статью здесь..." 
-                              required></textarea>
-                    <div class="character-count">
-                        <span id="content-count">0</span> символов
-                    </div>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        placeholder="Напишите вашу статью здесь..." 
+                        required
+                        oninput="updateCounter('content', 'contentCounter', null)"
+                    ></textarea>
+                    <span id="contentCounter" class="counter">0 символов</span>
                 </div>
 
                 <button type="submit" class="submit-btn">
@@ -193,5 +205,39 @@
         </div>
     </div>
 
+    <script>
+        function updateCounter(inputId, counterId, maxLength) {
+            const input = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            const currentLength = input.value.length;
+            
+            // Форматирование текста счетчика
+            if (maxLength) {
+                counter.textContent = `${currentLength}/${maxLength}`;
+            } else {
+                counter.textContent = `${currentLength} символов`;
+            }
+            
+            // Изменение цвета при приближении к лимиту (только для полей с лимитом)
+            if (maxLength) {
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#e74c3c'; // Красный
+                } else if (currentLength > maxLength * 0.7) {
+                    counter.style.color = '#f39c12'; // Оранжевый
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            } else {
+                // Для поля без лимита (текст статьи)
+                if (currentLength > 1000) {
+                    counter.style.color = '#27ae60'; // Зеленый (хорошая длина)
+                } else if (currentLength > 500) {
+                    counter.style.color = '#3498db'; // Синий
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            }
+        }
+    </script>
 </body>
 </html>
