@@ -1,32 +1,15 @@
-2025-11-09 17:49:10,177 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwerty', 'gera')
-2025-11-09 17:49:10,178 - app.domain.logging - INFO - start endpoint of register with date gera5_7@mail.ru
-2025-11-09 17:49:10,178 - app.domain.logging - INFO - start use_case in endpoint register
-2025-11-09 17:49:10,178 - app.domain.logging - INFO - start repository for user_repository
-2025-11-09 17:49:14,766 - app.domain.logging - INFO - start dependencies with date of ('vera5_7@mail.ru', 'qwerty', 'gera')
-2025-11-09 17:49:14,767 - app.domain.logging - INFO - start endpoint of register with date vera5_7@mail.ru
-2025-11-09 17:49:14,767 - app.domain.logging - INFO - start use_case in endpoint register
-2025-11-09 17:49:14,767 - app.domain.logging - INFO - start repository for user_repository
-2025-11-09 17:49:14,769 - app.domain.logging - INFO - create hash = qwerty
-2025-11-09 17:49:14,814 - app.domain.logging - INFO - password hash : $argon2id$v=19$m=65536,t=3,p=4$TUlp7Z3TupdSai2ltPa+Vw$mmiZQ1d2W+drDqXduCWIu0IltCvaCp9PqPwBOcEAZKo
-2025-11-09 17:49:14,814 - app.domain.logging - INFO - start create repositories
-2025-11-09 17:49:14,818 - app.domain.logging - INFO - start user_model in repository <app.core.models.register.UserModel object at 0x000001629C1B0190>
-2025-11-09 17:49:14,818 - app.domain.logging - INFO - user in use_cases : <coroutine object UserRepositopry._to_entity at 0x000001629BBEE890>
-2025-11-09 17:50:43,437 - app.domain.logging - INFO - start dependencies with date of ('vrra5_7@mail.ru', 'qwerty', 'gera')
-2025-11-09 17:50:43,456 - app.domain.logging - INFO - start endpoint of register with date vrra5_7@mail.ru
-2025-11-09 17:50:43,456 - app.domain.logging - INFO - start use_case in endpoint register
-2025-11-09 17:50:43,456 - app.domain.logging - INFO - start repository for user_repository
-2025-11-09 17:50:43,525 - app.domain.logging - INFO - create hash = qwerty
-2025-11-09 17:50:43,569 - app.domain.logging - INFO - password hash : $argon2id$v=19$m=65536,t=3,p=4$o5SyVmptrZUSAkBorXWO8Q$oqBJ8wSgQlTet2ymaSEOeEJj+6dg2pF1xkpmPW79Xnk
-2025-11-09 17:50:43,569 - app.domain.logging - INFO - start create repositories
-2025-11-09 17:50:43,576 - app.domain.logging - INFO - start user_model in repository <app.core.models.register.UserModel object at 0x000001BC4F7A8980>
-2025-11-09 17:50:43,576 - app.domain.logging - INFO - start _to_entyti
-2025-11-09 17:51:08,547 - app.domain.logging - INFO - start dependencies with date of ('vrree5_7@mail.ru', 'qwerty', 'gera')
-2025-11-09 17:51:08,566 - app.domain.logging - INFO - start endpoint of register with date vrree5_7@mail.ru
-2025-11-09 17:51:08,567 - app.domain.logging - INFO - start use_case in endpoint register
-2025-11-09 17:51:08,567 - app.domain.logging - INFO - start repository for user_repository
-2025-11-09 17:51:08,737 - app.domain.logging - INFO - create hash = qwerty
-2025-11-09 17:51:08,788 - app.domain.logging - INFO - password hash : $argon2id$v=19$m=65536,t=3,p=4$EcL43/sfg1CKkfLe23svJQ$I+U0SxB3RRkLsq9i4MTHqCl4+ByKJVwYXc8/Gldi7iI
-2025-11-09 17:51:08,789 - app.domain.logging - INFO - start create repositories
-2025-11-09 17:51:08,795 - app.domain.logging - INFO - start user_model in repository <app.core.models.register.UserModel object at 0x0000029607658980>
-2025-11-09 17:51:08,795 - app.domain.logging - INFO - start _to_entyti
-2025-11-09 17:51:08,795 - app.domain.logging - INFO - user in use_cases : User(id=4, email='vrree5_7@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$EcL43/sfg1CKkfLe23svJQ$I+U0SxB3RRkLsq9i4MTHqCl4+ByKJVwYXc8/Gldi7iI')
+2025-11-09 21:00:35,609 - app.domain.logging - INFO - start LOGIN, form_data : <fastapi.security.oauth2.OAuth2PasswordRequestForm object at 0x000001CC3F062120>
+2025-11-09 21:00:35,609 - app.domain.logging - INFO - use case : <app.application.services.login_user.LoginUserUseCase object at 0x000001CC3F0630E0>
+2025-11-09 21:01:49,099 - app.domain.logging - INFO - start LOGIN, form_data : <fastapi.security.oauth2.OAuth2PasswordRequestForm object at 0x0000021470B02120>
+2025-11-09 21:01:49,099 - app.domain.logging - INFO - use case : <app.application.services.login_user.LoginUserUseCase object at 0x0000021470B030E0>
+2025-11-09 21:03:52,557 - app.domain.logging - INFO - start LOGIN, form_data : <fastapi.security.oauth2.OAuth2PasswordRequestForm object at 0x0000021470B38B90>
+2025-11-09 21:03:52,557 - app.domain.logging - INFO - use case : <app.application.services.login_user.LoginUserUseCase object at 0x0000021470B39950>
+2025-11-09 21:05:35,930 - app.domain.logging - INFO - start LOGIN, form_data : <fastapi.security.oauth2.OAuth2PasswordRequestForm object at 0x000001F664272120>
+2025-11-09 21:05:35,930 - app.domain.logging - INFO - use case : <app.application.services.login_user.LoginUserUseCase object at 0x000001F6642730E0>
+2025-11-09 21:05:35,930 - app.domain.logging - INFO - start EXECUTE
+2025-11-09 21:10:14,117 - app.domain.logging - INFO - start LOGIN, form_data : <fastapi.security.oauth2.OAuth2PasswordRequestForm object at 0x00000126E1122120>
+2025-11-09 21:10:14,118 - app.domain.logging - INFO - use case : <app.application.services.login_user.LoginUserUseCase object at 0x00000126E11230E0>
+2025-11-09 21:10:14,118 - app.domain.logging - INFO - start EXECUTE
+2025-11-09 21:10:14,118 - app.domain.logging - INFO - start repository for user_repository
+2025-11-09 21:10:14,188 - app.domain.logging - INFO - start _to_entyti
+2025-11-09 21:10:14,189 - app.domain.logging - INFO - in EXECUTE user: User(id=5, email='wap123@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$SIlxLoUQovT+/18LgZASgg$TCGmzhVQh5QIGm6/XlBatbWEHd36Cz/ogUFNQb0z5Sc')

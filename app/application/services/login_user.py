@@ -1,6 +1,6 @@
 from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository
-
+from app.domain.logging import logger
 
 class LoginUserUseCase:
     """Сценарий входа"""
@@ -15,8 +15,9 @@ class LoginUserUseCase:
 
     async def execute(self, email: str, password: str) -> str:
         """Возвращает JWT токнер"""
-
+        logger.info(f'start EXECUTE')
         user = await self.user_repo.get_by_email(email)
+        logger.info(f'in EXECUTE user: {user}')
         if not user:
             raise ValueError('Неверный email или пароль')
 

@@ -146,18 +146,19 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📝 Регистрация</h1>
+            <h1>📝 Авторизация
+            </h1>
             <p>Поделитесь своими мыслями с миром</p>
         </div>
         
         <div class="form-container">
-            <form action="/auth/register" method="POST">
+            <form action="/auth/login" method="POST">
                 <div class="form-group">
                     <label for="email">👤 email:</label>
                     <input 
                         type="text" 
                         id="email"
-                        name="email" 
+                        name="username" 
                         maxlength="100" 
                         required
                         placeholder="Введите email"
@@ -180,20 +181,6 @@
                     <span id="passwordCounter" class="counter">0/100</span>
                 </div>
 
-                <div class="form-group">
-                    <label for="repeat">📖 Ваше имя</label>
-                    <input 
-                        type="text"
-                        id="repeat" 
-                        name="username" 
-                        placeholder="Повторите пароль" 
-                        maxlength="100"
-                        required
-                        oninput="updateCounter('repeat', 'repeatCounter', 100)"
-                    >
-                    <span id="repeatCounter" class="counter">0/100</span>
-                </div>
-
                 <button type="submit" class="submit-btn">
                     📤 Зарегестрироваться
                 </button>
@@ -201,40 +188,5 @@
             
         </div>
     </div>
-
-    <script>
-        function updateCounter(inputId, counterId, maxLength) {
-            const input = document.getElementById(inputId);
-            const counter = document.getElementById(counterId);
-            const currentLength = input.value.length;
-            
-            // Форматирование текста счетчика
-            if (maxLength) {
-                counter.textContent = `${currentLength}/${maxLength}`;
-            } else {
-                counter.textContent = `${currentLength} символов`;
-            }
-            
-            // Изменение цвета при приближении к лимиту (только для полей с лимитом)
-            if (maxLength) {
-                if (currentLength > maxLength * 0.9) {
-                    counter.style.color = '#e74c3c'; // Красный
-                } else if (currentLength > maxLength * 0.7) {
-                    counter.style.color = '#f39c12'; // Оранжевый
-                } else {
-                    counter.style.color = '#888'; // Серый
-                }
-            } else {
-                // Для поля без лимита (текст статьи)
-                if (currentLength > 1000) {
-                    counter.style.color = '#27ae60'; // Зеленый (хорошая длина)
-                } else if (currentLength > 500) {
-                    counter.style.color = '#3498db'; // Синий
-                } else {
-                    counter.style.color = '#888'; // Серый
-                }
-            }
-        }
-    </script>
 </body>
 </html>
