@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 class IAuthService(ABC):
 
     @abstractmethod
@@ -7,7 +8,7 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
-    def verify_token(self, token: str) -> int:
+    async def verify_token(self, token: str) -> int:
         '''Возвращает user_id из токена'''
         pass
 
@@ -16,5 +17,6 @@ class IAuthService(ABC):
         pass
 
     @abstractmethod
-    def verify_password(self, plain_password: str, hashed: str) -> bool:
+    async def verify_password(self, plain_password: str, hashed: str) -> bool:
         pass
+

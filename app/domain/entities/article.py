@@ -9,9 +9,4 @@ class ArticleEntity:
     article: str
     date_add: date | None = None
 
-@dataclass
-class User:
-    id: int
-    email: str
-    username: str
-    password_hash: str
+

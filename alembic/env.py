@@ -16,17 +16,19 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from app.core.config import settings
+from app.infrastructure.config import settings
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.core.database import Base
-from app.core.models.article import Article
+from app.infrastructure.database.connection import Base
+from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.register import UserModel
 
 target_metadata = Base.metadata
 Article.metadata.bind = target_metadata
+UserModel.metadata.bind = target_metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
