@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.domain.entities.user import User
 from app.domain.interfaces.user_repository import IUserRepository
 from app.domain.logging import logger
-from app.infrastructure.database.models.register import UserModel
+from app.infrastructure.database.models.user import UserModel
 
 
 class UserRepositopry(IUserRepository):
@@ -50,7 +50,6 @@ class UserRepositopry(IUserRepository):
 
     async def _to_entity(self, model: User) -> User:
         """Преобразование SQLAlchemy модели в доменную сущность"""
-        logger.info('start _to_entyti')
         return User(
             id=model.id,
             email=model.email,

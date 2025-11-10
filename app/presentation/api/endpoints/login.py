@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 from app.domain.logging import logger
@@ -18,22 +18,28 @@ def page_of_login(request: Request):
 
 @router.post('/auth/login')
 async def login(
+    request: Request,
+    response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service = Depends(get_auth_service),
     user_repo = Depends(get_user_repository)
 ):
     """Вход и получение токена"""
-    logger.info(f'start LOGIN, form_data : {form_data}')
     use_case = LoginUserUseCase(
         user_repo=user_repo,
         auth_service=auth_service)
-    logger.info(f'use case : {use_case}')
     try:
         token = await use_case.execute(
             email=form_data.username,
             password=form_data.password
         )
-        return {'access_token': token, 'token_type': 'bearer'}
+        response.set_cookie(
+            key='access_token',
+            value=token,
+            httponly=True,
+            samesite='lax'
+        )
+        return {'your token': token}
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

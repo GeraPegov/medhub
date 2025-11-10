@@ -7,11 +7,12 @@ class ArticleManager:
     def __init__(self, repository: IArticleRepository):
         self.repository = repository
 
-    async def add_article(self, dto: ArticleCreateDTO):
+    async def add_article(self, dto: ArticleCreateDTO, user_id: int, user_author: str):
         entity = ArticleEntity(
-            author=dto.author,
             title=dto.title,
-            article=dto.content
+            article=dto.content,
+            author_id=user_id,
+            author=user_author
         )
         return await self.repository.save(entity)
 

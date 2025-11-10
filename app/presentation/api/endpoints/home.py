@@ -7,7 +7,7 @@ from app.presentation.dependencies.depends_submit_article import get_article_man
 
 router = APIRouter()
 
-templates = Jinja2Templates("app/api/endpoints/templates")
+templates = Jinja2Templates("app/presentation/api/endpoints/templates")
 
 @router.get("/", response_class=HTMLResponse)
 async def home(

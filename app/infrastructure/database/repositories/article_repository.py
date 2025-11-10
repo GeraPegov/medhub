@@ -13,51 +13,54 @@ class ArticleRepository(IArticleRepository):
 
     async def save(self, entity: ArticleEntity):
         article = Article(
-            author=entity.author,
             title=entity.title,
-            content=entity.article
+            content=entity.article,
+            author_id=entity.author_id,
+            author=entity.author
         )
         self.session.add(article)
         await self.session.commit()
         await self.session.refresh(article)
         return [ArticleEntity(
-            author=article.author,
             title=article.title,
             article=article.content,
-            date_add=article.date_add
+            date_add=article.date_add,
+            author_id=article.author_id,
+            author=article.author
         )]
 
 
     async def last_article(self):
-        result = await self.session.execute(
+        orm_article = await self.session.execute(
             select(Article).order_by(Article.id.desc()).limit(1)
         )
-        orm_articles = result.scalar_one()
+        article = orm_article.scalar_one()
         return ArticleEntity(
-                date_add=orm_articles.date_add,
-                title=orm_articles.title,
-                article=orm_articles.content,
-                author=orm_articles.author)
+            title=article.title,
+            article=article.content,
+            date_add=article.date_add,
+            author_id=article.author_id,
+            author=article.author
+        )
 
 
     async def search_by_title(self, title: str) -> list[ArticleEntity]:
 
-        result = await self.session.execute(
+        orm_article = await self.session.execute(
             select(Article).where(Article.title.ilike(f'%{title}%'))
         )
-        orm_articles = result.scalars().all()
+        article = orm_article.scalars().all()
 
         return [
             ArticleEntity(
                 title=article.title,
                 article=article.content,
                 author=article.author,
-                date_add=article.date_add)
-                for article in orm_articles
+                date_add=article.date_add,
+                author_id=article.author_id)
+                for article in article
         ]
 
-    async def log_in(self, dto):
-        pass
 
 
 

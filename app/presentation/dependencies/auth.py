@@ -1,4 +1,6 @@
-from fastapi import Depends, HTTPException, status
+from ast import alias
+from venv import logger
+from fastapi import Depends, HTTPException, status, Cookie
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,15 +23,16 @@ def get_user_repository(session: AsyncSession = Depends(get_db)) -> UserReposito
     return UserRepositopry(session)
 
 async def get_current_user(
-        token: str = Depends(oauth2_scheme),
+        token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
         user_repo: UserRepositopry = Depends(get_user_repository)
 ) -> User:
     """Получение текущего пользователя из токена"""
     try:
+        logger.info(f'token: {token}')
         user_id = auth_service.verify_token(token)
         user = await user_repo.get_by_id(user_id)
-
+        logger.info(f'user {user}')
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -41,4 +44,4 @@ async def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='Невалидный токен',
             headers={'WWW-Authenticate': 'Bearer'}
-        )
+        ) from None

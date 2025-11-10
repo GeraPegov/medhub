@@ -24,7 +24,7 @@ from app.infrastructure.config import settings
 # target_metadata = mymodel.Base.metadata
 from app.infrastructure.database.connection import Base
 from app.infrastructure.database.models.article import Article
-from app.infrastructure.database.models.register import UserModel
+from app.infrastructure.database.models.user import UserModel
 
 target_metadata = Base.metadata
 Article.metadata.bind = target_metadata

@@ -1,21 +1,21 @@
 """init
 
-Revision ID: 55581acd4615
+Revision ID: 58596f5df62d
 Revises: 
-Create Date: 2025-11-09 17:45:29.569388
+Create Date: 2025-11-10 21:39:49.166694
 
 """
-from collections.abc import Sequence
-
-import sqlalchemy as sa
+from typing import Sequence, Union
 
 from alembic import op
+import sqlalchemy as sa
+
 
 # revision identifiers, used by Alembic.
-revision: str = '55581acd4615'
-down_revision: str | Sequence[str] | None = None
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision: str = '58596f5df62d'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -24,6 +24,7 @@ def upgrade() -> None:
     op.create_table('article',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('author', sa.String(length=64), nullable=False),
+    sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('date_add', sa.Date(), server_default=sa.text('now()'), nullable=False),
     sa.Column('title', sa.String(length=255), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
