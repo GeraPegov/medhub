@@ -1,4 +1,5 @@
-2025-11-10 21:46:04,097 - venv - INFO - token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYyODAxODc4fQ.f1mwNUHwnTTKaYmntIJEKGOu1nK7pwOkRgNl6QNTE1M
-2025-11-10 21:46:04,099 - venv - INFO - user User(id=1, email='gera5_7@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$5vz/n7OW0lorxbjX2lsLYQ$WDlDbKsIXHc9jbPxoPkRgPmVMcpQ4VkNqK5xthTwwN0')
-2025-11-10 21:46:04,099 - app.domain.logging - INFO - user : User(id=1, email='gera5_7@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$5vz/n7OW0lorxbjX2lsLYQ$WDlDbKsIXHc9jbPxoPkRgPmVMcpQ4VkNqK5xthTwwN0')
-2025-11-10 21:46:04,102 - app.domain.logging - INFO - articles : [ArticleEntity(author='gera', title='sadfxcbvxcvb', article='asdfgdsfhbnsdh', author_id=1, date_add=datetime.date(2025, 11, 10))]
+2025-11-11 16:20:45,583 - app.domain.logging - INFO - id , <class 'str'>
+2025-11-11 16:24:35,950 - app.domain.logging - INFO - id , <class 'str'>
+2025-11-11 16:26:22,506 - venv - INFO - user User(id=1, email='gera5_7@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$5vz/n7OW0lorxbjX2lsLYQ$WDlDbKsIXHc9jbPxoPkRgPmVMcpQ4VkNqK5xthTwwN0')
+2025-11-11 16:26:29,263 - app.domain.logging - INFO - id 1, <class 'str'>
+2025-11-11 16:26:34,709 - venv - INFO - user User(id=1, email='gera5_7@mail.ru', username='gera', password_hash='$argon2id$v=19$m=65536,t=3,p=4$5vz/n7OW0lorxbjX2lsLYQ$WDlDbKsIXHc9jbPxoPkRgPmVMcpQ4VkNqK5xthTwwN0')

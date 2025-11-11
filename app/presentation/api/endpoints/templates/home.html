@@ -161,6 +161,13 @@
             z-index: 1000;
         }
 
+        .articles-user-form {
+            position: fixed;
+            top: 260px;
+            left: 20px;
+            z-index: 1000;
+        }
+
         .add-article-button {
             display: inline-flex;
             align-items: center;
@@ -214,18 +221,26 @@
         </a>
     </div>
 
-    <div class="register-form">
-        <a href="/register" class="add-article-button">
-            ➕ Регистрация
+    {% if login %}
+        <div class="register-form">
+            <a href="/register" class="add-article-button">
+                ➕ Регистрация
+            </a>
+        </div>
+
+        <div class="login-form">
+            <a href="/login" class="add-article-button">
+                ➕ Авторизация
+            </a>
+        </div>
+    {% endif %}    
+    
+    <div class="articles-user-form">
+        <a href="/articles/user" class="add-article-button">
+            ➕ Мои статьи
         </a>
     </div>
 
-    <div class="login-form">
-        <a href="/login" class="add-article-button">
-            ➕ Авторизация
-        </a>
-    </div>
-    
     <div class="search-container">
         <form class="search-form" action="/articles/search" method="get">
             <input 
@@ -256,7 +271,7 @@
             </div>
             
             <div class="article-content">
-                <p>{{ articles.article }}</p>
+                <p>{{ articles.content }}</p>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
-from ast import alias
 from venv import logger
-from fastapi import Depends, HTTPException, status, Cookie
+
+from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -26,10 +26,11 @@ async def get_current_user(
         token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
         user_repo: UserRepositopry = Depends(get_user_repository)
-) -> User:
+) -> User | None:
     """Получение текущего пользователя из токена"""
     try:
-        logger.info(f'token: {token}')
+        if not token:
+            return None
         user_id = auth_service.verify_token(token)
         user = await user_repo.get_by_id(user_id)
         logger.info(f'user {user}')

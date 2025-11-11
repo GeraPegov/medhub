@@ -152,7 +152,7 @@
 
 
     <div class="container">
-        <h1>🔍 Результаты поиска: "{{ title }}"</h1>
+        <h1>🔍 Все статьи</h1>
         
         {% if articles %}
             {% for article in articles %}
@@ -169,6 +169,15 @@
                     </div>
                 </div>
                 
+                <div class="delete-article">
+                    <form action="/articles/user/delete" method="POST">
+                        <input type="hidden" name='article_id' value="{{ article.id }}">
+                        <button type="submit" class="submit-btn">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+
                 <div class="article-content">
                     <p>{{ article.content }}</p>
                 </div>

@@ -6,8 +6,9 @@ from datetime import date
 class ArticleEntity:
     author: str
     title: str
-    article: str
+    content: str
     author_id: int
     date_add: date | None = None
+    id: int | None = None
 
 

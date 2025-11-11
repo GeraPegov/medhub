@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from app.domain.entities.user import User
-from app.domain.logging import logger
+
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.application.services.article_manager import ArticleManager
+from app.domain.entities.user import User
+from app.domain.logging import logger
+from app.presentation.dependencies.auth import get_current_user
 from app.presentation.dependencies.depends_submit_article import get_article_manager
 from app.presentation.dependencies.parse_article import parse_article_form
-from app.presentation.dependencies.auth import get_current_user
 
 router = APIRouter()
 
@@ -17,7 +18,7 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 @router.get("/articles/submit", response_class=HTMLResponse)
 async def add(request: Request):
     return templates.TemplateResponse(
-        name="add_article.html",
+        name="submit_article.html",
         context={"request": request})
 
 
