@@ -1,29 +1,32 @@
-from app.application.dto.articleCreate_dto import ArticleCreateDTO
+from app.application.dto.article_create_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.repositories import IArticleRepository
 
 
-class ArticleManager:
+class ArticleService:
     def __init__(self, repository: IArticleRepository):
         self.repository = repository
 
-    async def add_article(self, dto: ArticleCreateDTO, user_id: int, user_author: str):
+    async def add_article(self, dto: ArticleCreateDTO, user_id: int, user_author: str) -> list[ArticleEntity]:
         entity = ArticleEntity(
             title=dto.title,
             content=dto.content,
             author_id=user_id,
             author=user_author
         )
-        return await self.repository.save_db(entity)
+        return await self.repository.save(entity)
 
-    async def show_last_article(self):
-        return await self.repository.last_article_db()
+    async def delete_article(self, article_id: int) -> dict:
+        return await self.repository.delete(article_id)
 
-    async def search_article(self, title):
-        return await self.repository.search_by_title_db(title)
+    async def show_last_article(self) -> ArticleEntity:
+        return await self.repository.last_article()
 
-    async def list_user_articles(self, id: int):
-        return await self.repository.list_user_articles_db(id)
+    async def search_article(self, title: str) -> list[ArticleEntity]:
+        return await self.repository.search_by_title(title)
 
-    async def delete_article(self, id: int):
-        return await self.repository.delete_article_db(id)
+    async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
+        return await self.repository.get_user_articles(user_id)
+
+    async def show(self, article_id: int) -> ArticleEntity:
+        return await self.repository.show(article_id)

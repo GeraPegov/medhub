@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.templating import Jinja2Templates
 
 from app.application.dto.articleAuth_dto import ArticleAuthDTO
-from app.application.services.register_user import RegisterUserUseCase
+from app.application.services.register_user import UserRegistrationService
 from app.domain.logging import logger
 
 # from presentation.api.schemas.user_schema import UserCreate, Token
@@ -31,7 +31,7 @@ async def register(
 ):
     logger.info(f'start endpoint of register with date {user_data.email}')
     """Регистрация пользователя"""
-    use_case = RegisterUserUseCase(user_repo, auth_service)
+    use_case = UserRegistrationService(user_repo, auth_service)
     logger.info('start use_case in endpoint register')
     try:
         user = await use_case.execute(

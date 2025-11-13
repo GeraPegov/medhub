@@ -18,6 +18,7 @@
             padding: 40px 20px;
         }
         
+        /* НОВЫЙ КОД: Контейнер для раскрывающегося поиска */
         .search-container {
             position: fixed;
             top: 20px;
@@ -25,47 +26,89 @@
             z-index: 1000;
         }
         
-        .search-form {
+        /* НОВЫЙ КОД: Обёртка поиска - начинает маленькой (50px) */
+        .search-wrapper {
+            position: relative;
             display: flex;
-            gap: 10px;
+            align-items: center;
             background: white;
-            padding: 10px;
-            border-radius: 25px;
+            border-radius: 50px;
+            padding: 5px;
+            transition: all 0.5s ease;
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
+        /* НОВЫЙ КОД: Когда добавляется класс 'active', ширина увеличивается */
+        .search-wrapper.active {
+            width: 400px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* НОВЫЙ КОД: Кнопка с иконкой поиска */
+        .search-icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+        
+        .search-icon-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* НОВЫЙ КОД: Поле ввода - изначально невидимое (opacity: 0) */
         .search-input {
             border: none;
             outline: none;
-            padding: 10px 20px;
+            padding: 0 15px;
             font-size: 14px;
-            border-radius: 20px;
-            width: 250px;
-            background: #f5f5f5;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
+            background: transparent;
         }
         
-        .search-input:focus {
-            background: #fff;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        /* НОВЫЙ КОД: Когда wrapper активен, поле становится видимым */
+        .search-wrapper.active .search-input {
+            opacity: 1;
         }
         
-        .search-button {
+        /* НОВЫЙ КОД: Кнопка "Найти" - тоже изначально невидима */
+        .search-submit-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 10px 25px;
-            border-radius: 20px;
+            padding: 8px 20px;
+            border-radius: 25px;
             cursor: pointer;
+            font-size: 14px;
             font-weight: 600;
-            transition: transform 0.2s ease;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.7s ease 0.3s;
+            flex-shrink: 0;
         }
         
-        .search-button:hover {
+        /* НОВЫЙ КОД: Появляется при активации */
+        .search-wrapper.active .search-submit-btn {
+            opacity: 1;
+        }
+        
+        .search-submit-btn:hover {
             transform: scale(1.05);
-        }
-        
-        .search-button:active {
-            transform: scale(0.95);
         }
         
         .container {
@@ -168,6 +211,13 @@
             z-index: 1000;
         }
 
+        .article-user-form-active {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 1000;
+        }
+
         .add-article-button {
             display: inline-flex;
             align-items: center;
@@ -185,7 +235,7 @@
         .add-article-button:hover {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            transform: translateY(-2px);
+            transform: translateY(-4px);
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
         }
 
@@ -208,8 +258,8 @@
                 justify-content: center;
             }
             
-            .search-input {
-                width: 180px;
+            .search-wrapper.active {
+                width: 100%;
             }
         }
     </style>
@@ -241,16 +291,24 @@
         </a>
     </div>
 
+    <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
     <div class="search-container">
-        <form class="search-form" action="/articles/search" method="get">
-            <input 
-                type="text" 
-                name="query" 
-                class="search-input" 
-                placeholder="🔍 Поиск по названию..."
-                required
-            >
-            <button type="submit" class="search-button">Найти</button>
+        <form action="/articles/search" method="get" class="search-form-wrapper">
+            <div class="search-wrapper" id="searchWrapper">
+                <button type="button" class="search-icon-btn" id="searchToggle">
+                    🔍
+                </button>
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Поиск по названию..."
+                >
+                <button type="submit" class="search-submit-btn">
+                    Найти
+                </button>
+            </div>
         </form>
     </div>
 
@@ -271,9 +329,62 @@
             </div>
             
             <div class="article-content">
-                <p>{{ articles.content }}</p>
+                <p>{{ articles.content[0:200] }}</p>
+                <a href="article/{{ articles.id }}">
+                    Показать полностью
+                </a>
             </div>
         </div>
     </div>
+
+    <!-- НОВЫЙ КОД: JavaScript для раскрытия поиска -->
+    <script>
+        // ШАГ 1: Получаем элементы из HTML по их ID
+        // document.getElementById() - находит элемент на странице по уникальному ID
+        const searchToggle = document.querySelector('#searchToggle');  // Кнопка с иконкой 🔍
+        const searchWrapper = document.querySelector('#searchWrapper'); // Обёртка всего поиска
+        const searchInput = document.querySelector('#searchInput');     // Поле ввода текста
+        const listArticle = document.querySelector('.articles-user-form');
+        const loginForm = document.querySelector('.login-form');
+
+        if (!document.contains(loginForm)) {
+            listArticle.classList.remove('articles-user-form');
+            listArticle.classList.add('article-user-form-active')
+        }
+
+        // ШАГ 2: Добавляем слушатель события на кнопку
+        // addEventListener('click', function) - "слушает" клики по кнопке
+        // Когда пользователь кликает на кнопку 🔍, запускается эта функция
+        searchToggle.addEventListener('mouseover', () => {
+            
+            // ШАГ 3: Переключаем класс 'active'
+            // classList.toggle('active') - добавляет класс, если его нет, убирает если есть
+            // Это как выключатель света: нажал - включилось, нажал ещё раз - выключилось
+            searchWrapper.classList.toggle('active');
+            
+            // ШАГ 4: Если класс 'active' теперь есть (поиск раскрылся)
+            // classList.contains('active') - проверяет, есть ли класс
+            if (searchWrapper.classList.contains('active')) {
+                
+                // ШАГ 5: Устанавливаем фокус на поле ввода
+                // focus() - курсор автоматически прыгает в поле, можно сразу печатать
+                searchInput.focus();
+            }
+        });
+
+        // ШАГ 6: Закрытие поиска при клике вне его
+        // Слушаем клики по всему документу (всей странице)
+        document.addEventListener('mouseover', function(e) {
+            
+            // ШАГ 7: Проверяем, кликнули ли ВНЕ поиска
+            // e.target - это элемент, на который кликнули
+            // contains() - проверяет, находится ли элемент внутри searchWrapper
+            // ! - отрицание (НЕ)
+            // Если кликнули НЕ по поиску - закрываем его
+            if (!searchWrapper.contains(e.target)) {
+                searchWrapper.classList.remove('active'); // Убираем класс 'active'
+            }
+        });
+    </script>
 </body>
 </html>

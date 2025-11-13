@@ -7,6 +7,7 @@ app = FastAPI()
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
+
 @app.exception_handler(HTTPException)
 async def handle_http_exception(request: Request, exc: HTTPException):
     return templates.TemplateResponse(

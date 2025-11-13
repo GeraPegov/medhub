@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import User
 from app.infrastructure.database.connection import get_db
-from app.infrastructure.database.repositories.user_repository import UserRepositopry
+from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.infrastructure.security.auth_service import AuthService
 
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
@@ -18,14 +18,14 @@ def get_auth_service() -> AuthService:
     """Зависимость для сервиса авторизаци"""
     return AuthService()
 
-def get_user_repository(session: AsyncSession = Depends(get_db)) -> UserRepositopry:
+def get_user_repository(session: AsyncSession = Depends(get_db)) -> UserRepository:
     """Зависиммость для репозитория пользователя"""
-    return UserRepositopry(session)
+    return UserRepository(session)
 
 async def get_current_user(
         token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
-        user_repo: UserRepositopry = Depends(get_user_repository)
+        user_repo: UserRepository = Depends(get_user_repository)
 ) -> User | None:
     """Получение текущего пользователя из токена"""
     try:

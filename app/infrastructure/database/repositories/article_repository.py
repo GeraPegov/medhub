@@ -1,9 +1,11 @@
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.repositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.client import Client
 
 
 class ArticleRepository(IArticleRepository):
@@ -11,63 +13,78 @@ class ArticleRepository(IArticleRepository):
         self.session = session
 
 
-    async def save_db(self, entity: ArticleEntity):
+    async def save(self, entity: ArticleEntity) -> list[ArticleEntity]:
+        author_orm = (await self.session.execute(
+            select(Client)
+            .where(Client.id==entity.author_id)
+        )).scalar_one()
         article = Article(
             title=entity.title,
             content=entity.content,
             author_id=entity.author_id,
-            author=entity.author
+            author=author_orm
         )
         self.session.add(article)
         await self.session.commit()
         await self.session.refresh(article)
+
         return [ArticleEntity(
-            id=article.id,
+                    id=article.id,
+                    title=article.title,
+                    content=article.content,
+                    author=article.author.username,
+                    date_add=article.created_at,
+                    author_id=article.author_id)]
+
+
+    async def show(self, article_id: int) -> ArticleEntity:
+        orm_article = await self.session.execute(
+            select(Article)
+            .where(Article.id==article_id)
+        )
+        article = orm_article.scalar_one()
+
+        return ArticleEntity(
+            author=article.author.username,
             title=article.title,
             content=article.content,
-            date_add=article.date_add,
             author_id=article.author_id,
-            author=article.author
-        )]
+            date_add=article.created_at,
+            id=article.id
+        )
 
 
-    async def last_article_db(self):
+    async def delete(self, article_id: int) -> dict:
+        orm_del = await self.session.execute(
+            delete(Article)
+            .where(Article.id == article_id)
+            .returning(Article.title)
+        )
+        title = orm_del.scalar_one()
+        await self.session.commit()
+        return {"success delete": title}
+
+
+    async def last_article(self) -> ArticleEntity:
         orm_article = await self.session.execute(
-            select(Article).order_by(Article.id.desc()).limit(1)
+            select(Article)
+            .options(selectinload(Article.author))
+            .order_by(Article.id.desc()).limit(1)
         )
         article = orm_article.scalar_one()
         return ArticleEntity(
             id=article.id,
             title=article.title,
             content=article.content,
-            date_add=article.date_add,
+            date_add=article.created_at,
             author_id=article.author_id,
-            author=article.author
+            author=article.author.username
         )
 
 
-    async def search_by_title_db(self, title: str) -> list[ArticleEntity]:
-
-        orm_article = await self.session.execute(
-            select(Article).where(Article.title.ilike(f'%{title}%'))
-        )
-        articles = orm_article.scalars().all()
-
-        return [
-            ArticleEntity(
-                id=article.id,
-                title=article.title,
-                content=article.content,
-                author=article.author,
-                date_add=article.date_add,
-                author_id=article.author_id)
-                for article in articles
-        ]
-
-    async def list_user_articles_db(self, id: int) -> list[ArticleEntity]:
+    async def search_by_title(self, title: str) -> list[ArticleEntity]:
         orm_articles = await self.session.execute(
-            select(Article)
-            .where(Article.author_id==id)
+            select(Article).where(Article.title.ilike(f'%{title}%'))
         )
         articles = orm_articles.scalars().all()
 
@@ -76,23 +93,27 @@ class ArticleRepository(IArticleRepository):
                 id=article.id,
                 title=article.title,
                 content=article.content,
-                author=article.author,
-                date_add=article.date_add,
+                author=article.author.username,
+                date_add=article.created_at,
                 author_id=article.author_id)
                 for article in articles
         ]
 
-    async def delete_article_db(self, id: int):
-        orm_del = await self.session.execute(
-            delete(Article)
-            .where(Article.id==id)
-            .returning(Article.title)
+
+    async def get_user_articles(self, user_id: int) -> list[ArticleEntity]:
+        orm_articles = await self.session.execute(
+            select(Article)
+            .where(Article.author_id==user_id)
         )
-        title = orm_del.scalar_one()
-        await self.session.commit()
-        return {"success delete": title}
+        articles = orm_articles.scalars().all()
 
-
-
-
-
+        return [
+            ArticleEntity(
+                id=article.id,
+                title=article.title,
+                content=article.content,
+                author=article.author.username,
+                date_add=article.created_at,
+                author_id=article.author_id)
+                for article in articles
+        ]

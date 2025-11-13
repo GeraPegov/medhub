@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.article_manager import ArticleManager
-from app.presentation.dependencies.depends_submit_article import get_article_manager
+from app.application.services.article_manager import ArticleService
+from app.presentation.dependencies.articles_dependencies import get_article_manager
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ templates = Jinja2Templates(directory="app/presentation/api/endpoints/templates"
 async def search(
     request: Request,
     query: str = Query(..., min_length=2),
-    manager: ArticleManager = Depends(get_article_manager)
+    manager: ArticleService = Depends(get_article_manager)
 ):
 
     articles = await manager.search_article(query)

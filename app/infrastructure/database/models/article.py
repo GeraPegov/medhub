@@ -1,18 +1,25 @@
 from datetime import date
+from typing import TYPE_CHECKING
 
-from sqlalchemy import Date, Integer, String, Text, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.connection import Base
 
+if TYPE_CHECKING:
+    from app.infrastructure.database.models.client import Client
+    from app.infrastructure.database.models.comment import Comment
 
-class Article(Base):
+class Article(Base, AsyncAttrs):
     __tablename__ = 'article'
     __table_args__ = None
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    author: Mapped[str] = mapped_column(String(64))
-    author_id: Mapped[int] = mapped_column(Integer)
-    date_add: Mapped[date] = mapped_column(Date, server_default=func.now())
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('client.id'))
+    created_at: Mapped[date] = mapped_column(DateTime, server_default=func.now())
+
+    author: Mapped['Client'] = relationship('Client', back_populates='articles')
+    comments: Mapped[list['Comment']] = relationship('Comment', back_populates='article')

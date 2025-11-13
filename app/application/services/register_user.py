@@ -4,7 +4,7 @@ from app.domain.interfaces.user_repository import IUserRepository
 from app.domain.logging import logger
 
 
-class RegisterUserUseCase:
+class UserRegistrationService:
     """Сценарий регистрации"""
     def __init__(
             self,

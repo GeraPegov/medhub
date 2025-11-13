@@ -2,7 +2,7 @@ from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository
 
 
-class LoginUserUseCase:
+class UserAuthenticationService:
 
     """Сценарий входа"""
 
