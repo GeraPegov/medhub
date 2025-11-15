@@ -2,8 +2,9 @@ from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
-from app.domain.interfaces.repositories import IArticleRepository
+from app.domain.interfaces.articleRepositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.client import Client
 
@@ -13,15 +14,15 @@ class ArticleRepository(IArticleRepository):
         self.session = session
 
 
-    async def save(self, entity: ArticleEntity) -> list[ArticleEntity]:
+    async def save(self, dto: ArticleCreateDTO, author_id: int) -> list[ArticleEntity]:
         author_orm = (await self.session.execute(
             select(Client)
-            .where(Client.id==entity.author_id)
+            .where(Client.id==author_id)
         )).scalar_one()
         article = Article(
-            title=entity.title,
-            content=entity.content,
-            author_id=entity.author_id,
+            title=dto.title,
+            content=dto.content,
+            author_id=author_id,
             author=author_orm
         )
         self.session.add(article)
@@ -33,13 +34,14 @@ class ArticleRepository(IArticleRepository):
                     title=article.title,
                     content=article.content,
                     author=article.author.username,
-                    date_add=article.created_at,
+                    created_at=article.created_at,
                     author_id=article.author_id)]
 
 
     async def show(self, article_id: int) -> ArticleEntity:
         orm_article = await self.session.execute(
             select(Article)
+            .options(selectinload(Article.author))
             .where(Article.id==article_id)
         )
         article = orm_article.scalar_one()
@@ -49,7 +51,7 @@ class ArticleRepository(IArticleRepository):
             title=article.title,
             content=article.content,
             author_id=article.author_id,
-            date_add=article.created_at,
+            created_at=article.created_at,
             id=article.id
         )
 
@@ -76,7 +78,7 @@ class ArticleRepository(IArticleRepository):
             id=article.id,
             title=article.title,
             content=article.content,
-            date_add=article.created_at,
+            created_at=article.created_at,
             author_id=article.author_id,
             author=article.author.username
         )
@@ -84,7 +86,9 @@ class ArticleRepository(IArticleRepository):
 
     async def search_by_title(self, title: str) -> list[ArticleEntity]:
         orm_articles = await self.session.execute(
-            select(Article).where(Article.title.ilike(f'%{title}%'))
+            select(Article)
+            .options(selectinload(Article.author))
+            .where(Article.title.ilike(f'%{title}%'))
         )
         articles = orm_articles.scalars().all()
 
@@ -94,7 +98,7 @@ class ArticleRepository(IArticleRepository):
                 title=article.title,
                 content=article.content,
                 author=article.author.username,
-                date_add=article.created_at,
+                created_at=article.created_at,
                 author_id=article.author_id)
                 for article in articles
         ]
@@ -103,6 +107,7 @@ class ArticleRepository(IArticleRepository):
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity]:
         orm_articles = await self.session.execute(
             select(Article)
+            .options(selectinload(Article.author))
             .where(Article.author_id==user_id)
         )
         articles = orm_articles.scalars().all()
@@ -113,7 +118,7 @@ class ArticleRepository(IArticleRepository):
                 title=article.title,
                 content=article.content,
                 author=article.author.username,
-                date_add=article.created_at,
+                created_at=article.created_at,
                 author_id=article.author_id)
                 for article in articles
         ]

@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_manager import ArticleService
-from app.domain.entities.user import User
+from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.auth import get_current_user
 
@@ -16,7 +16,7 @@ templates = Jinja2Templates("app/presentation/api/endpoints/templates")
 async def home(
     request: Request,
     manager: ArticleService = Depends(get_article_manager),
-    user: User = Depends(get_current_user)
+    user: UserEntity = Depends(get_current_user)
     ):
     '''login это показ иконки авторизации для неавторизованных пользователей'''
     login = False

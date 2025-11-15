@@ -4,7 +4,7 @@ from fastapi import Cookie, Depends, HTTPException, status
 from fastapi.security import OAuth2AuthorizationCodeBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.user import User
+from app.domain.entities.user import UserEntity
 from app.infrastructure.database.connection import get_db
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.infrastructure.security.auth_service import AuthService
@@ -26,7 +26,7 @@ async def get_current_user(
         token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
         user_repo: UserRepository = Depends(get_user_repository)
-) -> User | None:
+) -> UserEntity | None:
     """Получение текущего пользователя из токена"""
     try:
         if not token:

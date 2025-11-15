@@ -2,7 +2,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.user import User
+from app.domain.entities.user import UserEntity
 from app.domain.interfaces.user_repository import IUserRepository
 from app.domain.logging import logger
 from app.infrastructure.database.models.client import Client
@@ -14,7 +14,7 @@ class UserRepository(IUserRepository):
         self.session = session
 
 
-    async def get_by_id(self, user_id: int) -> User | None:
+    async def get_by_id(self, user_id: int) -> UserEntity | None:
         user = await self.session.execute(
             select(Client)
             .where(Client.id==user_id)
@@ -25,8 +25,7 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user_model)
 
 
-    async def get_by_email(self, email: str) -> User | None:
-        logger.info('start repository for user_repository')
+    async def get_by_email(self, email: str) -> UserEntity | None:
         user = await self.session.execute(
             select(Client)
             .where(Client.email==email)
@@ -37,8 +36,7 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user_model)
 
 
-    async def create(self, email: str, password_hash: str, username: str) -> User:
-        logger.info('start create repositories')
+    async def create(self, email: str, password_hash: str, username: str) -> UserEntity:
         user_model = Client(
             email=email,
             password_hash=password_hash,
@@ -51,9 +49,9 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user_model)
 
 
-    async def _to_entity(self, model: Client) -> User:
+    async def _to_entity(self, model: Client) -> UserEntity:
         """Преобразование SQLAlchemy модели в доменную сущность"""
-        return User(
+        return UserEntity(
             id=model.id,
             email=model.email,
             username=model.username,

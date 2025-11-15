@@ -1,20 +1,14 @@
-from app.application.dto.article_create_dto import ArticleCreateDTO
+from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
-from app.domain.interfaces.repositories import IArticleRepository
+from app.domain.interfaces.articleRepositories import IArticleRepository
 
 
 class ArticleService:
     def __init__(self, repository: IArticleRepository):
         self.repository = repository
 
-    async def add_article(self, dto: ArticleCreateDTO, user_id: int, user_author: str) -> list[ArticleEntity]:
-        entity = ArticleEntity(
-            title=dto.title,
-            content=dto.content,
-            author_id=user_id,
-            author=user_author
-        )
-        return await self.repository.save(entity)
+    async def add_article(self, dto: ArticleCreateDTO, user_id: int) -> list[ArticleEntity]:
+        return await self.repository.save(dto, user_id)
 
     async def delete_article(self, article_id: int) -> dict:
         return await self.repository.delete(article_id)

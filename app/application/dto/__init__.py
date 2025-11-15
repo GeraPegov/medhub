@@ -1,4 +1,4 @@
-from app.application.dto.article_create_dto import ArticleCreateDTO
-from app.application.dto.user_auth_dto import UserAuthDTO
+from app.application.dto.articleAuth_dto import ArticleAuthDTO
+from app.application.dto.articleCreate_dto import ArticleCreateDTO
 
-__all__ = ['UserAuthDTO', 'ArticleCreateDTO']
+__all__ = ['ArticleAuthDTO', 'ArticleCreateDTO']

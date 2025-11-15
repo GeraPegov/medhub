@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.services.article_manager import ArticleService
-from app.domain.interfaces.repositories import IArticleRepository
+from app.domain.interfaces.articleRepositories import IArticleRepository
 from app.infrastructure.database.connection import get_db
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,

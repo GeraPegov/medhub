@@ -4,9 +4,9 @@ from datetime import datetime
 
 @dataclass
 class CommentEntity:
-    id: int
     author_id: int
     article_id: int
     content: str
-    datetime: datetime
+    created_at: datetime
     author: str | None = None
+    id: int | None = None

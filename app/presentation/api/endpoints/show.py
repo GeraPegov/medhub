@@ -2,31 +2,32 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_manager import ArticleService
-from app.domain.logging import logger
+from app.application.services.comment_manager import CommentService
+from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
+from app.presentation.dependencies.auth import get_current_user
+from app.presentation.dependencies.comments import get_comment_manager
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
 router = APIRouter()
 
 @router.get('/article/{article_id}')
-async def show(
+async def show_article(
     request: Request,
     article_id: int,
-    manager: ArticleService = Depends(get_article_manager)
+    article_manager: ArticleService = Depends(get_article_manager),
+    comment_manager: CommentService = Depends(get_comment_manager),
+    user: UserEntity = Depends(get_current_user)
 ):
-    logger.info(f'article_id = {article_id}')
-    article = await manager.show(article_id)
+    article = await article_manager.show(article_id)
+    comments = await comment_manager.show(article_id)
 
     return templates.TemplateResponse(
         'show.html',
         {'request': request,
-         'article': article
+         'article': article,
+         'comments': comments,
+         'user': user
         }
     )
-
-# @router.post('/article/comment')
-# async def comment(
-#     article_id: int = Form(...),
-
-# )

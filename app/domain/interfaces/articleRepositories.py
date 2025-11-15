@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 
 
@@ -11,7 +12,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def save(self, entity: ArticleEntity) -> list[ArticleEntity]:
+    async def save(self, dto: ArticleCreateDTO, client_id: int) -> list[ArticleEntity]:
         pass
 
     @abstractmethod
@@ -34,20 +35,3 @@ class IArticleRepository(ABC):
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity]:
         pass
 
-class ICommentRepository(ABC):
-
-    @abstractmethod
-    def __init__(self, session: AsyncSession):
-        pass
-
-    @abstractmethod
-    async def show(self, article_id: int):
-        pass
-
-    @abstractmethod
-    async def create(self, article_id: int, author_id: int):
-        pass
-
-    @abstractmethod
-    async def delete(self, article_id: int, author_id: int):
-        pass

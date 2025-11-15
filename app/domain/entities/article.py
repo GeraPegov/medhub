@@ -8,7 +8,7 @@ class ArticleEntity:
     title: str
     content: str
     author_id: int
-    date_add: date | None = None
+    created_at: date | None = None
     id: int | None = None
 
 
