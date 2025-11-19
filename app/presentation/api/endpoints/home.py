@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.article_manager import ArticleService
+from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.auth import get_current_user

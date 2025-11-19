@@ -210,6 +210,19 @@
             left: 20px;
             z-index: 1000;
         }
+        .profile-form {
+            position: fixed;
+            top: 340px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .profile-form-active {
+            position: fixed;
+            top: 180px;
+            left: 20px;
+            z-index: 1000;
+        }
 
         .article-user-form-active {
             position: fixed;
@@ -286,8 +299,14 @@
     {% endif %}    
     
     <div class="articles-user-form">
-        <a href="/articles/user" class="add-article-button">
+        <a href="/user/articles" class="add-article-button">
             ➕ Мои статьи
+        </a>
+    </div>
+
+    <div class="profile-form">
+        <a href="/user/profile" class="add-article-button">
+            Профиль
         </a>
     </div>
 
@@ -320,10 +339,10 @@
                 <h2 class="article-title">{{ articles.title }}</h2>
                 <div class="article-meta">
                     <div class="meta-item">
-                        <span class="author">{{ articles.author }}</span>
+                        <span class="author">{{ articles.nickname }}</span>
                     </div>
                     <div class="meta-item">
-                        <span class="date">{{ articles.date_add }}</span>
+                        <span class="date">{{ articles.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                     </div>
                 </div>
             </div>
@@ -346,10 +365,13 @@
         const searchInput = document.querySelector('#searchInput');     // Поле ввода текста
         const listArticle = document.querySelector('.articles-user-form');
         const loginForm = document.querySelector('.login-form');
+        const profileForm = document.querySelector('.profile-form')
 
         if (!document.contains(loginForm)) {
             listArticle.classList.remove('articles-user-form');
-            listArticle.classList.add('article-user-form-active')
+            profileForm.classList.remove('profile-form');
+            listArticle.classList.add('article-user-form-active');
+            profileForm.classList.add('profile-form-active')
         }
 
         // ШАГ 2: Добавляем слушатель события на кнопку

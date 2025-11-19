@@ -23,7 +23,8 @@ class ArticleRepository(IArticleRepository):
             title=dto.title,
             content=dto.content,
             author_id=author_id,
-            author=author_orm
+            author=author_orm,
+            category=dto.category
         )
         self.session.add(article)
         await self.session.commit()
@@ -33,9 +34,11 @@ class ArticleRepository(IArticleRepository):
                     id=article.id,
                     title=article.title,
                     content=article.content,
-                    author=article.author.username,
+                    username=article.author.unique_username,
+                    nickname=article.author.nickname,
                     created_at=article.created_at,
-                    author_id=article.author_id)]
+                    author_id=article.author_id,
+                    category=article.category)]
 
 
     async def show(self, article_id: int) -> ArticleEntity:
@@ -47,12 +50,14 @@ class ArticleRepository(IArticleRepository):
         article = orm_article.scalar_one()
 
         return ArticleEntity(
-            author=article.author.username,
+            username=article.author.unique_username,
+            nickname=article.author.nickname,
             title=article.title,
             content=article.content,
             author_id=article.author_id,
             created_at=article.created_at,
-            id=article.id
+            id=article.id,
+            category=article.category
         )
 
 
@@ -80,7 +85,9 @@ class ArticleRepository(IArticleRepository):
             content=article.content,
             created_at=article.created_at,
             author_id=article.author_id,
-            author=article.author.username
+            username=article.author.unique_username,
+            nickname=article.author.nickname,
+            category=article.category
         )
 
 
@@ -97,9 +104,11 @@ class ArticleRepository(IArticleRepository):
                 id=article.id,
                 title=article.title,
                 content=article.content,
-                author=article.author.username,
+                username=article.author.unique_username,
+                nickname=article.author.nickname,
                 created_at=article.created_at,
-                author_id=article.author_id)
+                author_id=article.author_id,
+                category=article.category)
                 for article in articles
         ]
 
@@ -117,8 +126,10 @@ class ArticleRepository(IArticleRepository):
                 id=article.id,
                 title=article.title,
                 content=article.content,
-                author=article.author.username,
+                username=article.author.unique_username,
+                nickname=article.author.nickname,
                 created_at=article.created_at,
-                author_id=article.author_id)
+                author_id=article.author_id,
+                category=article.category)
                 for article in articles
         ]

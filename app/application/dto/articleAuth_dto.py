@@ -4,7 +4,8 @@ from pydantic import BaseModel, EmailStr, Field
 class ArticleAuthDTO(BaseModel):
     email: EmailStr = Field(..., description="Email пользователя")
     password: str = Field(..., min_length=2, max_length=100, description="Пароль")
-    username: str = Field(..., description='Имя пользователя')
+    username: str = Field(..., description='Уникальное имя')
+    nickname: str = Field(..., description='Имя пользователя')
 
     # @field_validator('email')
     # @classmethod

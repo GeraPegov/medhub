@@ -11,14 +11,14 @@ if TYPE_CHECKING:
     from app.infrastructure.database.models.article import Article
     from app.infrastructure.database.models.client import Client
 
-class Comment(Base, AsyncAttrs):
-    __tablename__ = 'comment'
+class Comments(Base, AsyncAttrs):
+    __tablename__ = 'comments'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('client.id'))
-    article_id: Mapped[int] = mapped_column(Integer, ForeignKey('article.id'))
+    article_id: Mapped[int] = mapped_column(Integer, ForeignKey('articles.id'))
 
     article: Mapped['Article'] = relationship('Article', back_populates='comments')
     author: Mapped['Client'] = relationship('Client', back_populates='comments')

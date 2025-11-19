@@ -35,17 +35,19 @@ class UserRepository(IUserRepository):
             return None
         return await self._to_entity(user_model)
 
-
-    async def create(self, email: str, password_hash: str, username: str) -> UserEntity:
+    async def create(self, email: str, password_hash: str, username: str, nickname: str) -> UserEntity:
+        logger.info('start create')
         user_model = Client(
             email=email,
             password_hash=password_hash,
-            username=username
+            nickname=nickname,
+            unique_username=username
         )
-
+        logger.info('create user_model')
         self.session.add(user_model)
         await self.session.commit()
         await self.session.refresh(user_model)
+        logger.info('save new db model')
         return await self._to_entity(user_model)
 
 
@@ -54,6 +56,7 @@ class UserRepository(IUserRepository):
         return UserEntity(
             id=model.id,
             email=model.email,
-            username=model.username,
+            username=model.unique_username,
             password_hash=model.password_hash,
+            nickname=model.nickname
         )

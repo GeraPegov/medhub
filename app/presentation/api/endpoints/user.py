@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.article_manager import ArticleService
+from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
 from app.domain.logging import logger
 from app.presentation.dependencies.articles_dependencies import get_article_manager
@@ -11,8 +11,8 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
 router = APIRouter()
 
-@router.get('/articles/user')
-async def user_articles(
+@router.get('/user/articles')
+async def only_user_articles(
     request: Request,
     user: UserEntity = Depends(get_current_user),
     manager: ArticleService = Depends(get_article_manager)
@@ -24,7 +24,7 @@ async def user_articles(
         {'request': request, 'articles': list_articles}
     )
 
-@router.post('/articles/user/delete')
+@router.post('/user/delete')
 async def delete_article(
     request: Request,
     manager: ArticleService = Depends(get_article_manager),
@@ -36,3 +36,10 @@ async def delete_article(
         return 'Авторизуйтесь'
     title = await manager.delete_article(int(article_id))
     return {'access': title}
+
+@router.get('/user/profile')
+async def profile(
+    request: Request,
+    user: UserEntity = Depends(get_current_user)
+):
+    pass

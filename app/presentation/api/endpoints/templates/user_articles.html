@@ -174,16 +174,16 @@
                     <h2 class="article-title">{{ article.title }}</h2>
                     <div class="article-meta">
                         <div class="meta-item">
-                            <span class="author">{{ article.author }}</span>
+                            <span class="author">{{ article.nickname }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="date">{{ article.date_add }}</span>
+                            <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                         </div>
                     </div>
                 </div>
             </a>
                 <div class="search-button">
-                    <form action="/articles/user/delete" method="POST">
+                    <form action="/user/delete" method="POST">
                         <input type="hidden" name='article_id' value="{{ article.id }}">
                         <button type="submit" class="search-button">
                             Удалить

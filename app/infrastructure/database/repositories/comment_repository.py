@@ -3,10 +3,9 @@ from sqlalchemy.orm import selectinload
 
 from app.domain.entities.comment import CommentEntity
 from app.domain.interfaces.commentRepositories import AsyncSession, ICommentRepository
-from app.domain.logging import logger
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.client import Client
-from app.infrastructure.database.models.comment import Comment
+from app.infrastructure.database.models.comment import Comments
 
 
 class CommentRepository(ICommentRepository):
@@ -14,7 +13,6 @@ class CommentRepository(ICommentRepository):
         self.session = session
 
     async def create(self, author_id: int, article_id: int, content: str) -> CommentEntity:
-        logger.info('start DB COMMENT')
         author_orm = (await self.session.execute(
             select(Client)
             .where(Client.id==author_id)
@@ -23,7 +21,7 @@ class CommentRepository(ICommentRepository):
             select(Article)
             .where(Article.id==article_id)
         )).scalar_one()
-        comment = Comment(
+        comment = Comments(
             content=content,
             author_id=author_id,
             article_id=article_id,
@@ -34,21 +32,22 @@ class CommentRepository(ICommentRepository):
         self.session.add(comment)
         await self.session.commit()
         await self.session.refresh(comment)
-        logger.info('finish COMMENT')
+
         return CommentEntity(
             id=comment.id,
             author_id=comment.author_id,
             article_id=comment.article_id,
             content=comment.content,
             created_at=comment.created_at,
-            author=comment.author.username
+            nickname=comment.author.nickname,
+            username=comment.author.unique_username
         )
 
     async def show(self, article_id: int) -> list[CommentEntity]:
         comments_orm = await self.session.execute(
-            select(Comment)
-            .options(selectinload(Comment.author))
-            .where(Comment.article_id==article_id)
+            select(Comments)
+            .options(selectinload(Comments.author))
+            .where(Comments.article_id==article_id)
         )
 
         comments = comments_orm.scalars().all()
@@ -59,18 +58,20 @@ class CommentRepository(ICommentRepository):
             article_id=comment.article_id,
             content=comment.content,
             created_at=comment.created_at,
-            author=comment.author.username
+            nickname=comment.author.nickname,
+            username=comment.author.unique_username
         ) for comment in comments]
 
 
-    async def delete(self, article_id: int):
+    async def delete(self, comment_id: int):
         comments_del_orm = await self.session.execute(
-            delete(Comment)
-            .options(selectinload(Comment.article))
-            .where(Comment.article_id==article_id)
-            .returning(Comment.article.title)
+            delete(Comments)
+            .where(Comments.id==comment_id)
+            .returning(Comments.article_id)
         )
-        comments_del = comments_del_orm.scalar_one()
+        article_id = comments_del_orm.scalar_one()
+        await self.session.commit()
 
-        return comments_del
+        return article_id
+
 

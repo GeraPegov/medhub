@@ -7,7 +7,7 @@ class ArticleService:
     def __init__(self, repository: IArticleRepository):
         self.repository = repository
 
-    async def add_article(self, dto: ArticleCreateDTO, user_id: int) -> list[ArticleEntity]:
+    async def submit_article(self, dto: ArticleCreateDTO, user_id: int) -> list[ArticleEntity]:
         return await self.repository.save(dto, user_id)
 
     async def delete_article(self, article_id: int) -> dict:
@@ -22,5 +22,5 @@ class ArticleService:
     async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
         return await self.repository.get_user_articles(user_id)
 
-    async def show(self, article_id: int) -> ArticleEntity:
+    async def only_article(self, article_id: int) -> ArticleEntity:
         return await self.repository.show(article_id)

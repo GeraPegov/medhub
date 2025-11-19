@@ -164,7 +164,7 @@
                             <span class="author">{{ article.author }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="date">{{ article.date_add }}</span>
+                            <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                         </div>
                     </div>
                 </div>

@@ -74,7 +74,8 @@
         
         .article-meta {
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            gap: 10px;
             color: #666;
             font-size: 0.9em;
         }
@@ -97,12 +98,20 @@
             font-size: 1.1em;
         }
         
-        .author {
+        .meta-author {
             color: #667eea;
             font-weight: 600;
         }
         
-        .date {
+        .meta-date {
+            color: #888;
+        }
+
+        .meta-category {
+            color: #667eea;
+        }
+
+        .meta-label {
             color: #888;
         }
         
@@ -255,10 +264,16 @@
                 <h1 class="article-title">{{ article.title }}</h1>
                 <div class="article-meta">
                     <div class="meta-item">
-                        <span class="author">{{ article.author.username }}</span>
+                        <span class="meta-label">Автор:</span>
+                        <span class="meta-author">{{ article.author }}</span>
                     </div>
                     <div class="meta-item">
-                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                        <span class="meta-label">Дата публикации: </span>
+                        <span class="meta-date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Категории: </span>
+                        <span class="meta-category">{{ article.category }}</span>
                     </div>
                 </div>
             </div>
@@ -276,7 +291,7 @@
             
             <!-- Форма добавления комментария -->
             {% if user %}
-            <form class="comment-form" method="POST" action="/articles/{{ article.id }}/comments">
+            <form class="comment-form" method="POST" action="/comments/{{ article.id }}/create">
                 <textarea 
                     name="content" 
                     placeholder="Напишите ваш комментарий..." 

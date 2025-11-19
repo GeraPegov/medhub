@@ -18,5 +18,5 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete(self, article_id: int, author_id: int):
+    async def delete(self, comment_id: int):
         pass

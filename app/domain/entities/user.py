@@ -7,3 +7,4 @@ class UserEntity:
     email: str
     username: str
     password_hash: str
+    nickname: str

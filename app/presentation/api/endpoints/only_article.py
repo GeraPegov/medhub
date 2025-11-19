@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.article_manager import ArticleService
+from app.application.services.article_service import ArticleService
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
@@ -20,11 +20,11 @@ async def show_article(
     comment_manager: CommentService = Depends(get_comment_manager),
     user: UserEntity = Depends(get_current_user)
 ):
-    article = await article_manager.show(article_id)
-    comments = await comment_manager.show(article_id)
+    article = await article_manager.only_article(article_id)
+    comments = await comment_manager.show_comment(article_id)
 
     return templates.TemplateResponse(
-        'show.html',
+        'only_article.html',
         {'request': request,
          'article': article,
          'comments': comments,
