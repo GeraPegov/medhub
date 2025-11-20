@@ -20,11 +20,11 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def show(self, article_id: int) -> ArticleEntity:
+    async def show(self, article_id: int) -> list[ArticleEntity]:
         pass
 
     @abstractmethod
-    async def last_article(self) -> ArticleEntity:
+    async def last_article(self) -> list[ArticleEntity]:
         pass
 
     @abstractmethod

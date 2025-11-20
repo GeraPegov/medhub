@@ -258,14 +258,13 @@
     </div>
     
     <div class="container">
-        <!-- Статья -->
         <div class="article-card">
             <div class="article-header">
                 <h1 class="article-title">{{ article.title }}</h1>
                 <div class="article-meta">
                     <div class="meta-item">
                         <span class="meta-label">Автор:</span>
-                        <span class="meta-author">{{ article.author }}</span>
+                        <span class="meta-author">{{ article.nickname }}</span>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">Дата публикации: </span>
@@ -277,9 +276,10 @@
                     </div>
                 </div>
             </div>
-            
+        
             <div class="article-content">
                 <p>{{ article.content }}</p>
+        
             </div>
         </div>
         

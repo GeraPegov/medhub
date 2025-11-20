@@ -6,5 +6,5 @@ class UserEntity:
     id: int
     email: str
     username: str
-    password_hash: str
     nickname: str
+    password_hash: str

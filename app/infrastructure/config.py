@@ -13,6 +13,8 @@ class Setting(BaseSettings):
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
+    HOST_REDIS: str
+    PORT_REDIS: int
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 

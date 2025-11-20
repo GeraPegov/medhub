@@ -19,6 +19,6 @@ class CommentService:
 
     async def delete_comment(self, comment_id, author_id):
         client = await self.user_repository.get_by_id(author_id)
-        if not client.id:
+        if not client:
             return 'warning: you are not holder of comment'
         return await self.comment_repository.delete(comment_id)

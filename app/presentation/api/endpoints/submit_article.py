@@ -7,7 +7,7 @@ from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
 from app.domain.logging import logger
 from app.presentation.dependencies.articles_dependencies import get_article_manager
-from app.presentation.dependencies.auth import get_current_user
+from app.presentation.dependencies.current_user import get_current_user
 from app.presentation.dependencies.parse_article import parse_article_form
 
 router = APIRouter()

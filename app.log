@@ -1,119 +1,13 @@
-2025-11-19 16:34:42,538 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:38:00,163 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:38:00,188 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:38:07,507 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:38:23,380 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:42:50,111 - app.domain.logging - INFO - start login
-2025-11-19 16:42:50,111 - app.domain.logging - INFO - try create token
-2025-11-19 16:42:50,160 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYzNTYxNTcwfQ.3XF7HrPumkMvVS_GISI6kiBfUCeImRpgO19NcLYZwDc
-2025-11-19 16:42:50,160 - app.domain.logging - INFO - create response
-2025-11-19 16:42:50,167 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:42:51,222 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:43:10,617 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:43:29,030 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:43:47,628 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:15,328 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:16,173 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:16,173 - app.domain.logging - INFO - id 1, <class 'str'>
-2025-11-19 16:44:18,481 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:19,292 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:19,292 - app.domain.logging - INFO - id 2, <class 'str'>
-2025-11-19 16:44:20,893 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:44:24,195 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:46:08,697 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:46:31,029 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:48:54,078 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 16:49:14,595 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='Gera777', password_hash='$argon2id$v=19$m=65536,t=3,p=4$77035rw3BsAYA2Bszdl7Tw$vWy21eoaBfPFXAuo7qYGmfV4crSOqPfHA9vKxzdQLq4', nickname='gera')
-2025-11-19 17:43:45,234 - app.domain.logging - INFO - start login
-2025-11-19 17:43:45,234 - app.domain.logging - INFO - try create token
-2025-11-19 17:48:27,939 - app.domain.logging - INFO - start of form register
-2025-11-19 17:48:37,771 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')
-2025-11-19 17:48:37,799 - app.domain.logging - INFO - email, password, username, nickname: ('gera5_7@mail.ru', 'qwer', 'chinaski', 'gera')
-2025-11-19 17:50:29,398 - app.domain.logging - INFO - start login
-2025-11-19 17:50:29,398 - app.domain.logging - INFO - try create token
-2025-11-19 17:51:25,299 - app.domain.logging - INFO - start login
-2025-11-19 17:51:25,300 - app.domain.logging - INFO - try create token
-2025-11-19 17:52:07,254 - app.domain.logging - INFO - start login
-2025-11-19 17:52:07,254 - app.domain.logging - INFO - try create token
-2025-11-19 17:52:35,867 - app.domain.logging - INFO - start of form register
-2025-11-19 17:52:44,259 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')
-2025-11-19 17:52:44,282 - app.domain.logging - INFO - email, password, username, nickname: ('gera5_7@mail.ru', 'qwer', 'chinaski', 'gera')
-2025-11-19 18:00:03,248 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')
-2025-11-19 18:00:03,269 - app.domain.logging - INFO - email, password, username, nickname: ('gera5_7@mail.ru', 'qwer', 'chinaski', 'gera')
-2025-11-19 18:01:56,797 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')
-2025-11-19 18:01:56,819 - app.domain.logging - INFO - email, password, username, nickname: ('gera5_7@mail.ru', 'qwer', 'chinaski', 'gera')
-2025-11-19 18:10:08,483 - app.domain.logging - INFO - start of form register
-2025-11-19 18:10:15,444 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')
-2025-11-19 18:10:15,468 - app.domain.logging - INFO - email, password, username, nickname: ('gera5_7@mail.ru', 'qwer', 'chinaski', 'gera')
-2025-11-19 18:10:15,545 - app.domain.logging - INFO - create hash = qwer
-2025-11-19 18:10:15,596 - app.domain.logging - INFO - start create
-2025-11-19 18:10:15,597 - app.domain.logging - INFO - create user_model
-2025-11-19 18:10:15,603 - app.domain.logging - INFO - save new db model
-2025-11-19 18:10:15,606 - app.domain.logging - INFO - success register
-2025-11-19 18:10:19,766 - app.domain.logging - INFO - start login
-2025-11-19 18:10:19,766 - app.domain.logging - INFO - try create token
-2025-11-19 18:10:19,818 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYzNTY2ODE5fQ.anFgewXvNH3kJqW3_z1dwfvH0rGhbVnc32FdMmMSqNg
-2025-11-19 18:10:19,818 - app.domain.logging - INFO - create response
-2025-11-19 18:10:34,668 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:10:34,693 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:10:38,309 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:11:46,388 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:11:47,914 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:11:49,737 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:15:31,001 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:16:05,907 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:16:14,226 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:16:14,226 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=like, user=1
-2025-11-19 18:18:05,933 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:05,934 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=like, user=1
-2025-11-19 18:18:07,791 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:13,704 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:13,704 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=qweqwe, user=1
-2025-11-19 18:18:24,693 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:24,693 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=qweqwe, user=1
-2025-11-19 18:18:38,423 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:38,423 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=qweqwe, user=1
-2025-11-19 18:18:57,908 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:18:57,908 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=qweqwe, user=1
-2025-11-19 18:19:12,482 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:19:16,415 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:19:16,415 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=asdasd, user=1
-2025-11-19 18:19:48,771 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:19:48,771 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=asdasd, user=1
-2025-11-19 18:19:48,785 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:53:46,672 - app.domain.logging - INFO - start login
-2025-11-19 18:53:46,673 - app.domain.logging - INFO - try create token
-2025-11-19 18:53:46,796 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzYzNTY5NDI2fQ.ITe81M2Q7X8VvliNbSIJtz3I8zcJqmYvW1Ep4_WLyS8
-2025-11-19 18:53:46,797 - app.domain.logging - INFO - create response
-2025-11-19 18:53:50,831 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:53:57,345 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:54:00,468 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:05,522 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:14,627 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:17,683 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:19,246 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:24,226 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:55:25,741 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:04,192 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:04,192 - app.domain.logging - INFO - start DELETE
-2025-11-19 18:56:09,877 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:10,845 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:48,901 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:48,901 - app.domain.logging - INFO - start DELETE
-2025-11-19 18:56:50,935 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:53,165 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:56:53,165 - app.domain.logging - INFO - start DELETE
-2025-11-19 18:58:47,489 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:48,992 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:49,001 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:51,445 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:51,452 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:53,281 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:53,288 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:55,110 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:55,118 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:57,260 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:57,268 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:59,144 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:58:59,150 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
-2025-11-19 18:59:06,037 - venv - INFO - user UserEntity(id=1, email='gera5_7@mail.ru', username='chinaski', password_hash='$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', nickname='gera')
+2025-11-20 15:50:22,830 - app.domain.logging - INFO - start cache get_user 1
+2025-11-20 15:50:22,837 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
+2025-11-20 15:50:22,916 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x00000265E19F0D70>]
+2025-11-20 15:50:53,769 - app.domain.logging - INFO - start cache get_user 1
+2025-11-20 15:50:53,774 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
+2025-11-20 15:50:53,854 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA7F0D70>]
+2025-11-20 15:50:56,476 - app.domain.logging - INFO - start cache get_user 1
+2025-11-20 15:50:56,477 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
+2025-11-20 15:50:56,481 - app.domain.logging - INFO - THIS IS ARTICLES BEFORE SCALARS [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834A50>]
+2025-11-20 15:50:56,481 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834A50>]
+2025-11-20 15:50:58,278 - app.domain.logging - INFO - start cache get_user 1
+2025-11-20 15:50:58,280 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
+2025-11-20 15:50:58,284 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834550>, <app.infrastructure.database.models.article.Article object at 0x0000025FCA9B9480>]

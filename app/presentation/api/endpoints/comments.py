@@ -6,8 +6,8 @@ from fastapi.templating import Jinja2Templates
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.logging import logger
-from app.presentation.dependencies.auth import get_current_user
 from app.presentation.dependencies.comments import get_comment_manager
+from app.presentation.dependencies.current_user import get_current_user
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 

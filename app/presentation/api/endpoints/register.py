@@ -30,7 +30,6 @@ async def register(
 ):
     use_case = UserRegistrationService(user_repo, auth_service)
     try:
-        logger.info(f'email, password, username, nickname: {user_data.email, user_data.password, user_data.username, user_data.nickname}')
         await use_case.execute(
             email=user_data.email,
             password=user_data.password,

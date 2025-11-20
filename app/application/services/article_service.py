@@ -13,7 +13,7 @@ class ArticleService:
     async def delete_article(self, article_id: int) -> dict:
         return await self.repository.delete(article_id)
 
-    async def show_last_article(self) -> ArticleEntity:
+    async def show_last_article(self) -> list[ArticleEntity]:
         return await self.repository.last_article()
 
     async def search_article(self, title: str) -> list[ArticleEntity]:
@@ -22,5 +22,5 @@ class ArticleService:
     async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
         return await self.repository.get_user_articles(user_id)
 
-    async def only_article(self, article_id: int) -> ArticleEntity:
+    async def only_article(self, article_id: int) -> list[ArticleEntity]:
         return await self.repository.show(article_id)

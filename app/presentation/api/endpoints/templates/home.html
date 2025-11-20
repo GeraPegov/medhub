@@ -333,24 +333,27 @@
 
     <div class="container">
         <h1>📝 Список статей</h1>
-        <a href="/article/{{ articles.id }}">
+        {% for article in articles %}
+        <a href="/article/{{ article.id }}">
         <div class="article-card">
             <div class="article-header">
-                <h2 class="article-title">{{ articles.title }}</h2>
+                
+                <h2 class="article-title">{{ article.title }}</h2>
                 <div class="article-meta">
                     <div class="meta-item">
-                        <span class="author">{{ articles.nickname }}</span>
+                        <span class="author">{{ article.nickname }}</span>
                     </div>
                     <div class="meta-item">
-                        <span class="date">{{ articles.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                     </div>
                 </div>
             </div>
         </a>
             <div class="article-content">
-                <p>{{ articles.content[0:200] }}</p>
-                <a href="article/{{ articles.id }}">
+                <p>{{ article.content[0:200] }}</p>
+                <a href="article/{{ article.id }}">
                     Показать полностью
+        {% endfor %}
                 </a>
             </div>
         </div>
