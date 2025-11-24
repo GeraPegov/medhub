@@ -24,6 +24,7 @@ async def show_article(
     articles = await article_manager.only_article(article_id)
     comments = await comment_manager.show_comment(article_id)
     logger.info(f'rhis is articles {articles}')
+    logger.info(f'trhis is comment {comments}')
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,

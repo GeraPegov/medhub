@@ -114,6 +114,10 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* отступ между статьями */
+            padding: 20px;
         }
         
         h1 {
@@ -217,6 +221,13 @@
             z-index: 1000;
         }
 
+        .exit-form {
+            position: fixed;
+            top: 420px;
+            left: 20px;
+            z-index: 1000;
+        }
+
         .profile-form-active {
             position: fixed;
             top: 180px;
@@ -310,6 +321,12 @@
         </a>
     </div>
 
+    <div class="exit-form">
+        <a href="/exit"  class="add-article-button">
+            Выход
+        </a>
+    </div>
+
     <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
     <div class="search-container">
         <form action="/articles/search" method="get" class="search-form-wrapper">
@@ -331,13 +348,12 @@
         </form>
     </div>
 
-    <div class="container">
-        <h1>📝 Список статей</h1>
+<div class="container">
+    <h1>📝 Список статей</h1>
+    {% if articles %}
         {% for article in articles %}
-        <a href="/article/{{ article.id }}">
         <div class="article-card">
             <div class="article-header">
-                
                 <h2 class="article-title">{{ article.title }}</h2>
                 <div class="article-meta">
                     <div class="meta-item">
@@ -348,16 +364,23 @@
                     </div>
                 </div>
             </div>
-        </a>
+            
             <div class="article-content">
-                <p>{{ article.content[0:200] }}</p>
-                <a href="article/{{ article.id }}">
+                <p>{{ article.content[0:200] }}...</p>
+                <a href="/article/{{ article.id }}" class="read-more">
                     Показать полностью
-        {% endfor %}
                 </a>
             </div>
         </div>
-    </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-results">
+            <h2>У вас пока нет статей 😔</h2>
+            <p>Добавьте свою первую статью</p>
+            <a href="/" class="back-link">Вернуться назад</a>
+        </div>
+    {% endif %}
+</div>
 
     <!-- НОВЫЙ КОД: JavaScript для раскрытия поиска -->
     <script>

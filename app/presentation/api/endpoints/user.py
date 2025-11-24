@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Form, Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
@@ -35,7 +36,10 @@ async def delete_article(
     if not user:
         return 'Авторизуйтесь'
     title = await manager.delete_article(int(article_id))
-    return {'access': title}
+    response = RedirectResponse(
+        url='/user/articles'
+    )
+    return response
 
 @router.get('/user/profile')
 async def profile(

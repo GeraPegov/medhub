@@ -46,3 +46,4 @@ class CachedRepository:
                     nickname=from_repo.nickname,
                     password_hash=from_repo.password_hash
             )
+            return from_repo

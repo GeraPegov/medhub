@@ -22,18 +22,18 @@ class ArticleRepository(IArticleRepository):
             select(Client)
             .where(Client.id==author_id)
         )).scalar_one()
-        articles = [Article(
+        articles = Article(
             title=dto.title,
             content=dto.content,
             author_id=author_id,
             author=author_orm,
             category=dto.category
-        )]
+        )
         self.session.add(articles)
         await self.session.commit()
         await self.session.refresh(articles)
 
-        return await self._to_entity(articles)
+        return await self._to_entity([articles])
 
 
     async def show(self, article_id: int) -> list[ArticleEntity]:
@@ -47,6 +47,18 @@ class ArticleRepository(IArticleRepository):
         return await self._to_entity(articles)
 
 
+    async def all(self) -> list[ArticleEntity] | None:
+        orm_articles = await self.session.execute(
+            select(Article)
+            .options(selectinload(Article.author))
+        )
+        articles = orm_articles.scalars().all()
+        logger.info(f'ALL ARTICLES = {articles}')
+        if not articles:
+            return None
+        return await self._to_entity(articles)
+
+
     async def delete(self, article_id: int) -> dict:
         orm_del = await self.session.execute(
             delete(Article)
@@ -56,18 +68,6 @@ class ArticleRepository(IArticleRepository):
         title = orm_del.scalar_one()
         await self.session.commit()
         return {"success delete": title}
-
-
-    async def last_article(self) -> list[ArticleEntity]:
-        orm_article = await self.session.execute(
-            select(Article)
-            .options(selectinload(Article.author))
-            .order_by(Article.id.desc()).limit(1)
-        )
-        articles = [orm_article.scalar_one()]
-        logger.info(f'THIS IS ARTICLES BEFORE SCALARS {articles}')
-
-        return await self._to_entity(articles)
 
 
     async def search_by_title(self, title: str) -> list[ArticleEntity]:

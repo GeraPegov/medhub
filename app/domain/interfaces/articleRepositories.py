@@ -24,7 +24,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def last_article(self) -> list[ArticleEntity]:
+    async def all(self) -> list[ArticleEntity] | None:
         pass
 
     @abstractmethod

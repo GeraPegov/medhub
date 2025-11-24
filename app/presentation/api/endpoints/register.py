@@ -40,8 +40,6 @@ async def register(
             url='/login',
             status_code=303
         )
-
-        logger.info('success register')
         return response
     except ValueError as e:
         raise HTTPException(

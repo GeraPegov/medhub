@@ -1,13 +1,46 @@
-2025-11-20 15:50:22,830 - app.domain.logging - INFO - start cache get_user 1
-2025-11-20 15:50:22,837 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
-2025-11-20 15:50:22,916 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x00000265E19F0D70>]
-2025-11-20 15:50:53,769 - app.domain.logging - INFO - start cache get_user 1
-2025-11-20 15:50:53,774 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
-2025-11-20 15:50:53,854 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA7F0D70>]
-2025-11-20 15:50:56,476 - app.domain.logging - INFO - start cache get_user 1
-2025-11-20 15:50:56,477 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
-2025-11-20 15:50:56,481 - app.domain.logging - INFO - THIS IS ARTICLES BEFORE SCALARS [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834A50>]
-2025-11-20 15:50:56,481 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834A50>]
-2025-11-20 15:50:58,278 - app.domain.logging - INFO - start cache get_user 1
-2025-11-20 15:50:58,280 - app.domain.logging - INFO - if from redis accept {'nickname': 'gera', 'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'username': 'chinaski', 'email': 'gera5_7@mail.ru'}
-2025-11-20 15:50:58,284 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000025FCA834550>, <app.infrastructure.database.models.article.Article object at 0x0000025FCA9B9480>]
+2025-11-24 18:28:28,797 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:28:28,803 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:28:28,877 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x000002952B1BC830>, <app.infrastructure.database.models.article.Article object at 0x000002952B157890>]
+2025-11-24 18:28:28,877 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x000002952B1BC830>, <app.infrastructure.database.models.article.Article object at 0x000002952B157890>]
+2025-11-24 18:30:36,093 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:30:36,099 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:30:36,174 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x0000020132A38980>, <app.infrastructure.database.models.article.Article object at 0x00000201325D79D0>]
+2025-11-24 18:30:36,175 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132A38980>, <app.infrastructure.database.models.article.Article object at 0x00000201325D79D0>]
+2025-11-24 18:32:12,433 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:32:12,435 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:32:12,438 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132A60CD0>]
+2025-11-24 18:32:12,447 - app.domain.logging - INFO - trhis is comment [CommentEntity(author_id=2, article_id=2, content='asdfasdf', created_at=datetime.datetime(2025, 11, 24, 18, 9, 54, 792290), username='chinaski', nickname='anton', id=1)]
+2025-11-24 18:32:15,353 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:32:15,354 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:32:15,357 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x00000201325C75C0>]
+2025-11-24 18:33:32,947 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:33:32,949 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:33:32,951 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x0000020132BED0F0>, <app.infrastructure.database.models.article.Article object at 0x0000020132A54050>]
+2025-11-24 18:33:32,952 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132BED0F0>, <app.infrastructure.database.models.article.Article object at 0x0000020132A54050>]
+2025-11-24 18:33:34,484 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:33:34,486 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:33:34,488 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x000002013259B570>, <app.infrastructure.database.models.article.Article object at 0x000002013259B460>]
+2025-11-24 18:33:34,488 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x000002013259B570>, <app.infrastructure.database.models.article.Article object at 0x000002013259B460>]
+2025-11-24 18:34:33,814 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:34:33,816 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:34:33,819 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x0000020132A65650>, <app.infrastructure.database.models.article.Article object at 0x0000020132A65C50>]
+2025-11-24 18:34:33,819 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132A65650>, <app.infrastructure.database.models.article.Article object at 0x0000020132A65C50>]
+2025-11-24 18:34:40,134 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:34:40,136 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:34:40,139 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x0000020132B6D4F0>, <app.infrastructure.database.models.article.Article object at 0x0000020132B6D5E0>]
+2025-11-24 18:34:40,139 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132B6D4F0>, <app.infrastructure.database.models.article.Article object at 0x0000020132B6D5E0>]
+2025-11-24 18:35:10,923 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:35:10,925 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:35:10,928 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x00000201325DEA50>, <app.infrastructure.database.models.article.Article object at 0x00000201325DEDD0>]
+2025-11-24 18:35:10,928 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x00000201325DEA50>, <app.infrastructure.database.models.article.Article object at 0x00000201325DEDD0>]
+2025-11-24 18:36:33,853 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:36:33,854 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:36:33,857 - app.domain.logging - INFO - ALL ARTICLES = [<app.infrastructure.database.models.article.Article object at 0x0000020132B68940>, <app.infrastructure.database.models.article.Article object at 0x000002013264FA10>]
+2025-11-24 18:36:33,858 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x0000020132B68940>, <app.infrastructure.database.models.article.Article object at 0x000002013264FA10>]
+2025-11-24 18:36:38,136 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:36:38,138 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:36:38,140 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x000002013264DFD0>]
+2025-11-24 18:36:38,145 - app.domain.logging - INFO - trhis is comment [CommentEntity(author_id=2, article_id=2, content='asdfasdf', created_at=datetime.datetime(2025, 11, 24, 18, 9, 54, 792290), username='chinaski', nickname='anton', id=1)]
+2025-11-24 18:36:40,889 - app.domain.logging - INFO - start cache get_user 1
+2025-11-24 18:36:40,891 - app.domain.logging - INFO - if from redis accept {'password_hash': '$argon2id$v=19$m=65536,t=3,p=4$q5UyhnCuFeI8RwgBwBhDKA$Y8A41+FklJyVIG+g/wRFVYnD4ChIrf6xrNiXibWGRyQ', 'email': 'gera5_7@mail.ru', 'username': 'chinaski', 'nickname': 'gera'}
+2025-11-24 18:36:40,893 - app.domain.logging - INFO - start to entity [<app.infrastructure.database.models.article.Article object at 0x00000201324F4310>]

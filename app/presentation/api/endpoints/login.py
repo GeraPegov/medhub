@@ -3,12 +3,10 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.article_service import ArticleService
 from app.application.services.login_user import UserAuthenticationService
 from app.domain.logging import logger
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.infrastructure.security.auth_service import AuthService
-from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.auth import get_auth_service, get_user_repository
 
 router = APIRouter()
@@ -24,15 +22,14 @@ def page_of_login(request: Request):
 
 @router.post('/auth/login')
 async def login(
-    request: Request,
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(get_auth_service),
     user_repo: UserRepository = Depends(get_user_repository),
-    manager: ArticleService = Depends(get_article_manager)
 ):
     """Вход и получение токена"""
     logger.info('start login')
+
     use_case = UserAuthenticationService(
         user_repo=user_repo,
         auth_service=auth_service)
@@ -45,7 +42,7 @@ async def login(
         logger.info(f'success token before create cookie {token}')
 
         response = RedirectResponse(
-            url='/articles/submit',
+            url='/',
             status_code=303
         )
 
