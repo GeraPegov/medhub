@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        /* НОВЫЙ КОД: Контейнер для раскрывающегося поиска */
+        .search-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        /* НОВЫЙ КОД: Обёртка поиска - начинает маленькой (50px) */
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            transition: all 0.5s ease;
+            width: 50px;
+            height: 50px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* НОВЫЙ КОД: Когда добавляется класс 'active', ширина увеличивается */
+        .search-wrapper.active {
+            width: 400px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        /* НОВЫЙ КОД: Кнопка с иконкой поиска */
+        .search-icon-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+            z-index: 2;
+        }
+        
+        .search-icon-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* НОВЫЙ КОД: Поле ввода - изначально невидимое (opacity: 0) */
+        .search-input {
+            border: none;
+            outline: none;
+            padding: 0 15px;
+            font-size: 14px;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease 0.2s;
+            background: transparent;
+        }
+        
+        /* НОВЫЙ КОД: Когда wrapper активен, поле становится видимым */
+        .search-wrapper.active .search-input {
+            opacity: 1;
+        }
+        
+        /* НОВЫЙ КОД: Кнопка "Найти" - тоже изначально невидима */
+        .search-submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.7s ease 0.3s;
+            flex-shrink: 0;
+        }
+        
+        /* НОВЫЙ КОД: Появляется при активации */
+        .search-wrapper.active .search-submit-btn {
+            opacity: 1;
+        }
+        
+        .search-submit-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* отступ между статьями */
+            padding: 20px;
+        }
+        
+        h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .article-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+        }
+        
+        .article-header {
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .article-title {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-item::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .article-content {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        
+        .author {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .date {
+            color: #888;
+        }
+
+        .add-article-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .register-form {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .login-form {
+            position: fixed;
+            top: 180px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .articles-user-form {
+            position: fixed;
+            top: 260px;
+            left: 20px;
+            z-index: 1000;
+        }
+        .profile-form {
+            position: fixed;
+            top: 340px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .exit-form {
+            position: fixed;
+            top: 420px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .category-form {
+            position: fixed;
+            top: 500px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .profile-form-active {
+            position: fixed;
+            top: 180px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .article-user-form-active {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .add-article-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-article-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .add-article-button:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .add-article-container {
+                position: static;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .search-container {
+                position: static;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: center;
+            }
+            
+            .search-wrapper.active {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="add-article-container">
+        <a href="/articles/submit" class="add-article-button">
+            ➕ Добавить статью
+        </a>
+    </div>
+
+    {% if login %}
+        <div class="register-form">
+            <a href="/register" class="add-article-button">
+                ➕ Регистрация
+            </a>
+        </div>
+
+        <div class="login-form">
+            <a href="/login" class="add-article-button">
+                ➕ Авторизация
+            </a>
+        </div>
+    {% endif %}    
+    
+    <div class="articles-user-form">
+        <a href="/user/articles" class="add-article-button">
+            ➕ Мои статьи
+        </a>
+    </div>
+
+    <div class="profile-form">
+        <a href="/user/profile" class="add-article-button">
+            Профиль
+        </a>
+    </div>
+
+    <div class="exit-form">
+        <a href="/exit"  class="add-article-button">
+            Выход
+        </a>
+    </div>
+
+    <div class="category-form">
+        <a href="/articles/categories"  class="add-article-button">
+            Выбрать категорию
+        </a>
+    </div>
+
+    <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
+    <div class="search-container">
+        <form action="/articles/search" method="get" class="search-form-wrapper">
+            <div class="search-wrapper" id="searchWrapper">
+                <button type="button" class="search-icon-btn" id="searchToggle">
+                    🔍
+                </button>
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Поиск по названию..."
+                >
+                <button type="submit" class="search-submit-btn">
+                    Найти
+                </button>
+            </div>
+        </form>
+    </div>
+
+<div class="container">
+    <h1>📝 Список статей</h1>
+    {% if articles %}
+        {% for article in articles %}
+        <div class="article-card">
+            <div class="article-header">
+                <h2 class="article-title">{{ article.title }}</h2>
+                <div class="article-meta">
+                    <div class="meta-item">
+                        <span class="author">{{ article.nickname }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="category">{{ article.category }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>{{ article.content[0:200] }}...</p>
+                <a href="/article/{{ article.id }}" class="read-more">
+                    Показать полностью
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="no-results">
+            <h2>У вас пока нет статей 😔</h2>
+            <p>Добавьте свою первую статью</p>
+            <a href="/" class="back-link">Вернуться назад</a>
+        </div>
+    {% endif %}
+</div>
+
+    <!-- НОВЫЙ КОД: JavaScript для раскрытия поиска -->
+    <script>
+        // ШАГ 1: Получаем элементы из HTML по их ID
+        // document.getElementById() - находит элемент на странице по уникальному ID
+        const searchToggle = document.querySelector('#searchToggle');  // Кнопка с иконкой 🔍
+        const searchWrapper = document.querySelector('#searchWrapper'); // Обёртка всего поиска
+        const searchInput = document.querySelector('#searchInput');     // Поле ввода текста
+        const listArticle = document.querySelector('.articles-user-form');
+        const loginForm = document.querySelector('.login-form');
+        const profileForm = document.querySelector('.profile-form')
+
+        if (!document.contains(loginForm)) {
+            listArticle.classList.remove('articles-user-form');
+            profileForm.classList.remove('profile-form');
+            listArticle.classList.add('article-user-form-active');
+            profileForm.classList.add('profile-form-active')
+        }
+
+        // ШАГ 2: Добавляем слушатель события на кнопку
+        // addEventListener('click', function) - "слушает" клики по кнопке
+        // Когда пользователь кликает на кнопку 🔍, запускается эта функция
+        searchToggle.addEventListener('mouseover', () => {
+            
+            // ШАГ 3: Переключаем класс 'active'
+            // classList.toggle('active') - добавляет класс, если его нет, убирает если есть
+            // Это как выключатель света: нажал - включилось, нажал ещё раз - выключилось
+            searchWrapper.classList.toggle('active');
+            
+            // ШАГ 4: Если класс 'active' теперь есть (поиск раскрылся)
+            // classList.contains('active') - проверяет, есть ли класс
+            if (searchWrapper.classList.contains('active')) {
+                
+                // ШАГ 5: Устанавливаем фокус на поле ввода
+                // focus() - курсор автоматически прыгает в поле, можно сразу печатать
+                searchInput.focus();
+            }
+        });
+
+        // ШАГ 6: Закрытие поиска при клике вне его
+        // Слушаем клики по всему документу (всей странице)
+        document.addEventListener('mouseover', function(e) {
+            
+            // ШАГ 7: Проверяем, кликнули ли ВНЕ поиска
+            // e.target - это элемент, на который кликнули
+            // contains() - проверяет, находится ли элемент внутри searchWrapper
+            // ! - отрицание (НЕ)
+            // Если кликнули НЕ по поиску - закрываем его
+            if (!searchWrapper.contains(e.target)) {
+                searchWrapper.classList.remove('active'); // Убираем класс 'active'
+            }
+        });
+    </script>
+</body>
+</html>

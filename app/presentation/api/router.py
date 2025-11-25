@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.presentation.api.endpoints.category import router as category_router
 from app.presentation.api.endpoints.comments import router as comments_router
 from app.presentation.api.endpoints.exit import router as exit_router
 from app.presentation.api.endpoints.home import router as home_router
@@ -21,3 +22,4 @@ api_router.include_router(userArticles_router, tags=['UserArticles'])
 api_router.include_router(only_article__router, tags=['Show'])
 api_router.include_router(comments_router, tags=['Comments'])
 api_router.include_router(exit_router, tags=['Exit'])
+api_router.include_router(category_router, tags=['Category'])

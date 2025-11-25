@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .home-button-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .home-button:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        .article-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .article-header {
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .article-title {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .article-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .meta-item::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .article-content {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.1em;
+        }
+        
+        .meta-author {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .meta-date {
+            color: #888;
+        }
+
+        .meta-category {
+            color: #667eea;
+        }
+
+        .meta-label {
+            color: #888;
+        }
+        
+        /* Стили комментариев */
+        .comments-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .comments-header {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .comment-form {
+            margin-bottom: 30px;
+        }
+        
+        .comment-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: border-color 0.3s;
+        }
+        
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .comment-form button {
+            margin-top: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .comment-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .comment-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .comment {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .comment-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+        
+        .comment-date {
+            font-size: 0.85em;
+            color: #888;
+        }
+        
+        .comment-content {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        .comment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .delete-btn {
+            padding: 5px 15px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .no-comments {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
+        }
+        
+        .login-message {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            color: #856404;
+        }
+        
+        .login-message a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="home-button-container">
+        <a href="/" class="home-button">
+            🏠 Домой
+        </a>
+    </div>
+    
+    <div class="container">
+        <div class="article-card">
+            <div class="article-header">
+                <h1 class="article-title">{{ article.title }}</h1>
+                <div class="article-meta">
+                    <div class="meta-item">
+                        <span class="meta-label">Автор:</span>
+                        <span class="meta-author">{{ article.nickname }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Дата публикации: </span>
+                        <span class="meta-date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Категории: </span>
+                        <span class="meta-category">{{ article.category }}</span>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="article-content">
+                <p>{{ article.content }}</p>
+        
+            </div>
+        </div>
+        
+        <!-- Секция комментариев -->
+        <!-- <div class="comments-section">
+            <h2 class="comments-header">
+                Комментарии ({{ comments|length }})
+            </h2> -->
+            
+            <!-- Форма добавления комментария -->
+            {% if user %}
+            <form class="comment-form" method="POST" action="/comments/{{ article.id }}/create">
+                <textarea 
+                    name="content" 
+                    placeholder="Напишите ваш комментарий..." 
+                    required
+                    maxlength="1000"
+                ></textarea>
+                <button type="submit">Отправить комментарий</button>
+            </form>
+            {% else %}
+            <div class="login-message">
+                <a href="/login">Войдите</a>, чтобы оставить комментарий
+            </div>
+            {% endif %}
+            
+            <!-- Список комментариев -->
+            {% if comments %}
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">{{ comment.nickname }}</span>
+                        <span class="comment-date">
+                            {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </span>
+                    </div>
+                    <div class="comment-content">
+                        {{ comment.content }}
+                    </div>
+                    {% if user and user.id == comment.author_id %}
+                    <div class="comment-actions">
+                        <form method="POST" action="/comments/{{ comment.id }}/delete" style="display: inline;">
+                            <button type="submit" class="delete-btn" onclick="return confirm('Удалить комментарий?')">
+                                Удалить
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-comments">
+                    Пока нет комментариев. Будьте первым!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

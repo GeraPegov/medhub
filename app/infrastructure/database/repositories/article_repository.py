@@ -92,6 +92,18 @@ class ArticleRepository(IArticleRepository):
             return None
         return await self._to_entity(articles)
 
+
+    async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
+        orm_articles = await self.session.execute(
+            select(Article)
+            .options(selectinload(Article.author))
+            .where(Article.category==category)
+        )
+        articles = orm_articles.scalars().all()
+        if not articles:
+            return None
+        return await self._to_entity(articles)
+
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:
         logger.info(f'start to entity {articles}')
         return [ArticleEntity(

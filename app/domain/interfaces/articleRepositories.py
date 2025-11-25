@@ -12,6 +12,10 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
+    async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
+        pass
+
+    @abstractmethod
     async def save(self, dto: ArticleCreateDTO, client_id: int) -> list[ArticleEntity]:
         pass
 

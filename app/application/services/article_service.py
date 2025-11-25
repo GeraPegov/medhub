@@ -7,6 +7,9 @@ class ArticleService:
     def __init__(self, repository: IArticleRepository):
         self.repository = repository
 
+    async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
+        return await self.repository.search_by_category(category)
+
     async def submit_article(self, dto: ArticleCreateDTO, user_id: int) -> list[ArticleEntity]:
         return await self.repository.save(dto, user_id)
 

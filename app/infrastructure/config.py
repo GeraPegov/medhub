@@ -15,6 +15,8 @@ class Setting(BaseSettings):
     POSTGRES_DB: str
     HOST_REDIS: str
     PORT_REDIS: int
+    CATEGORIES: str
+    BIOCHEMISTRY: str
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить статью</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"],
+        select {
+            height: 50px;
+        }
+
+        select {
+            cursor: pointer;
+            background-color: white;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            padding-right: 45px;
+        }
+        
+        select option {
+            padding: 10px;
+        }
+        
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        textarea {
+            height: 200px;
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: block;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .counter {
+            display: block;
+            text-align: right;
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📝 Новая статья</h1>
+            <p>Поделитесь своими мыслями с миром</p>
+        </div>
+        
+        <div class="form-container">
+            <form action="/articles/submit/add" method="POST">
+
+                <div class="form-group">
+                    <label for="title">📌 Название статьи:</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        placeholder="Введите название"
+                        maxlength="100"
+                        required
+                        oninput="updateCounter('title', 'titleCounter', 100)"
+                    >
+                    <span id="titleCounter" class="counter">0/100</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">🏷️ Категория статьи:</label>
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+                        <option value="">Выберите категорию</option>
+                        <option value="Медицина">Медицина</option>
+                        <option value="Спорт">Спорт</option>
+                        <option value="Биохимия">Биохимия</option>
+                        <option value="Физиология">Физиология</option>
+                        <option value="другое">Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">📖 Текст статьи:</label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        placeholder="Напишите вашу статью здесь..." 
+                        required
+                        oninput="updateCounter('content', 'contentCounter', null)"
+                    ></textarea>
+                    <span id="contentCounter" class="counter">0 символов</span>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    📤 Опубликовать статью
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Ваша статья будет доступна всем читателям после публикации</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateCounter(inputId, counterId, maxLength) {
+            const input = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            const currentLength = input.value.length;
+            
+            // Форматирование текста счетчика
+            if (maxLength) {
+                counter.textContent = `${currentLength}/${maxLength}`;
+            } else {
+                counter.textContent = `${currentLength} символов`;
+            }
+            
+            // Изменение цвета при приближении к лимиту (только для полей с лимитом)
+            if (maxLength) {
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#e74c3c'; // Красный
+                } else if (currentLength > maxLength * 0.7) {
+                    counter.style.color = '#f39c12'; // Оранжевый
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            } else {
+                // Для поля без лимита (текст статьи)
+                if (currentLength > 1000) {
+                    counter.style.color = '#27ae60'; // Зеленый (хорошая длина)
+                } else if (currentLength > 500) {
+                    counter.style.color = '#3498db'; // Синий
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            }
+        }
+    </script>
+</body>
+</html>
