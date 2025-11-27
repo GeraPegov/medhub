@@ -8,7 +8,7 @@ from app.domain.logging import logger
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.current_user import get_current_user
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates')
+templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 router = APIRouter()
 

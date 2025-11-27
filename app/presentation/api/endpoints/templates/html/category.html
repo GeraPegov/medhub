@@ -1,69 +1,80 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <link rel='stylesheet' href="/static/category/category.css">
-    </head>
-    <body>
-        <h1> Категории </h1>
+<head>
+    <link rel='stylesheet' href="/static/css/category.css">
+</head>
+<body>
+    <h1>Категории</h1>
 
-        <div class="login-form">
-            <a href="/login" class="login-link">
-                &#8962;  Войти
-            </a>
+    <div class="login-form">
+        <a href="/login" class="login-link">&#8962; Войти</a>
+    </div>
+
+    <div class="categories-container">
+        <div class="categories-column">
+            <!-- Биохимия -->
+            <div class="category-item">
+                <a href="#" class="categories-link">Биохимия</a>
+                <div class="subcategories-wrapper">
+                    <a href="#" class="subcategories-link">Нутриенты</a>
+                    <a href="#" class="subcategories-link">Гормоны</a>
+                    <a href="#" class="subcategories-link">Метаболизм</a>
+                </div>
+            </div>
+
+            <!-- Медицина -->
+            <div class="category-item">
+                <a href="#" class="categories-link">Медицина</a>
+                <div class="subcategories-wrapper">
+                    <a href="#" class="subcategories-link">Педиатрия</a>
+                    <a href="#" class="subcategories-link">Физиотерапия</a>
+                    <a href="#" class="subcategories-link">Эндокринология</a>
+                </div>
+            </div>
+
+            <!-- Физиология -->
+            <div class="category-item">
+                <a href="#" class="categories-link">Физиология</a>
+                <div class="subcategories-wrapper">
+                    <a href="#" class="subcategories-link">Анатомия</a>
+                    <a href="#" class="subcategories-link">Нервная система</a>
+                </div>
+            </div>
+
+            <!-- Спорт -->
+            <div class="category-item">
+                <a href="#" class="categories-link">Спорт</a>
+                <div class="subcategories-wrapper">
+                    <a href="#" class="subcategories-link">Тренировки</a>
+                    <a href="#" class="subcategories-link">Питание</a>
+                </div>
+            </div>
         </div>
-        <div class="categories-container">
-            <div class="categories-column">
-                <a href="#" class="categories-link" id="biochemistry"> Биохимия</a>
-                <a href="#" class="categories-link" id="medicine"> Медицина</a>
-                <a href="#" class="categories-link" id="physiology"> Физиология</a>
-                <a href="#" class="categories-link" id="sport"> Спорт</a>
-            </div>
-    
-            <div class="subcategories-biochemistry-wrapper">
-                <a href="#" class="subcategories-biochemistry-link">Нутриенты</a>
-                <a href="#" class="subcategories-biochemistry-link">Гормоны</a>
-                <a href="#" class="subcategories-biochemistry-link">Метаболизм</a>
-            </div>
+    </div>
 
-            <div class="subcategories-medicine-wrapper">
-                <a href="#" class="subcategories-medicine-link">Педиатрия</a>
-                <a href="#" class="subcategories-medicine-link">Физиотерапия</a>
-                <a href="#" class="subcategories-medicine-link">Эндокринология</a>
-            </div>
-
-        </div>
     <script>
-        const biochemistryLink = document.querySelector('#biochemistry')
-        const medicineLink = document.querySelector('#medicine')
-        const biochemistryColumn = document.querySelectorAll('.subcategories-biochemistry-link')
-        const medicineColumn = document.querySelectorAll('.subcategories-medicine-link')
-        const biochemistryContainer = document.querySelector('.categories-container')
+        const categoryItems = document.querySelectorAll('.category-item');
 
-        medicineLink.addEventListener('mouseover', () => {
-            medicineColumn.forEach(link => {
-                link.classList.toggle('active')
-            })
-        })
+        categoryItems.forEach(item => {
+            const link = item.querySelector('.categories-link');
+            const subcategories = item.querySelector('.subcategories-wrapper');
 
-        biochemistryLink.addEventListener('mouseover', () => {
-            biochemistryColumn.forEach(link => {
-                link.classList.toggle('active')
-            })
-        })
-        document.addEventListener('mouseout', function(e) {
-            if (!biochemistryContainer.contains(e.target)) {
-                biochemistryColumn.forEach(link => {
-                    link.classList.remove('active')
-                })
-                medicineColumn.forEach(link => {
-                    link.classList.remove('active')
-                })
-        }
-        })
-    
+            link.addEventListener('mouseenter', () => {
+                // Скрываем все остальные подкатегории
+                document.querySelectorAll('.subcategories-wrapper').forEach(sub => {
+                    if (sub !== subcategories) {
+                        sub.classList.remove('active');
+                    }
+                });
+                // Показываем текущие
+                subcategories.classList.add('active');
+            });
 
-
-        
+            // Держим подкатегории видимыми при наведении на них
+            item.addEventListener('mouseleave', () => {
+                subcategories.classList.remove('active');
+            });
+        });
     </script>
-    </body>
+</body>
 </html>

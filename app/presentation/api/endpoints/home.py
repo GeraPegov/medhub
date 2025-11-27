@@ -15,12 +15,12 @@ templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 @router.get('/')
 async def full(
     request: Request,
-    user: UserEntity = Depends(get_current_user),
+    # user: UserEntity = Depends(get_current_user),
     manager: ArticleService = Depends(get_article_manager)
 ):
-    login = False
-    if not user:
-        login = True
+    # login = False
+    # if not user:
+    login = True
     articles = await manager.show_all_articles()
     logger.info(f'endpoint HOME articles = {articles}')
     return templates.TemplateResponse(

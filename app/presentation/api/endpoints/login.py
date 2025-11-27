@@ -10,7 +10,7 @@ from app.infrastructure.security.auth_service import AuthService
 from app.presentation.dependencies.auth import get_auth_service, get_user_repository
 
 router = APIRouter()
-templates = Jinja2Templates('app/presentation/api/endpoints/templates')
+templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 
 @router.get('/login')
