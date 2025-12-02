@@ -10,7 +10,7 @@ from app.presentation.dependencies.parse_user import parse_auth_form
 
 router = APIRouter()
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates')
+templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 @router.get('/register')
 async def page_of_register(

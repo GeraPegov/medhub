@@ -12,7 +12,7 @@ from app.presentation.dependencies.parse_article import parse_article_form
 
 router = APIRouter()
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates')
+templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 
 @router.get("/articles/submit", response_class=HTMLResponse)
