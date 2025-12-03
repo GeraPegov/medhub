@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Статьи</title>
     <link rel="stylesheet" href="/static/css/home.css">
-<script src="https://kit.fontawesome.com/cb8c9c5d8f.js" crossorigin="anonymous"></script></head>
+    <script src="/static/js/menu.js" defer></script>
+    <script src="https://kit.fontawesome.com/cb8c9c5d8f.js" crossorigin="anonymous"></script>
+</head>
 <body>
     <button class="menu-icon">
         <i class="fa-solid fa-align-justify"></i>
@@ -73,7 +75,7 @@
             </div>
             
             <div class="article-content">
-                <p>{{ article.content[0:200] }}...
+                <p>{{ article.content[0:300] }}...
                     <a href="/article/{{ article.id }}" class="read-more">
                         Показать полностью
                     </a>
@@ -83,7 +85,7 @@
         {% endfor %}
     {% endif %}
 </div>
-    <script>
+    <!-- <script>
         const menuItems = document.querySelector('.menu-items')
         const menuButton = document.querySelector('.menu-icon')
         const searchWrapper = document.querySelector('.search-wrapper')
@@ -118,6 +120,6 @@
         })
 
 
-    </script>
+    </script> -->
 </body>
 </html>

@@ -7,12 +7,15 @@ body {
 }
 
 .menu-icon {
-    border: 2px solid #D83F87;
+    background-image: url('/static/images/menu.png');
+    background-repeat: no-repeat;
+    background-color: #A4B3B6;
+    background-position: 10px 6px;
+    background-size: 25px;
+    position: fixed;
+    border: 2px solid #042c8380;
     border-radius: 10px;
-    padding: 5px;
-    font-size: 20px;
-    margin-bottom: 10px;
-    background-color: #DEF2F1;
+    height: 40px;
     cursor: pointer;
 }
 
@@ -21,7 +24,8 @@ body {
 }
 
 .menu-items {
-    position: absolute;
+    position: fixed;
+    margin-top: 50px;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
