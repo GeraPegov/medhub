@@ -1,8 +1,8 @@
 """init
 
-Revision ID: ed09a0ee80f3
+Revision ID: 091b498fe20e
 Revises: 
-Create Date: 2025-11-24 17:21:56.455470
+Create Date: 2025-12-04 17:22:13.190694
 
 """
 from collections.abc import Sequence
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = 'ed09a0ee80f3'
+revision: str = '091b498fe20e'
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -48,7 +48,7 @@ def upgrade() -> None:
     sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('author_id', sa.Integer(), nullable=False),
     sa.Column('article_id', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['article_id'], ['articles.id'], ),
+    sa.ForeignKeyConstraint(['article_id'], ['articles.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['author_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

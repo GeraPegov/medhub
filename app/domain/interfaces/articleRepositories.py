@@ -24,7 +24,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def show(self, article_id: int) -> list[ArticleEntity]:
+    async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
         pass
 
     @abstractmethod
@@ -37,5 +37,9 @@ class IArticleRepository(ABC):
 
     @abstractmethod
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity]:
+        pass
+
+    @abstractmethod
+    async def change(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity]:
         pass
 

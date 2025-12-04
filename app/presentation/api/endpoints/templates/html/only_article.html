@@ -12,7 +12,10 @@
     <button class="menu-icon">
         <i class="fa-solid fa-align-justify"></i>
     </button>
-    <div class='menu-items'>  
+    <div class='menu-items'> 
+        <a href="/" class="item-menu">
+            Домой
+        </a> 
         <a href="/articles/submit" class="item-menu">
             Добавить статью
         </a>
@@ -28,7 +31,7 @@
         <a href="/articles/categories"  class="item-menu">
             Выбрать категорию
         </a>
-        {% if login %}
+        {% if not login %}
             <a href="/register" class="item-menu">
                 Регистрация
             </a>

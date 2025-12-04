@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
@@ -8,6 +10,7 @@ from app.domain.logging import logger
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.comments import get_comment_manager
 from app.presentation.dependencies.current_user import get_current_user
+from app.presentation.dependencies.parse_article import parse_article_form
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
@@ -17,19 +20,61 @@ router = APIRouter()
 async def show_article(
     request: Request,
     article_id: int,
-    article_manager: ArticleService = Depends(get_article_manager),
-    comment_manager: CommentService = Depends(get_comment_manager),
+    article_service: ArticleService = Depends(get_article_manager),
+    comment_service: CommentService = Depends(get_comment_manager),
     user: UserEntity = Depends(get_current_user)
 ):
-    articles = await article_manager.only_article(article_id)
-    comments = await comment_manager.show_comment(article_id)
-    logger.info(f'rhis is articles {articles}')
-    logger.info(f'trhis is comment {comments}')
+    articles = await article_service.get_by_id(article_id)
+    comments = await comment_service.show_comment(article_id)
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
          'article': articles[0],
          'comments': comments,
          'user': user
+        }
+    )
+
+@router.post('/article/delete/{article_id}')
+async def delete_article(
+    article_id: int,
+    article_service: ArticleService = Depends(get_article_manager),
+):
+    print('start')
+    await article_service.delete_article(article_id)
+    response = RedirectResponse(
+        status_code=303,
+        url='/user/articles'
+    )
+    return response
+
+@router.get('/article/change/{article_id}')
+async def change_article(
+    request: Request,
+    article_id: int,
+    articles_service: ArticleService = Depends(get_article_manager),
+):
+    articles = await articles_service.get_by_id(article_id)
+    return templates.TemplateResponse(
+        'change_article.html',
+        {'request': request,
+         'articles': articles}
+    )
+
+
+@router.post('/article/change/{article_id}/access')
+async def create_article_access(
+    request: Request,
+    article_id: int,
+    dto: ArticleCreateDTO = Depends(parse_article_form),
+    manager: ArticleService = Depends(get_article_manager),
+):
+    logger.info(f'{dto.title} dto title')
+    articles = await manager.change_article(dto, article_id)
+    return templates.TemplateResponse(
+        'only_article.html',
+        {
+        'request': request,
+        'article': articles[0]
         }
     )

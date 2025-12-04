@@ -25,5 +25,8 @@ class ArticleService:
     async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
         return await self.repository.get_user_articles(user_id)
 
-    async def only_article(self, article_id: int) -> list[ArticleEntity]:
-        return await self.repository.show(article_id)
+    async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
+        return await self.repository.get_by_id(article_id)
+
+    async def change_article(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity]:
+        return await self.repository.change(dto, article_id)

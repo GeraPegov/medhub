@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -36,7 +36,7 @@ class ArticleRepository(IArticleRepository):
         return await self._to_entity([articles])
 
 
-    async def show(self, article_id: int) -> list[ArticleEntity]:
+    async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
         orm_article = await self.session.execute(
             select(Article)
             .options(selectinload(Article.author))
@@ -103,6 +103,26 @@ class ArticleRepository(IArticleRepository):
         if not articles:
             return None
         return await self._to_entity(articles)
+
+    async def change(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity] | None:
+        orm_articles = await self.session.execute(
+            update(Article)
+            .where(Article.id==article_id)
+            .options(selectinload(Article.author))
+            .values(
+                title=dto.title,
+                content=dto.content,
+                category=dto.category
+            )
+            .returning(Article)
+        )
+        await self.session.commit()
+
+        articles = orm_articles.scalars().all()
+        if not articles:
+            return None
+        return await self._to_entity(articles)
+
 
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:
         logger.info(f'start to entity {articles}')

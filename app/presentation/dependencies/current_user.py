@@ -1,16 +1,16 @@
 from fastapi import Cookie, Depends, HTTPException, status
 
 from app.domain.entities.user import UserEntity
-from app.infrastructure.database.repositories.cache_repository import CachedRepository
+from app.infrastructure.database.repositories.cache_repository import CachedUser
 from app.infrastructure.security.auth_service import AuthService
 from app.presentation.dependencies.auth import get_auth_service
-from app.presentation.dependencies.cache import get_cache_repositories
+from app.presentation.dependencies.cache import get_cache_user
 
 
 async def get_current_user(
         token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
-        cache_repo: CachedRepository = Depends(get_cache_repositories)
+        cache_repo: CachedUser = Depends(get_cache_user)
 ) -> UserEntity | None:
     """Получение текущего пользователя из токена"""
     try:

@@ -11,23 +11,27 @@
     {% if articles %}
         {% for article in articles %}
         <div class="article-card">
-            <div class="article-header">
-                <h2 class="article-title">{{ article.title }}</h2>
-                <div class="article-meta">
-                    <div class="meta-item">
-                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="author">{{ article.nickname }}</span>
-                    </div>
-                    <div class="meta-item">
-                        <span class="category">{{ article.category }}</span>
-                    </div>
+            <h2 class="article-title">{{ article.title }}</h2>
+            <div class="article-meta">
+                <div class="meta-item">
+                    <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                 </div>
+                <div class="meta-item">
+                    <span class="author">{{ article.nickname }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="category">{{ article.category }}</span>
+                </div>
+                <form action="/article/delete/{{article.id}}" method="POST" class="form-change-btn">
+                    <button type="submit" class="change-btn">
+                        Удалить
+                    </button>
+                </form>
+                <a href="/article/change/{{article.id}}" class="delete-btn">Изменить</a>
             </div>
             
             <div class="article-content">
-                <p>{{ article.content[0:200] }}...
+                <p>{{ article.content[0:300] }}...
                     <a href="/article/{{ article.id }}" class="read-more">
                         Показать полностью
                     </a>

@@ -112,19 +112,75 @@ body {
     font-family: cursive;
 }
 
-.article-meta {
+.article-meta{
+    gap: 5px;
     display: flex;
+    flex-wrap: wrap;
     flex-direction:column;
     text-align: left;
     margin-left: 30px;
     margin-bottom: 20px;
     font-family: cursive;
 }
-
-.article-header {
-    border-radius: 20px;
-    background: rgba(124, 70, 79, 0.356)
+.article-meta .delete-btn {
+    margin-left: auto;
 }
+
+.form-change-btn {
+    display: flex;
+    justify-content: flex-end;
+    /* right: 123px; */
+}
+
+.change-btn {
+    border-radius: 10px;
+    border-color: rgba(255, 192, 203, 0.199);
+    min-width: 100px;
+    max-width: 200px;
+    padding: 10px;
+    background: rgba(255, 192, 203, 0.199);
+    font-size: 17px;
+    font-family: cursive;
+    color: #1A1A1D;
+    text-decoration:none;
+    cursor: pointer;
+}
+
+.delete-btn {
+    border-radius: 10px;
+    border-color: rgba(255, 192, 203, 0.199);
+    min-width: 100px;
+    max-width: 200px;
+    padding: 10px;
+    background: rgba(255, 192, 203, 0.199);
+    font-size: 17px;
+    font-family: cursive;
+    color: #1A1A1D;
+    text-decoration:none;
+}
+
+/* button {
+    border-radius: 10px;
+    min-width: 100px;
+    max-width: 200px;
+    padding: 10px;
+    background: rgba(255, 192, 203, 0.199);
+    font-size: 17px;
+    font-family: cursive;
+    color: #1A1A1D;
+    text-decoration:none;
+    cursor: pointer;
+} */
+
+#articleText {
+    outline: none; /* убирает рамку при фокусе */
+}
+
+#articleText[contenteditable="true"] {
+    background-color: transparent; /* тот же фон */
+    cursor: text;
+}
+
 .article-content {
     margin-left: 50px;
     margin-right: 50px;
@@ -139,3 +195,4 @@ body {
 .read-more:hover {
     color: rgb(124, 70, 79)
 }
+
