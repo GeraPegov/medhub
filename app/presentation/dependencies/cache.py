@@ -1,6 +1,6 @@
-import redis
 from fastapi import Depends
-from redis import Redis
+from redis.asyncio import Redis
+from redis.asyncio.connection import ConnectionPool
 
 from app.infrastructure.config import settings
 from app.infrastructure.database.repositories.article_repository import (
@@ -15,15 +15,20 @@ from app.presentation.dependencies.articles_dependencies import get_article_repo
 from app.presentation.dependencies.auth import get_user_repository
 
 
-def get_redis():
-    r = redis.Redis(
+async def get_redis():
+    pool = ConnectionPool.from_url(
+        f'redis://{settings.HOST_REDIS}:{settings.PORT_REDIS}',
+        decode_responses=True)
+    r = Redis(
         host=settings.HOST_REDIS,
         port=settings.PORT_REDIS,
-        decode_responses=True)
+        decode_responses=True
+        )
     try:
         yield r
     finally:
-        r.close()
+        await r.aclose()
+        await pool.aclose()
 
 
 async def get_cache_user(

@@ -7,7 +7,9 @@ from app.application.services.article_service import ArticleService
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.logging import logger
+from app.infrastructure.database.repositories.cache_repository import CachedArticle
 from app.presentation.dependencies.articles_dependencies import get_article_manager
+from app.presentation.dependencies.cache import get_cache_article
 from app.presentation.dependencies.comments import get_comment_manager
 from app.presentation.dependencies.current_user import get_current_user
 from app.presentation.dependencies.parse_article import parse_article_form
@@ -20,16 +22,16 @@ router = APIRouter()
 async def show_article(
     request: Request,
     article_id: int,
-    article_service: ArticleService = Depends(get_article_manager),
+    cache_service: CachedArticle = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_manager),
     user: UserEntity = Depends(get_current_user)
 ):
-    articles = await article_service.get_by_id(article_id)
+    article = await cache_service.get_article(article_id)
     comments = await comment_service.show_comment(article_id)
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
-         'article': articles[0],
+         'article': article,
          'comments': comments,
          'user': user
         }
