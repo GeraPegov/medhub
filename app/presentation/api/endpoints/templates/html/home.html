@@ -15,7 +15,7 @@
         <a href="/" class="item-menu">
             Домой
         </a>
-        <a href="/articles/submit" class="item-menu">
+        <a href="/article/submit" class="item-menu">
             Добавить статью
         </a>
         <a href="/user/articles" class="item-menu">
@@ -30,7 +30,7 @@
         <a href="/articles/categories"  class="item-menu">
             Выбрать категорию
         </a>
-        {% if login %}
+        {% if not login %}
             <a href="/register" class="item-menu">
                 Регистрация
             </a>

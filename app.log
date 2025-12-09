@@ -1,7 +1,40 @@
-2025-12-05 17:35:51,059 - app.domain.logging - INFO - start login
-2025-12-05 17:35:51,059 - app.domain.logging - INFO - try create token
-2025-12-05 17:35:51,059 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
-2025-12-05 17:35:51,192 - app.domain.logging - INFO - valide token
-2025-12-05 17:35:51,193 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY0OTYzMzUxfQ.yDDSGa9ONY6BdI8UvbvOi3YMKUCP3Rz91VgCa8mu7KE
-2025-12-05 17:35:51,193 - app.domain.logging - INFO - create response
-2025-12-05 17:46:30,421 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-09 12:34:59,956 - app.domain.logging - INFO - start login
+2025-12-09 12:34:59,957 - app.domain.logging - INFO - try create token
+2025-12-09 12:34:59,957 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-09 12:35:00,047 - app.domain.logging - INFO - valide token
+2025-12-09 12:35:00,047 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1MjkwOTAwfQ.5Je0q9vfLjVGfOLq6LDOU2djRXodZlSTuffDMj4hUbs
+2025-12-09 12:35:00,048 - app.domain.logging - INFO - create response
+2025-12-09 12:39:57,450 - app.domain.logging - INFO - start login
+2025-12-09 12:39:57,450 - app.domain.logging - INFO - try create token
+2025-12-09 12:39:57,450 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'asd')
+2025-12-09 12:47:04,110 - app.domain.logging - INFO - start login
+2025-12-09 12:47:04,110 - app.domain.logging - INFO - try create token
+2025-12-09 12:47:04,110 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'asd')
+2025-12-09 12:56:43,938 - app.domain.logging - INFO - start login
+2025-12-09 12:56:43,938 - app.domain.logging - INFO - try create token
+2025-12-09 12:56:43,938 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'asd')
+2025-12-09 12:56:47,125 - app.domain.logging - INFO - start login
+2025-12-09 12:56:47,126 - app.domain.logging - INFO - try create token
+2025-12-09 12:56:50,362 - app.domain.logging - INFO - start login
+2025-12-09 12:56:50,362 - app.domain.logging - INFO - try create token
+2025-12-09 12:56:50,362 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-09 12:56:50,412 - app.domain.logging - INFO - valide token
+2025-12-09 12:56:50,413 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1MjkyMjEwfQ.eU2gc_pV42h02fGJ4Vxnsp20sTLSiSIcX80XjT42yTA
+2025-12-09 12:56:50,413 - app.domain.logging - INFO - create response
+2025-12-09 12:57:14,277 - app.domain.logging - INFO - start login
+2025-12-09 12:57:14,277 - app.domain.logging - INFO - try create token
+2025-12-09 12:57:14,277 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'asdasd')
+2025-12-09 12:57:33,365 - app.domain.logging - INFO - start login
+2025-12-09 12:57:33,365 - app.domain.logging - INFO - try create token
+2025-12-09 12:57:33,366 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-09 12:57:33,416 - app.domain.logging - INFO - valide token
+2025-12-09 12:57:33,417 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1MjkyMjUzfQ.ZBnX8U9B0r-2L2FPN7dGR_CHZUrH74hUmuRIWnCZhGQ
+2025-12-09 12:57:33,417 - app.domain.logging - INFO - create response
+2025-12-09 16:22:20,974 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-09 16:39:49,767 - app.domain.logging - INFO - asdfasdf dto title
+2025-12-09 16:58:03,101 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-09 17:04:00,634 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-09 17:04:02,196 - app.domain.logging - INFO - start comment endpoint, article_id = 5, content=asdfasdf, user=1
+2025-12-09 17:04:04,461 - app.domain.logging - INFO - start comment endpoint, article_id = 5, content=asdfasdf, user=1
+2025-12-09 17:04:21,026 - app.domain.logging - INFO - start comment endpoint, article_id = 5, content=asdfasdf, user=1
+2025-12-09 17:04:21,147 - app.domain.logging - INFO - Success fetching article from redis

@@ -43,11 +43,30 @@ class CommentRepository(ICommentRepository):
             username=comment.author.unique_username
         )
 
-    async def show(self, article_id: int) -> list[CommentEntity]:
+    async def show_by_article(self, article_id: int) -> list[CommentEntity]:
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
             .where(Comments.article_id==article_id)
+        )
+
+        comments = comments_orm.scalars().all()
+
+        return [CommentEntity(
+            id=comment.id,
+            author_id=comment.author_id,
+            article_id=comment.article_id,
+            content=comment.content,
+            created_at=comment.created_at,
+            nickname=comment.author.nickname,
+            username=comment.author.unique_username
+        ) for comment in comments]
+
+    async def show_by_author(self, client_id: int) -> list[CommentEntity]:
+        comments_orm = await self.session.execute(
+            select(Comments)
+            .options(selectinload(Comments.author))
+            .where(Comments.author_id==client_id)
         )
 
         comments = comments_orm.scalars().all()

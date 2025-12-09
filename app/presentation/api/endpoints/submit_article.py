@@ -15,14 +15,14 @@ router = APIRouter()
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 
-@router.get("/articles/submit", response_class=HTMLResponse)
+@router.get("/article/submit", response_class=HTMLResponse)
 async def add(request: Request):
     return templates.TemplateResponse(
         name="submit_article.html",
         context={"request": request})
 
 
-@router.post('/articles/submit/add')
+@router.post('/article/submit/add')
 async def create_article(
     response: Response,
     dto: ArticleCreateDTO = Depends(parse_article_form),

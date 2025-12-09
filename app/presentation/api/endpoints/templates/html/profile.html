@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <script src="/static/js/menu.js" defer></script>
+    <title>Профиль</title>
+</head>
+<body>
+    <button class="menu-icon">
+    </button>
+    <div class='menu-items'>  
+        <a href="/" class="item-menu">
+            Домой
+        </a>
+        <a href="/article/submit" class="item-menu">
+            Добавить статью
+        </a>
+        <a href="/user/articles" class="item-menu">
+            Мои статьи
+        </a>
+        <a href="/user/profile" class="item-menu">
+            Профиль
+        </a>
+        <a href="/exit"  class="item-menu">
+            Выход
+        </a>
+        <a href="/articles/categories"  class="item-menu">
+            Выбрать категорию
+        </a>
+        {% if not login %}
+            <a href="/register" class="item-menu">
+                Регистрация
+            </a>
+            <a href="/login" class="item-menu">
+                Авторизация
+            </a>
+        {% endif %}  
+    </div>
+    <div class="container">
+        <div class="card-wrapper">
+            <div class="card-group">
+                <div class="image-profile">
+                    {{ user.images }}
+                </div>
+                <div class="group-header">
+                    {{ user.nickname }}
+                    {{ user.username }}
+                </div>
+                <form action="/user/follow/{{ user.id }}" method="post" class="follow-user">
+                    <button type="button" class="follow-user-btn" id="followButton">Подписаться
+                    </button>
+                </form>            
+            </div> 
+        </div>
+        <div class="action">
+            <a href="/user/profile/{{ user.id }}/articles" class="action-btn">Статьи</a>
+            <a href="/user/profile/{{ user.id }}/comments" class="action-btn">Комментарии</a>
+        </div>
+        
+{% if articles %}
+    {% for article in articles %}
+        <div class="article-card">
+            <h2 class="article-title">{{ article.title }}</h2>
+            <div class="article-meta">
+                <div class="meta-item">
+                    <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="author">{{ article.nickname }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="category">{{ article.category }}</span>
+                </div>
+            </div>
+            <div class="article-content">
+                <p>{{ article.content[0:300] }}...
+                    <a href="/article/{{ article.id }}" class="read-more">
+                        Показать полностью
+                    </a>
+                </p>
+            </div>
+        </div>    
+    {% endfor %}
+{% endif %} 
+                
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">{{ comment.nickname }}</span>
+                        <span class="comment-date">
+                            {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
+                        </span>
+                    </div>
+                    <div class="comment-content">
+                        {{ comment.content }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+    </div>
+</body>
+</html>

@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.entities.comment import CommentEntity
+
 
 class ICommentRepository(ABC):
 
@@ -10,7 +12,11 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def show(self, article_id: int):
+    async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
+        pass
+
+    @abstractmethod
+    async def show_by_author(self, author_id: int) -> list[CommentEntity] | None:
         pass
 
     @abstractmethod

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
@@ -22,6 +22,7 @@ def page_of_login(request: Request):
 
 @router.post('/auth/login')
 async def login(
+    request: Request,
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     auth_service: AuthService = Depends(get_auth_service),
@@ -54,9 +55,13 @@ async def login(
         )
         logger.info('create response')
         return response
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=str(e),
-            headers={'WWW-Authenticate': 'Bearer'}
-        ) from None
+    except ValueError:
+        return templates.TemplateResponse(
+            name='login.html',
+            context = {
+                'request': request,
+                'error': 'Неверный логин или пароль',
+                'username': form_data.username
+            },
+            status_code=400
+        )

@@ -27,7 +27,7 @@ async def show_article(
     user: UserEntity = Depends(get_current_user)
 ):
     article = await cache_service.get_article(article_id)
-    comments = await comment_service.show_comment(article_id)
+    comments = await comment_service.show_by_article(article_id)
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,

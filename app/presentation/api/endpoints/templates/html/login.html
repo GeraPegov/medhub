@@ -20,11 +20,11 @@
                         type="text" 
                         id="email"
                         name="username" 
+                        value="{{ username or '' }}"
                         maxlength="100" 
                         required
                     >
                 </div>
-
                 <div class="form-group">
                     <label for="password"> Пароль:</label>
                     <input 
@@ -35,6 +35,9 @@
                         required
                     >
                 </div>
+                {% if error %}
+                {{ error }}
+                {% endif %}
 
                 <button type="submit" class="submit-btn">
                     Войти

@@ -21,7 +21,7 @@ async def create(
     user: UserEntity = Depends(get_current_user)
 ):
     logger.info(f'start comment endpoint, article_id = {article_id}, content={content}, user={user.id}')
-    await comment_manager.create_comment(
+    await comment_manager.create(
         article_id=article_id,
         content=content,
         author_id=user.id
