@@ -18,7 +18,6 @@ async def full(
     manager: ArticleService = Depends(get_article_manager)
 ):
     articles = await manager.show_all_articles()
-
     return templates.TemplateResponse(
         name='home.html', context={
             'login': user,

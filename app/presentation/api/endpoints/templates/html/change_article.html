@@ -12,7 +12,6 @@
             <h1>Новая статья</h1>
         </div>
         <div class="form-container">
-{% for article in articles %}
             <form action="/article/change/{{ article.id }}/access" method="POST">
                 <div class="form-group">
                     <label for="title">Название статьи:</label>
@@ -58,7 +57,6 @@
                     Изменить
                 </button>
             </form>
-{% endfor %}
             <div class="form-footer">
                 <p>Ваша статья будет доступна всем читателям после публикации</p>
             </div>

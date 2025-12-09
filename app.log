@@ -38,3 +38,11 @@
 2025-12-09 17:04:04,461 - app.domain.logging - INFO - start comment endpoint, article_id = 5, content=asdfasdf, user=1
 2025-12-09 17:04:21,026 - app.domain.logging - INFO - start comment endpoint, article_id = 5, content=asdfasdf, user=1
 2025-12-09 17:04:21,147 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-09 19:19:11,230 - app.domain.logging - INFO - start login
+2025-12-09 19:19:11,230 - app.domain.logging - INFO - try create token
+2025-12-09 19:19:11,230 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-09 19:19:11,287 - app.domain.logging - INFO - valide token
+2025-12-09 19:19:11,288 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1MzE1MTUxfQ.or3gUHwRmc-GK7pnXR9fxDjrNJT7SAwpdK-1L2s6m9E
+2025-12-09 19:19:11,288 - app.domain.logging - INFO - create response
+2025-12-09 20:03:58,713 - app.domain.logging - INFO - start comment endpoint, article_id = 8, content=asdfasdf, user=1
+2025-12-09 20:03:58,732 - app.domain.logging - INFO - Success fetching article from redis

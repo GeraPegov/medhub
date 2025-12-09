@@ -46,7 +46,7 @@ async def delete_article(
     await article_service.delete_article(article_id)
     response = RedirectResponse(
         status_code=303,
-        url='/user/articles'
+        url='/user/profile'
     )
     return response
 
@@ -59,8 +59,9 @@ async def change_article(
     articles = await articles_service.get_by_id(article_id)
     return templates.TemplateResponse(
         'change_article.html',
-        {'request': request,
-         'articles': articles}
+        {
+        'request': request,
+        'article': articles}
     )
 
 

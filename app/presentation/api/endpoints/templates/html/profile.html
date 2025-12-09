@@ -17,9 +17,6 @@
         <a href="/article/submit" class="item-menu">
             Добавить статью
         </a>
-        <a href="/user/articles" class="item-menu">
-            Мои статьи
-        </a>
         <a href="/user/profile" class="item-menu">
             Профиль
         </a>
@@ -62,18 +59,34 @@
 {% if articles %}
     {% for article in articles %}
         <div class="article-card">
-            <h2 class="article-title">{{ article.title }}</h2>
-            <div class="article-meta">
-                <div class="meta-item">
-                    <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                <h2 class="article-title">{{ article.title }}</h2>
+                <div class="action-and-meta">
+                    <div class="article-meta">
+                        <div class="meta-item">
+                            <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="author">{{ article.nickname }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="category">{{ article.category }}</span>
+                        </div>
+                    </div>
+                    {% if auth.id == user.id %}
+                    <div class="action-in-card">
+                        <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                            <button type="submit" class="delete-btn">
+                                Удалить
+                            </button>
+                        </form>
+                        <form action="/article/change/{{ article.id }}" method="GET" class="form-change-btn">
+                            <button type="submit" class="change-btn">
+                                Изменить
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="meta-item">
-                    <span class="author">{{ article.nickname }}</span>
-                </div>
-                <div class="meta-item">
-                    <span class="category">{{ article.category }}</span>
-                </div>
-            </div>
             <div class="article-content">
                 <p>{{ article.content[0:300] }}...
                     <a href="/article/{{ article.id }}" class="read-more">
@@ -85,21 +98,21 @@
     {% endfor %}
 {% endif %} 
                 
-        {% if comments %}
-            {% for comment in comments %}
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">{{ comment.nickname }}</span>
-                        <span class="comment-date">
-                            {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
-                        </span>
-                    </div>
-                    <div class="comment-content">
-                        {{ comment.content }}
-                    </div>
-                </div>
-            {% endfor %}
-        {% endif %}
+{% if comments %}
+    {% for comment in comments %}
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author">{{ comment.nickname }}</span>
+                <span class="comment-date">
+                    {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
+                </span>
+            </div>
+            <div class="comment-content">
+                {{ comment.content }}
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
         
     </div>
 </body>

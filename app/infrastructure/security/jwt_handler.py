@@ -20,7 +20,7 @@ class JWTHandler:
 
         return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
-    def verify_token(self, token: str) -> int:
+    def verify_token(self, token: str) -> int | None:
         '''Возвращает user_id или выбрасывает исключение'''
 
         try:
@@ -32,4 +32,4 @@ class JWTHandler:
             user_id = int(payload.get("sub"))
             return user_id
         except JWTError:
-            raise ValueError('Невалидный токен')
+            return None

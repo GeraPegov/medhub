@@ -118,14 +118,7 @@ button:hover {
     pointer-events: auto;
 }
 
-.container {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    margin: 0 100px;
-    gap: 30px
-}
+
 
 .article-card {
     background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);

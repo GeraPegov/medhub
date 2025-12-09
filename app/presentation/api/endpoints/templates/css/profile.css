@@ -127,12 +127,35 @@ button:hover {
 .article-card {
     background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
     width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
+.action-and-meta {
+    display: flex;
+    flex-direction: row-reverse;
+    /* gap: 60%; */
+    margin: auto;
+    gap: 300px
+}
 
 .article-content {
     padding: 20px;
     text-align: left;
+}
+
+.article-meta {
+    display: flex;
+    align-items: end;
+    flex-direction: column;
+    gap: 2px;
+    padding-right: 20px;
+}
+
+.action-in-card {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .comment {
@@ -158,7 +181,13 @@ button {
     max-width: 150px;
     padding: 10px;
     background: rgba(255, 192, 203, 0.199);
-    font-size: 15px;
+    font-size: 13px;
     font-family: cursive;
     /* align-self: flex-end; */
+}
+
+.change-btn,
+.delete-btn {
+    border: none;
+    width: 100%;
 }

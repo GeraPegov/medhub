@@ -65,7 +65,8 @@ async def articles(
     request: Request,
     client_id: int,
     user_manager: CachedUser = Depends(get_cache_user),
-    article_service: ArticleService = Depends(get_article_manager)
+    article_service: ArticleService = Depends(get_article_manager),
+    auth: UserEntity = Depends(get_current_user)
 ):
     user = await user_manager.get_user(client_id)
     entity_articles = await article_service.list_user_articles(client_id)
@@ -73,6 +74,7 @@ async def articles(
     return templates.TemplateResponse(
         'profile.html',
         {
+        'auth': auth,
         'request': request,
         'user': user,
         'articles': entity_articles

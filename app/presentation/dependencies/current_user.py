@@ -1,4 +1,4 @@
-from fastapi import Cookie, Depends, HTTPException, status
+from fastapi import Cookie, Depends
 
 from app.domain.entities.user import UserEntity
 from app.infrastructure.database.repositories.cache_repository import CachedUser
@@ -12,21 +12,10 @@ async def get_current_user(
         auth_service: AuthService = Depends(get_auth_service),
         cache_repo: CachedUser = Depends(get_cache_user)
 ) -> UserEntity | None:
-    """Получение текущего пользователя из токена"""
-    try:
-        if not token:
-            return None
-        user_id = auth_service.verify_token(token)
-        user = await cache_repo.get_user(user_id)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail='Пользователь не найден'
-            )
-        return user
-    except ValueError:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Невалидный токен',
-            headers={'WWW-Authenticate': 'Bearer'}
-        ) from None
+    if not token:
+        return None
+    user_id = auth_service.verify_token(token)
+    user = await cache_repo.get_user(user_id)
+    if not user:
+        return None
+    return user
