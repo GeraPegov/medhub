@@ -8,8 +8,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.infrastructure.database.connection import Base
 
 if TYPE_CHECKING:
-    from app.infrastructure.database.models.client import Client
     from app.infrastructure.database.models.comment import Comments
+    from app.infrastructure.database.models.user import User
 
 class Article(Base, AsyncAttrs):
     __tablename__ = 'articles'
@@ -18,9 +18,9 @@ class Article(Base, AsyncAttrs):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('client.id'))
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
     created_at: Mapped[date] = mapped_column(DateTime, server_default=func.now())
     category: Mapped[str] = mapped_column(String(64))
 
-    author: Mapped['Client'] = relationship('Client', back_populates='articles')
+    author: Mapped['User'] = relationship('User', back_populates='articles')
     comments: Mapped[list['Comments']] = relationship('Comments', back_populates='article')

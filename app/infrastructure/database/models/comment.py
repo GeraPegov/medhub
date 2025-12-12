@@ -9,7 +9,7 @@ from app.infrastructure.database.connection import Base
 
 if TYPE_CHECKING:
     from app.infrastructure.database.models.article import Article
-    from app.infrastructure.database.models.client import Client
+    from app.infrastructure.database.models.user import User
 
 class Comments(Base, AsyncAttrs):
     __tablename__ = 'comments'
@@ -17,8 +17,8 @@ class Comments(Base, AsyncAttrs):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('client.id'))
+    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
     article_id: Mapped[int] = mapped_column(Integer, ForeignKey('articles.id', ondelete='CASCADE'))
 
     article: Mapped['Article'] = relationship('Article', back_populates='comments')
-    author: Mapped['Client'] = relationship('Client', back_populates='comments')
+    author: Mapped['User'] = relationship('User', back_populates='comments')

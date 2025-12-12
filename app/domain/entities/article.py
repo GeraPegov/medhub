@@ -4,7 +4,7 @@ from datetime import date
 
 @dataclass
 class ArticleEntity:
-    username: str
+    unique_username: str
     title: str
     content: str
     author_id: int

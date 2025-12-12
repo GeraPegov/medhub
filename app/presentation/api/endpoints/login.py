@@ -28,7 +28,6 @@ async def login(
     auth_service: AuthService = Depends(get_auth_service),
     user_repo: UserRepository = Depends(get_user_repository),
 ):
-    """Вход и получение токена"""
     logger.info('start login')
 
     use_case = UserAuthenticationService(

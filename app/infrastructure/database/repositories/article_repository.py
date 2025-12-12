@@ -8,7 +8,7 @@ from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.articleRepositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
-from app.infrastructure.database.models.client import Client
+from app.infrastructure.database.models.user import User
 
 
 class ArticleRepository(IArticleRepository):
@@ -18,8 +18,8 @@ class ArticleRepository(IArticleRepository):
 
     async def save(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity:
         author_orm = (await self.session.execute(
-            select(Client)
-            .where(Client.id==author_id)
+            select(User)
+            .where(User.id==author_id)
         )).scalar_one()
         articles = Article(
             title=dto.title,
@@ -131,7 +131,7 @@ class ArticleRepository(IArticleRepository):
                     id=article.id,
                     title=article.title,
                     content=article.content,
-                    username=article.author.unique_username,
+                    unique_username=article.author.unique_username,
                     nickname=article.author.nickname,
                     created_at=article.created_at,
                     author_id=article.author_id,

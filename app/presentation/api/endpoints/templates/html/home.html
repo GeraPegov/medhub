@@ -12,6 +12,11 @@
         <i class="fa-solid fa-align-justify"></i>
     </button>
     <div class='menu-items'>  
+        {% if not login %}
+            <a href="/login" class="item-menu">
+                Войти
+            </a>
+        {% endif %}  
         <a href="/" class="item-menu">
             Домой
         </a>
@@ -27,14 +32,9 @@
         <a href="/articles/categories"  class="item-menu">
             Выбрать категорию
         </a>
-        {% if not login %}
-            <a href="/register" class="item-menu">
-                Регистрация
-            </a>
-            <a href="/login" class="item-menu">
-                Авторизация
-            </a>
-        {% endif %}  
+        <a href="/user/subscriptions" class="item-menu">
+            Подписки
+        </a>
     </div>
     <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
     <div class="search-container">

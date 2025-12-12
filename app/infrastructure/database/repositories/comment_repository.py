@@ -4,8 +4,8 @@ from sqlalchemy.orm import selectinload
 from app.domain.entities.comment import CommentEntity
 from app.domain.interfaces.commentRepositories import AsyncSession, ICommentRepository
 from app.infrastructure.database.models.article import Article
-from app.infrastructure.database.models.client import Client
 from app.infrastructure.database.models.comment import Comments
+from app.infrastructure.database.models.user import User
 
 
 class CommentRepository(ICommentRepository):
@@ -14,8 +14,8 @@ class CommentRepository(ICommentRepository):
 
     async def create(self, author_id: int, article_id: int, content: str) -> CommentEntity:
         author_orm = (await self.session.execute(
-            select(Client)
-            .where(Client.id==author_id)
+            select(User)
+            .where(User.id==author_id)
         )).scalar_one()
         article_orm = (await self.session.execute(
             select(Article)
@@ -62,11 +62,11 @@ class CommentRepository(ICommentRepository):
             username=comment.author.unique_username
         ) for comment in comments]
 
-    async def show_by_author(self, client_id: int) -> list[CommentEntity]:
+    async def show_by_author(self, User_id: int) -> list[CommentEntity]:
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
-            .where(Comments.author_id==client_id)
+            .where(Comments.author_id==User_id)
         )
 
         comments = comments_orm.scalars().all()

@@ -28,6 +28,7 @@ async def show_article(
 ):
     article = await cache_service.get_article(article_id)
     comments = await comment_service.show_by_article(article_id)
+    logger.info(f'article in only_article {article}')
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
@@ -42,7 +43,6 @@ async def delete_article(
     article_id: int,
     article_service: ArticleService = Depends(get_article_manager),
 ):
-    print('start')
     await article_service.delete_article(article_id)
     response = RedirectResponse(
         status_code=303,
@@ -57,6 +57,7 @@ async def change_article(
     articles_service: ArticleService = Depends(get_article_manager),
 ):
     articles = await articles_service.get_by_id(article_id)
+    logger.info(f'article in only_article {articles}')
     return templates.TemplateResponse(
         'change_article.html',
         {
@@ -73,11 +74,12 @@ async def create_article_access(
     manager: ArticleService = Depends(get_article_manager),
 ):
     logger.info(f'{dto.title} dto title')
-    articles = await manager.change_article(dto, article_id)
+    article = await manager.change_article(dto, article_id)
+    # logger.info(f'')
     return templates.TemplateResponse(
         'only_article.html',
         {
         'request': request,
-        'article': articles[0]
+        'article': article
         }
     )

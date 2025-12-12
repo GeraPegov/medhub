@@ -136,7 +136,12 @@ button:hover {
     flex-direction: row-reverse;
     /* gap: 60%; */
     margin: auto;
-    gap: 300px
+    gap: 300px;
+    border: solid;
+    border-width: 1px;
+    border-left: none;
+    border-right: none;
+    padding: 5px;
 }
 
 .article-content {
@@ -162,9 +167,13 @@ button:hover {
     display: flex;
     flex-direction: column;
     background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
-    width: 100%;
+    /* max-width: 90%; */
+    min-width: 100%;
+    margin: 0 auto;
     text-align: left;
-    gap: 10px
+    gap: 10px;
+    padding: 5px;
+    box-sizing: border-box;
 }
 
 .comment-header {
@@ -186,8 +195,70 @@ button {
     /* align-self: flex-end; */
 }
 
-.change-btn,
+/* .change-btn,
 .delete-btn {
     border: none;
     width: 100%;
+} */
+
+.delete-comment-btn {
+
+}
+
+.else-not-user {
+    display: flex;
+    flex-direction: column;
+    margin-left: 200px;
+    margin-right: 200px;
+    gap: 2px;
+    text-align: center;
+
+}
+
+.link-login,
+.link-register {
+    text-decoration: none;
+    border: solid;
+    border-radius: 5px;
+    border-width: 1px;
+    border-color: #1A1A1D;
+    color: black;
+    font-size: 20px;
+    min-width: 50px;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 5px;
+}
+
+.link-login:hover,
+.link-register:hover {
+    box-shadow: #1A1A1D;
+    font-size: 21px;
+}
+
+.read-more {
+    text-decoration: none;
+}
+
+.subscriptions {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    
+}
+
+.link-subscribtion {
+    text-decoration: none;
+    border: solid;
+    border-width: 1px;
+    border-color: #1A1A1D;
+    border-left: none;
+    border-right: none;
+    color: black;
+    font-size: 20px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 5px;
+    box-sizing: border-box;
 }

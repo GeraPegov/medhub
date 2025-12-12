@@ -13,10 +13,15 @@
         <i class="fa-solid fa-align-justify"></i>
     </button>
     <div class='menu-items'> 
+        {% if not login %}
+            <a href="/login" class="item-menu">
+                Войти
+            </a>
+        {% endif %}  
         <a href="/" class="item-menu">
             Домой
         </a> 
-        <a href="/articles/submit" class="item-menu">
+        <a href="/article/submit" class="item-menu">
             Добавить статью
         </a>
         <a href="/user/profile" class="item-menu">
@@ -28,14 +33,9 @@
         <a href="/articles/categories"  class="item-menu">
             Выбрать категорию
         </a>
-        {% if not login %}
-            <a href="/register" class="item-menu">
-                Регистрация
-            </a>
-            <a href="/login" class="item-menu">
-                Авторизация
-            </a>
-        {% endif %}  
+        <a href="/user/subscriptions" class="item-menu">
+            Подписки
+        </a>
     </div>
     
     <div class="container">
@@ -45,7 +45,7 @@
                 <div class="article-meta">
                     <div class="meta-item">
                         <span class="meta-label">Автор:</span>
-                        <span class="meta-author">{{ article.nickname }}</span>
+                        <span class="meta-author">{{ article.nickname }} <a href='/user/profile/{{article.unique_username}}'>{{ article.unique_username }}</a></span>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">Дата публикации: </span>

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class UserEntity:
     id: int
     email: str
-    username: str
+    unique_username: str
     nickname: str
-    password_hash: str
+    subscriptions: list[str]
+    password_hash: str | None = None

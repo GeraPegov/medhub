@@ -1,3 +1,4 @@
+import json
 from datetime import date, datetime
 
 from redis.asyncio import Redis, RedisError
@@ -20,15 +21,16 @@ class CachedUser:
             self,
             id: int,
             email: str,
-            username: str,
+            unique_username: str,
             nickname: str,
-            password_hash: str):
+            subscriptions: list[str]
+            ):
         try:
-            await self.connection.hmset(f'user:{id}', mapping={
+            await self.connection.hmset(f'user:{unique_username}', mapping={
                 'email': email,
-                'username': username,
+                'id': id,
                 'nickname': nickname,
-                'password_hash': password_hash
+                'subscriptions': json.dumps(list(subscriptions))
             })
             await self.connection.expire(f'user:{id}', 3600)
             return True
@@ -36,34 +38,34 @@ class CachedUser:
             logger.warning(f'Failed to cache user{id}: {e}')
             return False
 
-    async def get_user(self, client_id) -> UserEntity | None:
+    async def get_user(self, unique_username: str) -> UserEntity | None:
             try:
-                from_redis = await self.connection.hgetall(f'user:{client_id}')
+                from_redis = await self.connection.hgetall(f'user:{unique_username}')
                 if from_redis:
                     return UserEntity(
-                    id=client_id,
+                    id=int(from_redis['id']),
                     email=from_redis['email'],
-                    username=from_redis['username'],
+                    unique_username=unique_username,
                     nickname=from_redis['nickname'],
-                    password_hash=from_redis['password_hash']
+                    subscriptions=from_redis['subscriptions']
                 )
             except RedisError as e:
-                logger.warning(f'Redis error when fetching user {client_id, {e}}')
+                logger.warning(f'Redis error when fetching user {unique_username, {e}}')
             try:
-                from_repo = await self.session.get_by_id(client_id)
+                from_repo = await self.session.get_by_username(unique_username)
                 if from_repo:
                     logger.info('Success fetching user from redis')
                     await self.submit_user(
                             id=from_repo.id,
                             email=from_repo.email,
-                            username=from_repo.username,
+                            unique_username=from_repo.unique_username,
                             nickname=from_repo.nickname,
-                            password_hash=from_repo.password_hash
+                            subscriptions=from_repo.subscriptions
                     )
                     return from_repo
                 return None
             except Exception as e:
-                logger.error(f'Database error when fetching user {client_id}: {e}')
+                logger.error(f'Database error when fetching user {unique_username}: {e}')
 
 
 
@@ -74,7 +76,7 @@ class CachedArticle:
 
     async def submit_article(
             self,
-            username: str,
+            unique_username: str,
             title: str,
             content: str,
             author_id: int,
@@ -85,7 +87,7 @@ class CachedArticle:
     ):
         try:
             await self.connection.hmset(f'article:{id}',
-                {'username': username,
+                {'unique_username': unique_username,
                 'title': title,
                 'content': content,
                 'author_id': author_id,
@@ -106,7 +108,7 @@ class CachedArticle:
             if from_redis:
                 logger.info('Success fetching article from redis')
                 return ArticleEntity(
-                    username=from_redis['username'],
+                    unique_username=from_redis['unique_username'],
                     title=from_redis['title'],
                     content=from_redis['content'],
                     author_id=from_redis['author_id'],
@@ -121,7 +123,7 @@ class CachedArticle:
             from_repo = await self.session.get_by_id(article_id)
             if from_repo:
                 await self.submit_article(
-                    username=from_repo.username,
+                    unique_username=from_repo.unique_username,
                     title=from_repo.title,
                     content=from_repo.content,
                     author_id=from_repo.author_id,

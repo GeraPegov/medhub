@@ -35,6 +35,7 @@
             </a>
         {% endif %}  
     </div>
+<!-- {% if user %}   -->
     <div class="container">
         <div class="card-wrapper">
             <div class="card-group">
@@ -43,77 +44,110 @@
                 </div>
                 <div class="group-header">
                     {{ user.nickname }}
-                    {{ user.username }}
+                    <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
                 </div>
-                <form action="/user/follow/{{ user.id }}" method="post" class="follow-user">
-                    <button type="button" class="follow-user-btn" id="followButton">Подписаться
-                    </button>
-                </form>            
+            {% if auth %}
+                {% if auth.id != user.id %}
+                    {% if user.unique_username not in auth.subscriptions %}
+                        <form action="/user/profile/{{user.unique_username}}/subscribe" method="post" class="follow-user">
+                            <button type="submit" class="follow-user-btn" id="followButton">
+                                Подписаться
+                            </button>
+                        </form>  
+                    {% else %}
+                            <button type="button" class="follow-user-btn" id="followButton">
+                                Подписаны
+                            </button>
+                    {% endif %}
+                {% endif %}
+            {% endif %}          
             </div> 
         </div>
         <div class="action">
-            <a href="/user/profile/{{ user.id }}/articles" class="action-btn">Статьи</a>
-            <a href="/user/profile/{{ user.id }}/comments" class="action-btn">Комментарии</a>
+            <a href="/user/profile/{{ user.unique_username }}/articles" class="action-btn">Статьи</a>
+            <a href="/user/profile/{{ user.unique_username }}/comments" class="action-btn">Комментарии</a>
+            <a href="/user/profile/{{ user.unique_username }}/subscriptions" class="action-btn">Подписки</a>
         </div>
-        
-{% if articles %}
-    {% for article in articles %}
-        <div class="article-card">
-                <h2 class="article-title">{{ article.title }}</h2>
-                <div class="action-and-meta">
-                    <div class="article-meta">
-                        <div class="meta-item">
-                            <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+    {% if articles %}
+        {% for article in articles %}
+            <div class="article-card">
+                    <h2 class="article-title">{{ article.title }}</h2>
+                    <div class="action-and-meta">
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="author">{{ article.nickname }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="category">{{ article.category }}</span>
+                            </div>
                         </div>
-                        <div class="meta-item">
-                            <span class="author">{{ article.nickname }}</span>
+                        {% if auth.id == user.id %}
+                        <div class="action-in-card">
+                            <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                                <button type="submit" class="delete-article-btn">
+                                    Удалить
+                                </button>
+                            </form>
+                            <form action="/article/change/{{ article.id }}" method="GET" class="form-change-btn">
+                                <button type="submit" class="change-article-btn">
+                                    Изменить
+                                </button>
+                            </form>
                         </div>
-                        <div class="meta-item">
-                            <span class="category">{{ article.category }}</span>
-                        </div>
+                        {% endif %}
                     </div>
-                    {% if auth.id == user.id %}
-                    <div class="action-in-card">
-                        <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
-                            <button type="submit" class="delete-btn">
-                                Удалить
-                            </button>
-                        </form>
-                        <form action="/article/change/{{ article.id }}" method="GET" class="form-change-btn">
-                            <button type="submit" class="change-btn">
-                                Изменить
-                            </button>
-                        </form>
-                    </div>
-                    {% endif %}
+                <div class="article-content">
+                    <p>{{ article.content[0:300] }}...
+                        <a href="/article/{{ article.id }}" class="read-more">
+                            Показать полностью
+                        </a>
+                    </p>
                 </div>
-            <div class="article-content">
-                <p>{{ article.content[0:300] }}...
-                    <a href="/article/{{ article.id }}" class="read-more">
-                        Показать полностью
-                    </a>
-                </p>
+            </div>    
+        {% endfor %}
+    {% endif %} 
+                    
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">{{ comment.nickname }}</span>
+                    <span class="comment-date">
+                        {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    </span>
+                </div>
+            {% if auth.id == user.id %}
+                <div class="action-in-card">
+                    <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                        <button type="submit" class="delete-comment-btn">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+                <div class="comment-content">
+                    {{ comment.content }}
+                </div>
             </div>
-        </div>    
-    {% endfor %}
-{% endif %} 
-                
-{% if comments %}
-    {% for comment in comments %}
-        <div class="comment">
-            <div class="comment-header">
-                <span class="comment-author">{{ comment.nickname }}</span>
-                <span class="comment-date">
-                    {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
-                </span>
-            </div>
-            <div class="comment-content">
-                {{ comment.content }}
-            </div>
+        {% endfor %}
+    {% endif %}
+    {% if subscriptions  %}
+        <div class="subscriptions">
+        {% for subscribtion in subscriptions %}
+            <a href="/user/profile/{{subscribtion}}" class="link-subscribtion">{{ subscribtion }}</a>
+        {% endfor %}
         </div>
-    {% endfor %}
-{% endif %}
-        
+    {% endif %}
     </div>
+<!-- {% else %}
+        <div class="else-not-user">
+            <h2>Ooups.. Войдите или зарегестрируйтесь, чтобы увидеть профиль</h2>
+            <a href="/login" class="link-login">Войти</a>
+            <a href="/register" class="link-login">Зарегестрироваться</a>
+        </div>
+{% endif %} -->
 </body>
 </html>

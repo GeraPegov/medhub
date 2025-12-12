@@ -39,7 +39,7 @@ async def delete(
     comment_manager: CommentService = Depends(get_comment_manager),
     user: UserEntity = Depends(get_current_user),
 ):
-    result = await comment_manager.delete_comment(
+    result = await comment_manager.delete(
         comment_id=comment_id,
         author_id=user.id
     )

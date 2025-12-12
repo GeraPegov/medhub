@@ -32,7 +32,7 @@ async def create_article(
     logger.info(f'{dto.title} dto title')
     await manager.submit_article(dto, user.id)
     response = RedirectResponse(
-        url='/user/articles/',
+        url='/user/profile/',
         status_code=303
     )
 
