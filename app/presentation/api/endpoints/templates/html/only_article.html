@@ -94,6 +94,7 @@
                 <div class="comment">
                     <div class="comment-header">
                         <span class="comment-author">{{ comment.nickname }}</span>
+                        <a href="/user/profile/{{ comment.unique_username }}" class="comment-author">{{ comment.unique_username }}</a>
                         <span class="comment-date">
                             {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                         </span>

@@ -8,6 +8,6 @@ class CommentEntity:
     article_id: int
     content: str
     created_at: datetime
-    username: str | None = None
+    unique_username: str | None = None
     nickname: str | None = None
     id: int | None = None

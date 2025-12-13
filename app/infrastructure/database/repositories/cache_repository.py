@@ -12,6 +12,62 @@ from app.infrastructure.database.repositories.article_repository import (
 from app.infrastructure.database.repositories.user_repository import UserRepository
 
 
+class CachedAuth:
+    def __init__(self, connection: Redis, session: UserRepository):
+        self.connection = connection
+        self.session = session
+
+    async def submit_auth(
+            self,
+            user_id: int,
+            email: str,
+            unique_username: str,
+            nickname: str,
+            subscriptions: list[str]
+    ):
+        try:
+            await self.connection.hmset(f'user:{user_id}', mapping={
+                'email': email,
+                'nickname': nickname,
+                'unique_username': unique_username,
+                'subscriptions': json.dumps(list(subscriptions))
+            })
+            await self.connection.expire(f'user:{id}')
+            return True
+        except RedisError as e:
+            logger.warning(f'Failed to cache user{unique_username}: {e}')
+            return False
+        
+    async def get_auth(self, user_id: int) -> UserEntity | None:
+        try:
+            from_redis = await self.connection.hgetall(f'user:{user_id}')
+            if from_redis:
+                        return UserEntity(
+                        id=user_id,
+                        email=from_redis['email'],
+                        unique_username=from_redis['unique_username'],
+                        nickname=from_redis['nickname'],
+                        subscriptions=json.loads(from_redis['subscriptions'])
+                    )
+        except RedisError as e:
+            logger.warning(f'Redis error when fetching user {user_id, {e}}')
+        try:
+            from_repo = await self.session.get_by_id(user_id)
+            if from_repo:
+                await self.submit_auth(
+                        id=from_repo.id,
+                        email=from_repo.email,
+                        unique_username=from_repo.unique_username,
+                        nickname=from_repo.nickname,
+                        subscriptions=from_repo.subscriptions
+                )
+                return from_repo
+            return None
+        except Exception as e:
+            logger.error(f'Database error when fetching user {user_id}: {e}')
+
+
+
 class CachedUser:
     def __init__(self, connection: Redis, session: UserRepository) -> bool:
         self.connection = connection
@@ -32,10 +88,10 @@ class CachedUser:
                 'nickname': nickname,
                 'subscriptions': json.dumps(list(subscriptions))
             })
-            await self.connection.expire(f'user:{id}', 3600)
+            await self.connection.expire(f'user:{unique_username}', 3600)
             return True
         except RedisError as e:
-            logger.warning(f'Failed to cache user{id}: {e}')
+            logger.warning(f'Failed to cache user{unique_username}: {e}')
             return False
 
     async def get_user(self, unique_username: str) -> UserEntity | None:
@@ -47,7 +103,7 @@ class CachedUser:
                     email=from_redis['email'],
                     unique_username=unique_username,
                     nickname=from_redis['nickname'],
-                    subscriptions=from_redis['subscriptions']
+                    subscriptions=json.loads(from_redis['subscriptions'])
                 )
             except RedisError as e:
                 logger.warning(f'Redis error when fetching user {unique_username, {e}}')

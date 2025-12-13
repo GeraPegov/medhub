@@ -11,6 +11,11 @@
     <button class="menu-icon">
     </button>
     <div class='menu-items'>  
+        {% if not login %}
+            <a href="/login" class="item-menu">
+                Войти
+            </a>
+        {% endif %}  
         <a href="/" class="item-menu">
             Домой
         </a>
@@ -24,18 +29,10 @@
             Выход
         </a>
         <a href="/articles/categories"  class="item-menu">
-            Выбрать категорию
+            Категории статей
         </a>
-        {% if not login %}
-            <a href="/register" class="item-menu">
-                Регистрация
-            </a>
-            <a href="/login" class="item-menu">
-                Авторизация
-            </a>
-        {% endif %}  
     </div>
-<!-- {% if user %}   -->
+{% if user %}  
     <div class="container">
         <div class="card-wrapper">
             <div class="card-group">
@@ -115,6 +112,7 @@
             <div class="comment">
                 <div class="comment-header">
                     <span class="comment-author">{{ comment.nickname }}</span>
+                    <a href="/user/profile/{{ comment.unique_username }}" class="comment-author">{{ comment.unique_username }}</a>
                     <span class="comment-date">
                         {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </span>
@@ -142,12 +140,12 @@
         </div>
     {% endif %}
     </div>
-<!-- {% else %}
+{% else %}
         <div class="else-not-user">
             <h2>Ooups.. Войдите или зарегестрируйтесь, чтобы увидеть профиль</h2>
             <a href="/login" class="link-login">Войти</a>
             <a href="/register" class="link-login">Зарегестрироваться</a>
         </div>
-{% endif %} -->
+{% endif %}
 </body>
 </html>

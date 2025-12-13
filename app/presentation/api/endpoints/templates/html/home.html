@@ -32,9 +32,6 @@
         <a href="/articles/categories"  class="item-menu">
             Выбрать категорию
         </a>
-        <a href="/user/subscriptions" class="item-menu">
-            Подписки
-        </a>
     </div>
     <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
     <div class="search-container">
@@ -65,6 +62,7 @@
                     </div>
                     <div class="meta-item">
                         <span class="author">{{ article.nickname }}</span>
+                        <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
                     </div>
                     <div class="meta-item">
                         <span class="category">{{ article.category }}</span>

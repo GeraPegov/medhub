@@ -330,3 +330,55 @@
 2025-12-12 21:31:15,292 - venv - INFO -  user UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions=['chinaski', 'veliual', 'chinaski', 'veliual'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$SYlRyvlfqxXCOKeU8r63dg$nSYA+HZYnuM7yxjIfB85HEFKH1dPv47ACgLAhaEnvOA')
 2025-12-12 21:31:15,844 - venv - INFO - subscriberi ['chinaski', 'veliual', 'chinaski', 'veliual']
 2025-12-12 21:31:16,781 - venv - INFO - user if UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions='["chinaski", "veliual", "chinaski", "veliual"]', password_hash=None)
+2025-12-13 13:10:10,198 - venv - INFO -  user None
+2025-12-13 13:10:33,560 - venv - INFO -  user None
+2025-12-13 13:15:50,069 - venv - INFO -  user None
+2025-12-13 13:15:54,130 - venv - INFO -  user None
+2025-12-13 13:16:14,161 - venv - INFO -  user None
+2025-12-13 13:16:18,079 - app.domain.logging - INFO - start login
+2025-12-13 13:16:18,080 - app.domain.logging - INFO - try create token
+2025-12-13 13:16:18,080 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-13 13:16:18,226 - app.domain.logging - INFO - valide token
+2025-12-13 13:16:18,227 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1NjM4OTc4fQ.doxnzgImf_ag6mVEaPVEUKZ5HcfUXgW1E9KagcgC-FI
+2025-12-13 13:16:18,227 - app.domain.logging - INFO - create response
+2025-12-13 13:16:20,067 - venv - INFO -  user UserEntity(id=1, email='gera5_7@mail.ru', unique_username='chinaski', nickname='gera', subscriptions=['chinaski'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$NIbwvndO6b03hnDundMaow$6snDtnq7Kw/xH3PAtfvWU50OoMnZenIl/QUJOFU2yOU')
+2025-12-13 13:16:25,468 - app.domain.logging - WARNING - Redis error when fetching user ('chinaski', {ConnectionError("Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.")})
+2025-12-13 13:16:25,470 - app.domain.logging - INFO - Success fetching user from redis
+2025-12-13 13:16:29,572 - app.domain.logging - WARNING - Failed to cache user1: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2025-12-13 13:16:29,574 - venv - INFO - subscriberi ['chinaski']
+2025-12-13 13:16:42,552 - venv - INFO -  user UserEntity(id=1, email='gera5_7@mail.ru', unique_username='chinaski', nickname='gera', subscriptions=['chinaski'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$NIbwvndO6b03hnDundMaow$6snDtnq7Kw/xH3PAtfvWU50OoMnZenIl/QUJOFU2yOU')
+2025-12-13 13:17:03,447 - app.domain.logging - INFO - start login
+2025-12-13 13:17:03,447 - app.domain.logging - INFO - try create token
+2025-12-13 13:17:03,447 - app.domain.logging - INFO - start execute : ('wap4_6@mail.ru', 'qwer')
+2025-12-13 13:17:03,499 - app.domain.logging - INFO - valide token
+2025-12-13 13:17:03,500 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiZXhwIjoxNzY1NjM5MDIzfQ.E9UgbNOn1QgZYJPUeRLeR7CmuloDb80aI7n123gUNJg
+2025-12-13 13:17:03,500 - app.domain.logging - INFO - create response
+2025-12-13 13:17:05,663 - venv - INFO -  user UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions=['chinaski', 'veliual', 'chinaski', 'veliual'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$SYlRyvlfqxXCOKeU8r63dg$nSYA+HZYnuM7yxjIfB85HEFKH1dPv47ACgLAhaEnvOA')
+2025-12-13 13:17:06,223 - app.domain.logging - INFO - Success fetching user from redis
+2025-12-13 13:17:06,225 - venv - INFO - subscriberi ['chinaski', 'veliual', 'chinaski', 'veliual']
+2025-12-13 13:17:07,492 - venv - INFO - user username chinaski 
+2025-12-13 13:17:07,493 - venv - INFO - user username ['chinaski', 'veliual', 'chinaski', 'veliual'] 
+2025-12-13 13:17:14,312 - app.domain.logging - INFO - Success fetching user from redis
+2025-12-13 13:17:15,098 - venv - INFO - user if UserEntity(id=1, email='gera5_7@mail.ru', unique_username='chinaski', nickname='gera', subscriptions='["chinaski"]', password_hash=None)
+2025-12-13 13:17:16,222 - venv - INFO - subscriberi ['chinaski']
+2025-12-13 13:17:17,035 - venv - INFO - user if UserEntity(id=1, email='gera5_7@mail.ru', unique_username='chinaski', nickname='gera', subscriptions='["chinaski"]', password_hash=None)
+2025-12-13 13:17:22,210 - venv - INFO -  user UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions=['chinaski', 'veliual', 'chinaski', 'veliual'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$SYlRyvlfqxXCOKeU8r63dg$nSYA+HZYnuM7yxjIfB85HEFKH1dPv47ACgLAhaEnvOA')
+2025-12-13 13:17:23,201 - venv - INFO - user if UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions='["chinaski", "veliual", "chinaski", "veliual"]', password_hash=None)
+2025-12-13 13:17:24,124 - venv - INFO - subscriberi ['chinaski', 'veliual', 'chinaski', 'veliual']
+2025-12-13 13:17:25,279 - venv - INFO - user if UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions='["chinaski", "veliual", "chinaski", "veliual"]', password_hash=None)
+2025-12-13 13:18:40,299 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=xfcghb, user=2
+2025-12-13 13:18:40,320 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:19:38,575 - venv - INFO -  user UserEntity(id=2, email='wap4_6@mail.ru', unique_username='veliual', nickname='anton', subscriptions=['chinaski', 'veliual', 'chinaski', 'veliual'], password_hash='$argon2id$v=19$m=65536,t=3,p=4$SYlRyvlfqxXCOKeU8r63dg$nSYA+HZYnuM7yxjIfB85HEFKH1dPv47ACgLAhaEnvOA')
+2025-12-13 13:19:42,632 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:21:14,522 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:21:44,481 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:28:17,983 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:28:18,012 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:28:20,341 - app.domain.logging - INFO - start comment endpoint, article_id = 1, content=asdfasdf, user=2
+2025-12-13 13:28:20,359 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:29:10,365 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:30:47,861 - venv - INFO - user username chinaski 
+2025-12-13 13:30:47,861 - venv - INFO - user username ['chinaski', 'veliual', 'chinaski', 'veliual'] 
+2025-12-13 13:31:56,089 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:32:11,067 - app.domain.logging - INFO - Success fetching article from redis
+2025-12-13 13:47:09,958 - app.domain.logging - INFO - Success fetching article from redis

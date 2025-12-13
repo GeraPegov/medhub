@@ -1,3 +1,4 @@
+from typing import Sequence
 from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
@@ -33,15 +34,9 @@ class CommentRepository(ICommentRepository):
         await self.session.commit()
         await self.session.refresh(comment)
 
-        return CommentEntity(
-            id=comment.id,
-            author_id=comment.author_id,
-            article_id=comment.article_id,
-            content=comment.content,
-            created_at=comment.created_at,
-            nickname=comment.author.nickname,
-            username=comment.author.unique_username
-        )
+        comments = await self._to_entity([comment])
+
+        return comments[0]
 
     async def show_by_article(self, article_id: int) -> list[CommentEntity]:
         comments_orm = await self.session.execute(
@@ -52,34 +47,18 @@ class CommentRepository(ICommentRepository):
 
         comments = comments_orm.scalars().all()
 
-        return [CommentEntity(
-            id=comment.id,
-            author_id=comment.author_id,
-            article_id=comment.article_id,
-            content=comment.content,
-            created_at=comment.created_at,
-            nickname=comment.author.nickname,
-            username=comment.author.unique_username
-        ) for comment in comments]
+        return await self._to_entity(comments)
 
-    async def show_by_author(self, User_id: int) -> list[CommentEntity]:
+    async def show_by_author(self, user_id: int) -> list[CommentEntity]:
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
-            .where(Comments.author_id==User_id)
+            .where(Comments.author_id==user_id)
         )
 
         comments = comments_orm.scalars().all()
 
-        return [CommentEntity(
-            id=comment.id,
-            author_id=comment.author_id,
-            article_id=comment.article_id,
-            content=comment.content,
-            created_at=comment.created_at,
-            nickname=comment.author.nickname,
-            username=comment.author.unique_username
-        ) for comment in comments]
+        return await self._to_entity(comments)
 
 
     async def delete(self, comment_id: int):
@@ -93,4 +72,13 @@ class CommentRepository(ICommentRepository):
 
         return article_id
 
-
+    async def _to_entity(self, entity: Sequence):
+        return [CommentEntity(
+            id=comment.id,
+            author_id=comment.author_id,
+            article_id=comment.article_id,
+            content=comment.content,
+            created_at=comment.created_at,
+            nickname=comment.author.nickname,
+            unique_username=comment.author.unique_username
+        ) for comment in entity]
