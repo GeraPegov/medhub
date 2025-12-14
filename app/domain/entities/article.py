@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import datetime
 
 
 @dataclass
@@ -10,7 +10,7 @@ class ArticleEntity:
     author_id: int
     nickname: str | None = None
     category: str | None = None
-    created_at: date | None = None
-    id: int | None = None
+    created_at: datetime | None = None
+    article_id: int | None = None
 
 

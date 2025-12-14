@@ -91,7 +91,7 @@ class UserRepository(IUserRepository):
     async def _to_entity(self, model: User) -> UserEntity:
         """Преобразование SQLAlchemy модели в доменную сущность"""
         return UserEntity(
-            id=model.id,
+            user_id=model.id,
             email=model.email,
             unique_username=model.unique_username,
             nickname=model.nickname,

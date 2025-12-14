@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
@@ -19,7 +19,7 @@ class Article(Base, AsyncAttrs):
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
-    created_at: Mapped[date] = mapped_column(DateTime, server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     category: Mapped[str] = mapped_column(String(64))
 
     author: Mapped['User'] = relationship('User', back_populates='articles')

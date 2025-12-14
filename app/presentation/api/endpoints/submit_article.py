@@ -30,7 +30,7 @@ async def create_article(
     user: UserEntity = Depends(get_current_user)
 ):
     logger.info(f'{dto.title} dto title')
-    await manager.submit_article(dto, user.id)
+    await manager.submit_article(dto, user.user_id)
     response = RedirectResponse(
         url='/user/profile/',
         status_code=303

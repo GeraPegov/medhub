@@ -1,4 +1,5 @@
-from typing import Sequence
+from collections.abc import Sequence
+
 from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
@@ -42,7 +43,7 @@ class CommentRepository(ICommentRepository):
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
-            .where(Comments.article_id==article_id)
+            .where(Comments.article_id==int(article_id))
         )
 
         comments = comments_orm.scalars().all()

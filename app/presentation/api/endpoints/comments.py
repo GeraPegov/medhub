@@ -24,7 +24,7 @@ async def create(
     await comment_manager.create(
         article_id=article_id,
         content=content,
-        author_id=user.id
+        author_id=user.user_id
     )
     response = RedirectResponse(
         url=f'/article/{article_id}',

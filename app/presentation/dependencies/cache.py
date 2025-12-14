@@ -2,14 +2,12 @@ from fastapi import Depends
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
 
+from app.application.services.cache_service import CachedService
 from app.infrastructure.config import settings
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
-from app.infrastructure.database.repositories.cache_repository import (
-    CachedArticle,
-    CachedUser,
-)
+from app.infrastructure.database.repositories.cache_repository import CachedRepository
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.presentation.dependencies.articles_dependencies import get_article_repository
 from app.presentation.dependencies.auth import get_user_repository
@@ -30,15 +28,27 @@ async def get_redis():
         await r.aclose()
         await pool.aclose()
 
+async def get_cash_repositories(
+        connect: Redis = Depends(get_redis)
+) -> CachedRepository:
+    return CachedRepository(connect)
+
+
 
 async def get_cache_user(
-    connect: Redis = Depends(get_redis),
-    session: UserRepository = Depends(get_user_repository)
+    cash: CachedRepository = Depends(get_cash_repositories),
+    repo_user: UserRepository = Depends(get_user_repository)
         ):
-    return CachedUser(connect, session)
+    return CachedService(
+        cash=cash,
+        repo_user = repo_user
+    )
 
 async def get_cache_article(
-    connect: Redis = Depends(get_redis),
-    session: ArticleRepository = Depends(get_article_repository)
+    cash: CachedRepository = Depends(get_cash_repositories),
+    repo_article: ArticleRepository = Depends(get_article_repository)
         ):
-    return CachedArticle(connect, session)
+    return CachedService(
+        cash=cash,
+        repo_article=repo_article
+    )

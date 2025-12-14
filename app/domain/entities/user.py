@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class UserEntity:
-    id: int
+    user_id: int
     email: str
     unique_username: str
     nickname: str

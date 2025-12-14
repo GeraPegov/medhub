@@ -86,7 +86,7 @@ class ArticleRepository(IArticleRepository):
         orm_articles = await self.session.execute(
             select(Article)
             .options(selectinload(Article.author))
-            .where(Article.author_id==user_id)
+            .where(Article.author_id==int(user_id))
         )
         articles = orm_articles.scalars().all()
         if not articles:
@@ -128,7 +128,7 @@ class ArticleRepository(IArticleRepository):
 
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:
         return [ArticleEntity(
-                    id=article.id,
+                    article_id=article.id,
                     title=article.title,
                     content=article.content,
                     unique_username=article.author.unique_username,

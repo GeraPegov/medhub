@@ -4,10 +4,10 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
+from app.application.services.cache_service import CachedService
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.logging import logger
-from app.infrastructure.database.repositories.cache_repository import CachedArticle
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.cache import get_cache_article
 from app.presentation.dependencies.comments import get_comment_manager
@@ -22,11 +22,11 @@ router = APIRouter()
 async def show_article(
     request: Request,
     article_id: int,
-    cache_service: CachedArticle = Depends(get_cache_article),
+    cache_service: CachedService = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_manager),
     user: UserEntity = Depends(get_current_user)
 ):
-    article = await cache_service.get_article(article_id)
+    article = await cache_service.get_cache_article(article_id)
     comments = await comment_service.show_by_article(article_id)
     logger.info(f'article in only_article {article}')
     return templates.TemplateResponse(

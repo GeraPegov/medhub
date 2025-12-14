@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
+from app.application.services.cache_service import CachedService
 from app.application.services.comment_manager import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
-from app.infrastructure.database.repositories.cache_repository import CachedUser
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cache_user
@@ -58,13 +58,13 @@ async def profile_another_user_by_username(
 async def articles(
     request: Request,
     unique_username: str,
-    cache_manager: CachedUser = Depends(get_cache_user),
+    cache_service: CachedService = Depends(get_cache_user),
     article_service: ArticleService = Depends(get_article_manager),
     auth: UserEntity = Depends(get_current_user)
 ):
-    user = await cache_manager.get_user(unique_username)
+    user = await cache_service.get_cache_user(unique_username)
     logger.info(f'user if {user}')
-    entity_articles = await article_service.list_user_articles(user.id)
+    entity_articles = await article_service.list_user_articles(user.user_id)
 
     return templates.TemplateResponse(
         'profile.html',
@@ -80,12 +80,12 @@ async def articles(
 async def comments(
     request: Request,
     unique_username: str,
-    cache_manager: CachedUser = Depends(get_cache_user),
+    cache_service: CachedService = Depends(get_cache_user),
     comment_manager: CommentService = Depends(get_comment_manager),
     auth: UserEntity = Depends(get_current_user)
 ):
-    user = await cache_manager.get_user(unique_username)
-    comments = await comment_manager.show_by_author(user.id)
+    user = await cache_service.get_cache_user(unique_username)
+    comments = await comment_manager.show_by_author(user.user_id)
 
     return templates.TemplateResponse(
         'profile.html',
@@ -105,7 +105,7 @@ async def subscribe(
     auth: UserEntity = Depends(get_current_user)
 ):
     await user_service.subscribe(
-        subscriber_id=auth.id,
+        subscriber_id=auth.user_id,
         author_unique_username=unique_username)
 
 
@@ -115,9 +115,9 @@ async def subscriptions(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
-    cache_manager: CachedUser = Depends(get_cache_user)
+    cache_service: CachedService = Depends(get_cache_user)
 ):
-    user = await cache_manager.get_user(unique_username)
+    user = await cache_service.get_cache_user(unique_username)
     subscriptions = await user_service.subscriptions(unique_username)
     logger.info(f'subscriberi {subscriptions}')
 

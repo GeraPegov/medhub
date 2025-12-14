@@ -25,6 +25,6 @@ class UserAuthenticationService:
         if not self.auth_service.verify_password(password, user.password_hash):
             raise ValueError('НЕверный email или пароль')
         logger.info('valide token')
-        token = self.auth_service.create_access_token(user.id)
+        token = self.auth_service.create_access_token(user.user_id)
 
         return token
