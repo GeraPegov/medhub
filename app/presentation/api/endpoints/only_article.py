@@ -24,17 +24,16 @@ async def show_article(
     article_id: int,
     cache_service: CachedService = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_manager),
-    user: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_current_user)
 ):
     article = await cache_service.get_cache_article(article_id)
     comments = await comment_service.show_by_article(article_id)
-    logger.info(f'article in only_article {article}')
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
          'article': article,
          'comments': comments,
-         'user': user
+         'auth': auth
         }
     )
 
@@ -44,11 +43,11 @@ async def delete_article(
     article_service: ArticleService = Depends(get_article_manager),
 ):
     await article_service.delete_article(article_id)
-    response = RedirectResponse(
+
+    return RedirectResponse(
         status_code=303,
         url='/user/profile'
     )
-    return response
 
 @router.get('/article/change/{article_id}')
 async def change_article(
@@ -57,7 +56,7 @@ async def change_article(
     articles_service: ArticleService = Depends(get_article_manager),
 ):
     articles = await articles_service.get_by_id(article_id)
-    logger.info(f'article in only_article {articles}')
+
     return templates.TemplateResponse(
         'change_article.html',
         {
@@ -75,7 +74,7 @@ async def create_article_access(
 ):
     logger.info(f'{dto.title} dto title')
     article = await manager.change_article(dto, article_id)
-    # logger.info(f'')
+
     return templates.TemplateResponse(
         'only_article.html',
         {

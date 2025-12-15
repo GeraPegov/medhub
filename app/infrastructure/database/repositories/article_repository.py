@@ -36,14 +36,15 @@ class ArticleRepository(IArticleRepository):
         return entities[0]
 
 
-    async def get_by_id(self, article_id: int) -> ArticleEntity:
+    async def get_by_id(self, article_id: int) -> ArticleEntity | None:
         orm_article = await self.session.execute(
             select(Article)
             .options(selectinload(Article.author))
             .where(Article.id==article_id)
         )
         articles = orm_article.scalars().all()
-
+        if not articles:
+            return None
         entities = await self._to_entity(articles)
         return entities[0]
 
@@ -60,18 +61,18 @@ class ArticleRepository(IArticleRepository):
         return await self._to_entity(articles)
 
 
-    async def delete(self, article_id: int) -> dict:
+    async def delete(self, article_id: int) -> bool:
         orm_del = await self.session.execute(
             delete(Article)
             .where(Article.id==article_id)
             .returning(Article.title)
         )
-        title = orm_del.scalar_one()
+        orm_del.scalar_one()
         await self.session.commit()
-        return {"success delete": title}
+        return True
 
 
-    async def search_by_title(self, title: str) -> list[ArticleEntity]:
+    async def search_by_title(self, title: str) -> list[ArticleEntity] | None:
         orm_articles = await self.session.execute(
             select(Article)
             .options(selectinload(Article.author))
@@ -79,7 +80,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = orm_articles.scalars().all()
 
-        return await self._to_entity(articles)
+        return await self._to_entity(articles) if articles else None
 
 
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity] | None:

@@ -27,15 +27,11 @@
         <a href="/user/profile" class="item-menu">
             Профиль
         </a>
+        {% if auth %}
         <a href="/exit"  class="item-menu">
             Выход
         </a>
-        <a href="/articles/categories"  class="item-menu">
-            Выбрать категорию
-        </a>
-        <a href="/user/subscriptions" class="item-menu">
-            Подписки
-        </a>
+        {% endif %}
     </div>
     
     <div class="container">
@@ -72,8 +68,8 @@
             
         <h2>Комментарии</h2>
         <div class="comment-section">
-            {% if user %}
-            <form class="comment-form" method="POST" action="/comments/{{ article.id }}/create">
+            {% if auth %}
+            <form class="comment-form" method="POST" action="/comments/{{ article.article_id }}/create">
                 <textarea 
                     name="content" 
                     id="comment-field"
@@ -102,7 +98,7 @@
                     <div class="comment-content">
                         {{ comment.content }}
                     </div>
-                    {% if user and user.id == comment.author_id %}
+                    {% if auth and auth.user_id == comment.author_id %}
                     <div class="comment-actions">
                         <form method="POST" action="/comments/{{ comment.id }}/delete" style="display: inline;">
                             <button type="submit" class="delete-btn" onclick="return confirm('Удалить комментарий?')">

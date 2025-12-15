@@ -11,7 +11,7 @@
     <button class="menu-icon">
     </button>
     <div class='menu-items'>  
-        {% if not login %}
+        {% if not auth %}
             <a href="/login" class="item-menu">
                 Войти
             </a>
@@ -19,18 +19,18 @@
         <a href="/" class="item-menu">
             Домой
         </a>
-        <a href="/article/submit" class="item-menu">
-            Добавить статью
-        </a>
+        {% if auth.user_id != user.user_id %}
         <a href="/user/profile" class="item-menu">
             Профиль
+        </a>
+        {% endif %}
+        <a href="/article/submit" class="item-menu">
+            Добавить статью
         </a>
         <a href="/exit"  class="item-menu">
             Выход
         </a>
-        <a href="/articles/categories"  class="item-menu">
-            Категории статей
-        </a>
+
     </div>
 {% if user %}  
     <div class="container">
@@ -43,21 +43,21 @@
                     {{ user.nickname }}
                     <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
                 </div>
-            {% if auth %}
-                {% if auth.id != user.id %}
+                {% if auth.user_id != user.user_id %}
                     {% if user.unique_username not in auth.subscriptions %}
-                        <form action="/user/profile/{{user.unique_username}}/subscribe" method="post" class="follow-user">
-                            <button type="submit" class="follow-user-btn" id="followButton">
+                        <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
+                            <button type="submit" class="subscribe-user-btn" id="followButton">
                                 Подписаться
                             </button>
                         </form>  
-                    {% else %}
-                            <button type="button" class="follow-user-btn" id="followButton">
-                                Подписаны
+                    {% elif user.unique_username in auth.subscriptions %}
+                        <form action="/user/profile/{{ user.unique_username }}/unsubscribe" method="post" class="unsubscribe-user">
+                            <button type="submit" class="unsubscribe-user-btn" id="followButton">
+                                Отписаться
                             </button>
+                        </form>
                     {% endif %}
-                {% endif %}
-            {% endif %}          
+                {% endif %}       
             </div> 
         </div>
         <div class="action">
@@ -83,7 +83,7 @@
                         </div>
                         {% if auth.id == user.id %}
                         <div class="action-in-card">
-                            <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                            <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
                                 <button type="submit" class="delete-article-btn">
                                     Удалить
                                 </button>
@@ -111,9 +111,7 @@
         {% for comment in comments %}
             <div class="comment">
                 <div class="comment-header">
-                    <span class="comment-author">{{ comment.nickname }}</span>
-                    <a href="/user/profile/{{ comment.unique_username }}" class="comment-author">{{ comment.unique_username }}</a>
-                    <span class="comment-date">
+                    <span class="comment-author">{{ comment.nickname }}</span>                    <span class="comment-date">
                         {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </span>
                 </div>
@@ -132,7 +130,8 @@
             </div>
         {% endfor %}
     {% endif %}
-    {% if subscriptions  %}
+
+    {% if subscriptions %}
         <div class="subscriptions">
         {% for subscribtion in subscriptions %}
             <a href="/user/profile/{{subscribtion}}" class="link-subscribtion">{{ subscribtion }}</a>

@@ -27,9 +27,10 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def subscribe(self, subscriber_id, author_unique_username):
+    async def subscribe(self, subscriber_id, author_unique_username) -> bool:
         pass
 
     @abstractmethod
-    async def subscriptions(self, unique_username):
+    async def unsubscribe(self, subscriber_id, author_unique_username) -> bool:
         pass
+

@@ -23,5 +23,5 @@ class UserService:
     async def subscribe(self, subscriber_id, author_unique_username):
         return await self.repository.subscribe(subscriber_id, author_unique_username)
 
-    async def subscriptions(self, unique_username):
-        return await self.repository.subscriptions(unique_username)
+    async def unsubscribe(self, subscriber_id, author_unique_username):
+        return await self.repository.unsubscribe(subscriber_id, author_unique_username)

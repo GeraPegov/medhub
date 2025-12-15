@@ -1,6 +1,7 @@
 from venv import logger
 
 from fastapi import APIRouter, Depends, Request
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
@@ -19,32 +20,15 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 router = APIRouter()
 
 
-@router.get('/user/profile')
-async def mine_profile(
-    request: Request,
-    user: UserEntity = Depends(get_current_user)
-):
-    logger.info(f' user {user}')
-    return templates.TemplateResponse(
-        'profile.html',
-        {
-        'request': request,
-        'user': user
-        }
-    )
-
-
-@router.get('/user/profile/{username}')
+@router.get('/user/profile/{unique_username}')
 async def profile_another_user_by_username(
     request: Request,
-    username: str,
-    user_manager: UserService = Depends(get_user_service),
+    unique_username: str,
+    cache_service: CachedService = Depends(get_cache_user),
     auth: UserEntity = Depends(get_current_user)
 ):
-    entity_user = await user_manager.get_by_username(username)
-    logger.info(f'user username {entity_user.unique_username} ')
-    logger.info(f'user username {auth.subscriptions} ')
-
+    entity_user = await cache_service.get_cache_user(unique_username)
+    logger.info(f'user {entity_user.subscriptions}')
     return templates.TemplateResponse(
         'profile.html',
         {
@@ -63,7 +47,6 @@ async def articles(
     auth: UserEntity = Depends(get_current_user)
 ):
     user = await cache_service.get_cache_user(unique_username)
-    logger.info(f'user if {user}')
     entity_articles = await article_service.list_user_articles(user.user_id)
 
     return templates.TemplateResponse(
@@ -102,24 +85,38 @@ async def comments(
 async def subscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_current_user),
+    cache_service: CachedService = Depends(get_cache_user)
 ):
-    await user_service.subscribe(
+    user = await user_service.subscribe(
         subscriber_id=auth.user_id,
         author_unique_username=unique_username)
+    await cache_service.update_user(user)
+    return RedirectResponse(url=f'/user/profile/{unique_username}', status_code=303)
+
+
+@router.post("/user/profile/{unique_username}/unsubscribe")
+async def unsubscribe(
+    unique_username: str,
+    user_service: UserService = Depends(get_user_service),
+    auth: UserEntity = Depends(get_current_user),
+    cache_service: CachedService = Depends(get_cache_user)
+):
+    user = await user_service.unsubscribe(
+        subscriber_id=auth.user_id,
+        author_unique_username=unique_username)
+    await cache_service.update_user(user)
+    return RedirectResponse(url=f'/user/profile/{unique_username}', status_code=303)
 
 
 @router.get('/user/profile/{unique_username}/subscriptions')
 async def subscriptions(
     request: Request,
     unique_username: str,
-    user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
     cache_service: CachedService = Depends(get_cache_user)
 ):
     user = await cache_service.get_cache_user(unique_username)
-    subscriptions = await user_service.subscriptions(unique_username)
-    logger.info(f'subscriberi {subscriptions}')
 
     return templates.TemplateResponse(
         'profile.html',
@@ -128,6 +125,6 @@ async def subscriptions(
         'request': request,
         'user': user,
         'article': None,
-        'subscriptions': subscriptions
+        'subscriptions': user.subscriptions
         }
     )

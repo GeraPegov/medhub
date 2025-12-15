@@ -19,10 +19,12 @@ class CommentRepository(ICommentRepository):
             select(User)
             .where(User.id==author_id)
         )).scalar_one()
+
         article_orm = (await self.session.execute(
             select(Article)
             .where(Article.id==article_id)
         )).scalar_one()
+
         comment = Comments(
             content=content,
             author_id=author_id,
@@ -62,7 +64,7 @@ class CommentRepository(ICommentRepository):
         return await self._to_entity(comments)
 
 
-    async def delete(self, comment_id: int):
+    async def delete(self, comment_id: int) -> int:
         comments_del_orm = await self.session.execute(
             delete(Comments)
             .where(Comments.id==comment_id)
@@ -73,7 +75,7 @@ class CommentRepository(ICommentRepository):
 
         return article_id
 
-    async def _to_entity(self, entity: Sequence):
+    async def _to_entity(self, entity: Sequence[Comments]):
         return [CommentEntity(
             id=comment.id,
             author_id=comment.author_id,

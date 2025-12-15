@@ -17,42 +17,59 @@ class CachedRepository:
 
     async def create_cache(
             self,
-            action,
-            key,
-            mapping
+            action: str,
+            key: str | int,
+            mapping: dict,
+            ttl: int = 3600
     ):
-        await self.connection.hmset(f'{action}:{key}', mapping=mapping)
-        self.connection.expire(f'user:{key}', 3600)
+        cache_key = f"{action}:{key}"
+        await self.connection.hmset(cache_key, mapping=mapping)
+        await self.connection.expire(cache_key, ttl)
+
         return True
 
     async def get_cache_user(
-            self, key
+            self,
+            key: int | str
     ) -> UserEntity | None:
         from_cache = await self.connection.hgetall(f'user:{key}')
-        if from_cache:
-            return UserEntity(
-                user_id = int(from_cache['user_id']),
-                email = from_cache['email'],
-                unique_username = from_cache['unique_username'],
-                nickname = from_cache['nickname'],
-                subscriptions = json.loads(from_cache['subscriptions'])
-            )
-        return None
+        if not from_cache:
+            return None
+        return UserEntity(
+            user_id = int(from_cache['user_id']),
+            email = from_cache['email'],
+            unique_username = from_cache['unique_username'],
+            nickname = from_cache['nickname'],
+            subscriptions = json.loads(from_cache['subscriptions'])
+        )
 
     async def get_cache_article(
             self,
             key: int
     ) -> ArticleEntity | None:
         from_cache = await self.connection.hgetall(f'article:{key}')
-        if from_cache:
-            return ArticleEntity(
-                unique_username = from_cache['unique_username'],
-                title = from_cache['title'],
-                content = from_cache['content'],
-                author_id = from_cache['author_id'],
-                nickname = from_cache['nickname'],
-                category = from_cache['category'],
-                created_at = datetime.fromtimestamp(float(from_cache['created_at'])),
-                article_id = int(from_cache['article_id'])
-            )
-        return None
+        if not  from_cache:
+            return None
+
+        return ArticleEntity(
+            unique_username = from_cache['unique_username'],
+            title = from_cache['title'],
+            content = from_cache['content'],
+            author_id = from_cache['author_id'],
+            nickname = from_cache['nickname'],
+            category = from_cache['category'],
+            created_at = datetime.fromtimestamp(float(from_cache['created_at'])),
+            article_id = int(from_cache['article_id'])
+        )
+
+    async def delete_user(
+            self,
+            user: UserEntity
+    ):
+        await self.connection.delete(f'user:{user.user_id}', f'user:{user.unique_username}')
+
+    async def delete_article(
+            self,
+            article_id: int
+    ):
+        await self.connection.delete(f'article:{article_id}')
