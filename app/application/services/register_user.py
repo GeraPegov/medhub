@@ -1,7 +1,6 @@
 from app.domain.entities.user import UserEntity
 from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository
-from app.domain.logging import logger
 
 
 class UserRegistrationService:
@@ -14,12 +13,11 @@ class UserRegistrationService:
         self.user_repo = user_repo
         self.auth_service = auth_service
 
-    async def execute(self, email: str, password: str, username: str, nickname: str) -> UserEntity:
+    async def execute(self, email: str, password: str, username: str, nickname: str) -> UserEntity | None:
         if await self.user_repo.get_by_email(email):
-            raise ValueError('Email уже зарегестрирован')
+            return None
 
         password_hash = self.auth_service.hash_password(password)
-        logger.info(f'password hash : {password_hash}')
         user = await self.user_repo.create(email, password_hash, username, nickname)
         return user
 

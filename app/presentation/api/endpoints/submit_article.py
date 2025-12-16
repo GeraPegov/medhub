@@ -19,7 +19,9 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 async def add(request: Request):
     return templates.TemplateResponse(
         name="submit_article.html",
-        context={"request": request})
+        context={
+            "request": request
+            })
 
 
 @router.post('/article/submit/add')

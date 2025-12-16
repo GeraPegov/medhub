@@ -7,7 +7,6 @@ from app.application.services.article_service import ArticleService
 from app.application.services.cache_service import CachedService
 from app.application.services.comment_manager import CommentService
 from app.domain.entities.user import UserEntity
-from app.domain.logging import logger
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.cache import get_cache_article
 from app.presentation.dependencies.comments import get_comment_manager
@@ -61,7 +60,8 @@ async def change_article(
         'change_article.html',
         {
         'request': request,
-        'article': articles}
+        'article': articles
+        }
     )
 
 
@@ -72,7 +72,6 @@ async def create_article_access(
     dto: ArticleCreateDTO = Depends(parse_article_form),
     manager: ArticleService = Depends(get_article_manager),
 ):
-    logger.info(f'{dto.title} dto title')
     article = await manager.change_article(dto, article_id)
 
     return templates.TemplateResponse(

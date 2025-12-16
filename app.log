@@ -271,3 +271,18 @@
 2025-12-15 19:50:49,465 - venv - INFO - user []
 2025-12-15 20:09:22,623 - venv - INFO - user []
 2025-12-15 20:12:59,814 - venv - INFO - user []
+2025-12-16 19:36:10,322 - app.domain.logging - INFO - start login
+2025-12-16 19:36:10,322 - app.domain.logging - INFO - try create token
+2025-12-16 19:36:10,323 - app.domain.logging - INFO - start execute : ('gera5_7@mail.ru', 'qwer')
+2025-12-16 19:36:10,408 - app.domain.logging - INFO - valide token
+2025-12-16 19:36:10,408 - app.domain.logging - INFO - success token before create cookie eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZXhwIjoxNzY1OTIwOTcwfQ.Q3EBxofbdaFO2KIsDGOgFnN25SbmvbmWxi0MRHcitlk
+2025-12-16 19:36:10,409 - app.domain.logging - INFO - create response
+2025-12-16 19:36:13,934 - venv - INFO - user []
+2025-12-16 19:36:23,366 - venv - INFO - user []
+2025-12-16 19:36:24,223 - venv - INFO - user []
+2025-12-16 19:42:19,389 - venv - INFO - user []
+2025-12-16 19:42:20,351 - venv - INFO - user ['veliual']
+2025-12-16 19:42:27,851 - venv - INFO - user []
+2025-12-16 19:52:18,706 - venv - INFO - user ['veliual']
+2025-12-16 20:14:39,689 - app.domain.logging - INFO - start of form register
+2025-12-16 20:14:45,387 - app.domain.logging - INFO - start dependencies with date of ('gera5_7@mail.ru', 'qwer', 'chinaski')

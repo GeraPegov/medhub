@@ -9,6 +9,7 @@ async def parse_article_form(
         content: str = Form(),
         category:str = Form()
     ) -> ArticleCreateDTO:
+
     return ArticleCreateDTO(
         title=title,
         content=content,

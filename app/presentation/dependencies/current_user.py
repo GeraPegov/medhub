@@ -1,8 +1,8 @@
 from fastapi import Cookie, Depends
 
 from app.application.services.cache_service import CachedService
+from app.application.services.security.auth_service import AuthService
 from app.domain.entities.user import UserEntity
-from app.infrastructure.security.auth_service import AuthService
 from app.presentation.dependencies.auth import get_auth_service
 from app.presentation.dependencies.cache import get_cache_user
 

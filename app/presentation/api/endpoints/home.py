@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
@@ -12,12 +12,13 @@ templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 
 @router.get('/')
-async def full(
+async def home(
     request: Request,
     auth: UserEntity = Depends(get_current_user),
-    manager: ArticleService = Depends(get_article_manager)
-):
-    articles = await manager.show_all_articles()
+    article_service: ArticleService = Depends(get_article_manager)
+) -> Response:
+    articles = await article_service.show_all_articles()
+
     return templates.TemplateResponse(
         name='home.html', context={
             'auth': auth,

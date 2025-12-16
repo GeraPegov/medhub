@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.dto.articleAuth_dto import ArticleAuthDTO
 from app.application.services.register_user import UserRegistrationService
 from app.domain.logging import logger
-from app.presentation.dependencies.auth import get_auth_service, get_user_repository
+from app.presentation.dependencies.auth import get_auth_registration
 from app.presentation.dependencies.parse_user import parse_auth_form
 
 router = APIRouter()
@@ -24,25 +24,28 @@ async def page_of_register(
 
 @router.post('/auth/register')
 async def register(
+    request: Request,
     user_data: ArticleAuthDTO = Depends(parse_auth_form),
-    auth_service = Depends(get_auth_service),
-    user_repo = Depends(get_user_repository)
+    registration_service: UserRegistrationService = Depends(get_auth_registration)
 ):
-    use_case = UserRegistrationService(user_repo, auth_service)
-    try:
-        await use_case.execute(
-            email=user_data.email,
-            password=user_data.password,
-            username=user_data.username,
-            nickname=user_data.nickname
-        )
-        response = RedirectResponse(
-            url='/login',
-            status_code=303
-        )
-        return response
-    except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)) from None
+    user = await registration_service.execute(
+        email=user_data.email,
+        password=user_data.password,
+        username=user_data.username,
+        nickname=user_data.nickname
+    )
+
+    if not user:
+        return templates.TemplateResponse(
+        'register.html',
+        {
+        'request': request,
+        'error': 'Email уже зарегестрирован'
+        }
+    )
+    response = RedirectResponse(
+        url='/login',
+        status_code=303
+    )
+    return response
 

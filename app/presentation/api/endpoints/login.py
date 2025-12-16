@@ -3,17 +3,16 @@ from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 
-from app.application.services.login_user import UserAuthenticationService
-from app.domain.logging import logger
-from app.infrastructure.database.repositories.user_repository import UserRepository
-from app.infrastructure.security.auth_service import AuthService
-from app.presentation.dependencies.auth import get_auth_service, get_user_repository
+from app.application.services.security.login_user import UserAuthenticationService
+from app.presentation.dependencies.auth import (
+    get_auth_login,
+)
 
 router = APIRouter()
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 
-@router.get('/login')
+@router.get('/auth')
 def page_of_login(request: Request):
     return templates.TemplateResponse(
         'login.html',
@@ -25,42 +24,31 @@ async def login(
     request: Request,
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
-    auth_service: AuthService = Depends(get_auth_service),
-    user_repo: UserRepository = Depends(get_user_repository),
+    auth_service: UserAuthenticationService = Depends(get_auth_login),
 ):
-    logger.info('start login')
-
-    use_case = UserAuthenticationService(
-        user_repo=user_repo,
-        auth_service=auth_service)
-    try:
-        logger.info('try create token')
-        token = await use_case.execute(
-            email=form_data.username,
-            password=form_data.password
-        )
-        logger.info(f'success token before create cookie {token}')
-
-        response = RedirectResponse(
-            url='/',
-            status_code=303
-        )
-
-        response.set_cookie(
-            key='access_token',
-            value=token,
-            httponly=True,
-            samesite='lax'
-        )
-        logger.info('create response')
-        return response
-    except ValueError:
+    token = await auth_service.execute(
+        email=form_data.username,
+        password=form_data.password
+    )
+    if not token:
         return templates.TemplateResponse(
-            name='login.html',
-            context = {
-                'request': request,
-                'error': 'Неверный логин или пароль',
-                'username': form_data.username
-            },
-            status_code=400
-        )
+        'login.html',
+        {
+        'request': request,
+        'error': 'Неправильный логин или пароль'
+        }
+    )
+
+    response = RedirectResponse(
+        url='/',
+        status_code=303
+    )
+
+    response.set_cookie(
+        key='access_token',
+        value=token,
+        httponly=True,
+        samesite='lax'
+    )
+
+    return response

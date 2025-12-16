@@ -20,7 +20,7 @@
             Домой
         </a>
         {% if auth.user_id != user.user_id %}
-        <a href="/user/profile" class="item-menu">
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
             Профиль
         </a>
         {% endif %}

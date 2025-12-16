@@ -1,6 +1,6 @@
+from app.application.services.security.jwt_handler import JWTHandler
+from app.application.services.security.password_hasher import PasswordHasher
 from app.domain.interfaces.auth_service import IAuthService
-from app.infrastructure.security.jwt_handler import JWTHandler
-from app.infrastructure.security.password_hasher import PasswordHasher
 
 
 class AuthService(IAuthService):
@@ -13,7 +13,7 @@ class AuthService(IAuthService):
     def create_access_token(self, user_id: int) -> str:
         return self.jwt_handler.create_token(user_id)
 
-    def verify_token(self, token: str) -> int:
+    def verify_token(self, token: str) -> int | None:
         return self.jwt_handler.verify_token(token)
 
     def hash_password(self, password: str) -> str:

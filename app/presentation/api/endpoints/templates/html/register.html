@@ -56,6 +56,9 @@
                         required
                         >
                 </div>
+                {% if error %}
+                {{error}}
+                {% endif %}
                 <button type="submit" class="submit-btn">
                      Зарегестрироваться
                 </button>
