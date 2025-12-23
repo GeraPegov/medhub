@@ -6,13 +6,13 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
 from app.application.services.cache_service import CachedService
-from app.application.services.comment_manager import CommentService
+from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cache_user
-from app.presentation.dependencies.comments import get_comment_manager
+from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
@@ -64,11 +64,11 @@ async def comments(
     request: Request,
     unique_username: str,
     cache_service: CachedService = Depends(get_cache_user),
-    comment_manager: CommentService = Depends(get_comment_manager),
+    comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
     user = await cache_service.get_cache_user(unique_username)
-    comments = await comment_manager.show_by_author(user.user_id)
+    comments = await comment_service.show_by_author(user.user_id)
 
     return templates.TemplateResponse(
         'profile.html',
@@ -92,7 +92,9 @@ async def subscribe(
         subscriber_id=auth.user_id,
         author_unique_username=unique_username)
     await cache_service.update_user(user)
-    return RedirectResponse(url=f'/user/profile/{unique_username}', status_code=303)
+    return RedirectResponse(
+        url=f'/user/profile/{unique_username}',
+        status_code=303)
 
 
 @router.post("/user/profile/{unique_username}/unsubscribe")
@@ -106,7 +108,9 @@ async def unsubscribe(
         subscriber_id=auth.user_id,
         author_unique_username=unique_username)
     await cache_service.update_user(user)
-    return RedirectResponse(url=f'/user/profile/{unique_username}', status_code=303)
+    return RedirectResponse(
+        url=f'/user/profile/{unique_username}',
+        status_code=303)
 
 
 @router.get('/user/profile/{unique_username}/subscriptions')

@@ -20,9 +20,9 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(self, article_id: int, author_id: int, content: str):
+    async def create(self, mapping: dict) -> CommentEntity:
         pass
 
     @abstractmethod
-    async def delete(self, comment_id: int):
+    async def delete(self, comment_id: int) -> int | None:
         pass

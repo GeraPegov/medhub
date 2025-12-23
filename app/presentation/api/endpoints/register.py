@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.application.dto.articleAuth_dto import ArticleAuthDTO
+from app.application.dto.articleAuth_dto import UserDTO
 from app.application.services.register_user import UserRegistrationService
 from app.domain.logging import logger
 from app.presentation.dependencies.auth import get_auth_registration
@@ -25,15 +25,10 @@ async def page_of_register(
 @router.post('/auth/register')
 async def register(
     request: Request,
-    user_data: ArticleAuthDTO = Depends(parse_auth_form),
+    user_data: UserDTO = Depends(parse_auth_form),
     registration_service: UserRegistrationService = Depends(get_auth_registration)
 ):
-    user = await registration_service.execute(
-        email=user_data.email,
-        password=user_data.password,
-        username=user_data.username,
-        nickname=user_data.nickname
-    )
+    user = await registration_service.execute(user_data)
 
     if not user:
         return templates.TemplateResponse(
@@ -44,7 +39,7 @@ async def register(
         }
     )
     response = RedirectResponse(
-        url='/login',
+        url='/auth',
         status_code=303
     )
     return response

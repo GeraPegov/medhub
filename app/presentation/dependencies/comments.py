@@ -1,7 +1,7 @@
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.application.services.comment_manager import CommentService
+from app.application.services.comment_service import CommentService
 from app.domain.interfaces.commentRepositories import ICommentRepository
 from app.domain.interfaces.user_repository import IUserRepository
 from app.infrastructure.database.connection import get_db
@@ -16,7 +16,7 @@ def get_comment_repository(
 ) -> ICommentRepository:
     return CommentRepository(session)
 
-def get_comment_manager(
+def get_comment_service(
         comment_repository: ICommentRepository = Depends(get_comment_repository),
         user_repository: IUserRepository = Depends(get_user_repository)
 ) -> CommentService:

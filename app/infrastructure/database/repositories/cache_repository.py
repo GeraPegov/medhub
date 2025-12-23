@@ -21,9 +21,9 @@ class CachedRepository:
             key: str | int,
             mapping: dict,
             ttl: int = 3600
-    ):
+    ) -> bool:
         cache_key = f"{action}:{key}"
-        await self.connection.hmset(cache_key, mapping=mapping)
+        await self.connection.hset(cache_key, mapping=mapping)
         await self.connection.expire(cache_key, ttl)
 
         return True
@@ -66,10 +66,12 @@ class CachedRepository:
             self,
             user: UserEntity
     ):
-        await self.connection.delete(f'user:{user.user_id}', f'user:{user.unique_username}')
+        result = await self.connection.delete(f'user:{user.user_id}', f'user:{user.unique_username}')
+        return result
 
     async def delete_article(
             self,
             article_id: int
-    ):
-        await self.connection.delete(f'article:{article_id}')
+    ) -> int:
+        result = await self.connection.delete(f'article:{article_id}')
+        return result

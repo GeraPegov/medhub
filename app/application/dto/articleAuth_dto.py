@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 
 
-class ArticleAuthDTO(BaseModel):
+class UserDTO(BaseModel):
     email: EmailStr = Field(..., description="Email пользователя")
     password: str = Field(..., min_length=2, max_length=100, description="Пароль")
     username: str = Field(..., description='Уникальное имя')

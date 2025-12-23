@@ -8,9 +8,9 @@ class ArticleEntity:
     title: str
     content: str
     author_id: int
-    nickname: str | None = None
-    category: str | None = None
-    created_at: datetime | None = None
-    article_id: int | None = None
+    nickname: str
+    category: str
+    created_at: datetime
+    article_id: int
 
 

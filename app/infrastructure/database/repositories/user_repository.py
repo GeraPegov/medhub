@@ -41,12 +41,12 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user) if user else None
 
 
-    async def create(self, email: str, password_hash: str, username: str, nickname: str) -> UserEntity:
+    async def create(self, user_data: dict) -> UserEntity:
         user = User(
-            email=email,
-            password_hash=password_hash,
-            nickname=nickname,
-            unique_username=username
+            email=user_data['email'],
+            password_hash=user_data['password_hash'],
+            nickname=user_data['nickname'],
+            unique_username=user_data['unique_username']
         )
 
         self.session.add(user)

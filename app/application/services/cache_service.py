@@ -39,7 +39,7 @@ class CachedService:
     ):
         await self.cache.delete_user(user)
         mapping = {
-                'user_id': user.user_id,
+                'user_id': str(user.user_id),
                 'email': user.email,
                 'unique_username': user.unique_username,
                 'nickname': user.nickname,

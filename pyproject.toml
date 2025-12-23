@@ -1,70 +1,95 @@
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "your-fastapi-project"
+name = "medhub"
 version = "0.1.0"
+description = "Medical Hub FastAPI Application"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi",
-    "uvicorn",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "asyncpg",
+    "alembic",
+    "pydantic",
+    "pydantic-settings",
+    "python-jose[cryptography]",
+    "passlib[bcrypt]",
+    "python-multipart",
+    # добавь все свои зависимости из requirements.txt
 ]
 
 [project.optional-dependencies]
 dev = [
-    "ruff",
     "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "httpx",
+    "faker",
+    "ruff",
 ]
 
-# Конфигурация Ruff (рекомендуется)
+# Указываем setuptools, какие пакеты включать
+[tool.setuptools.packages.find]
+where = ["."]  # корень проекта
+include = ["app*", "alembic*"]  # включаем app и alembic
+exclude = ["tests*", "scripts*"]  # исключаем tests и scripts
+
+# Или можно явно указать пакеты:
+# [tool.setuptools]
+# packages = ["app", "alembic"]
+
+# Конфигурация Ruff
 [tool.ruff]
-# Длина строки
 line-length = 88
-
-# Версия Python
 target-version = "py311"
-
-# Исключить определенные папки
 exclude = [
     ".git",
     ".venv",
     "__pycache__",
     "build",
     "dist",
+    ".pytest_cache",
 ]
 
 [tool.ruff.lint]
-# Выберите правила для проверки
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
-    "I",   # isort (сортировка импортов)
+    "I",   # isort
     "N",   # pep8-naming
     "UP",  # pyupgrade
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
 ]
 
-# Игнорировать определенные правила
 ignore = [
-    "E501",  # line too long (если хотите игнорировать длинные строки)
-    "B008",  # Разрешить вызовы функций в значениях по умолчанию (для FastAPI Depends)
+    "E501",  # line too long
+    "B008",  # Depends() в FastAPI
 ]
 
-# Разрешить автофиксы
 fixable = ["ALL"]
-unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-# Игнорировать некоторые правила в тестах
 "tests/**/*.py" = ["E501"]
 
 [tool.ruff.format]
-# Форматирование в стиле Black
 quote-style = "double"
 indent-style = "space"
 
-# Альтернатива: конфигурация Flake8
-# (Flake8 не поддерживает pyproject.toml напрямую, 
-# нужен плагин flake8-pyproject или использовать .flake8 файл)
-[tool.flake8]
-max-line-length = 88
-exclude = [".git", "__pycache__", ".venv"]
-ignore = ["E203", "W503"]
+# Конфигурация pytest
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--tb=short",
+    "--cov=app",
+    "--cov-report=term-missing",
+]

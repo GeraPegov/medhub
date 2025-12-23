@@ -10,8 +10,14 @@ class ArticleService:
     async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
         return await self.repository.search_by_category(category)
 
-    async def submit_article(self, dto: ArticleCreateDTO, user_id: int) -> list[ArticleEntity]:
-        return await self.repository.save(dto, user_id)
+    async def submit_article(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity:
+        mapping = {
+            'title': dto.title,
+            'content': dto.content,
+            'author_id': author_id,
+            'category': dto.category
+        }
+        return await self.repository.save(mapping, author_id)
 
     async def delete_article(self, article_id: int) -> dict:
         return await self.repository.delete(article_id)
@@ -29,4 +35,9 @@ class ArticleService:
         return await self.repository.get_by_id(article_id)
 
     async def change_article(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity]:
-        return await self.repository.change(dto, article_id)
+        mapping = {
+            'title': dto.title,
+            'content': dto.content,
+            'category': dto.category
+        }
+        return await self.repository.change(mapping, article_id)

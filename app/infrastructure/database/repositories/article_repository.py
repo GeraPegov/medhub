@@ -4,7 +4,6 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.articleRepositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
@@ -16,18 +15,19 @@ class ArticleRepository(IArticleRepository):
         self.session = session
 
 
-    async def save(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity:
+    async def save(self, mapping: dict, author_id: int) -> ArticleEntity:
         author_orm = (await self.session.execute(
             select(User)
             .where(User.id==author_id)
         )).scalar_one()
         articles = Article(
-            title=dto.title,
-            content=dto.content,
-            author_id=author_id,
+            title=mapping['title'],
+            content=mapping['content'],
+            author_id=mapping['author_id'],
             author=author_orm,
-            category=dto.category
+            category=mapping['category']
         )
+
         self.session.add(articles)
         await self.session.commit()
         await self.session.refresh(articles)
@@ -106,15 +106,15 @@ class ArticleRepository(IArticleRepository):
             return None
         return await self._to_entity(articles)
 
-    async def change(self, dto: ArticleCreateDTO, article_id: int) -> ArticleEntity | None:
+    async def change(self, mapping: dict, article_id: int) -> ArticleEntity | None:
         orm_articles = await self.session.execute(
             update(Article)
             .where(Article.id==article_id)
             .options(selectinload(Article.author))
             .values(
-                title=dto.title,
-                content=dto.content,
-                category=dto.category
+                title=mapping['title'],
+                content=mapping['content'],
+                category=mapping['category']
             )
             .returning(Article)
         )

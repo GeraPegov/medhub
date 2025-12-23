@@ -14,10 +14,13 @@ class CommentService:
         return await self.comment_repository.show_by_author(author_id)
 
     async def create(self, article_id, content, author_id):
+        mapping = {
+            'article_id': article_id,
+            'content': content,
+            'author_id': author_id
+        }
         return await self.comment_repository.create(
-            article_id=article_id,
-            content=content,
-            author_id=author_id
+            mapping
         )
 
     async def delete(self, comment_id, author_id):

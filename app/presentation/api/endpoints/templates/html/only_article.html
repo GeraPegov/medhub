@@ -14,7 +14,7 @@
     </button>
     <div class='menu-items'> 
         {% if not login %}
-            <a href="/login" class="item-menu">
+            <a href="/auth" class="item-menu">
                 Войти
             </a>
         {% endif %}  
@@ -24,7 +24,7 @@
         <a href="/article/submit" class="item-menu">
             Добавить статью
         </a>
-        <a href="/user/profile" class="item-menu">
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
             Профиль
         </a>
         {% if auth %}

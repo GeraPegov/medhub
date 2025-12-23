@@ -22,16 +22,12 @@ async def lifespan(app: FastAPI):
     global redis_pool
     redis_pool = ConnectionPool.from_url(
         f'redis://{settings.HOST_REDIS}:{settings.PORT_REDIS}',
-        decode_responses=True)
-    # r = Redis(
-    #     host=settings.HOST_REDIS,
-    #     port=settings.PORT_REDIS,
-    #     decode_responses=True
-    #     )
+        decode_responses=True,
+        encoding='utf-8',
+        max_connections=10)
     yield
 
     await redis_pool.aclose()
-        # await pool.aclose()
 
 async def get_redis() -> AsyncGenerator[Redis, None]:
     if redis_pool is None:

@@ -23,10 +23,6 @@ from app.infrastructure.config import settings
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.infrastructure.database.connection import Base
-
-# from app.infrastructure.database.models.comment import Comment
-# from app.infrastructure.database.models.article import Article
-# from app.infrastructure.database.models.client import Client
 from app.infrastructure.database.models import Article, Comments, User
 
 target_metadata = Base.metadata
@@ -38,7 +34,7 @@ Comments.metadata.bind = target_metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-config.set_main_option('sqlalchemy.url', settings.MY_DB_URL)
+config.set_main_option('sqlalchemy.url', settings.PROD_DB_URL)
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.

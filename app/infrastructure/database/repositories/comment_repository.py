@@ -14,21 +14,21 @@ class CommentRepository(ICommentRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, author_id: int, article_id: int, content: str) -> CommentEntity:
+    async def create(self, mapping: dict) -> CommentEntity:
         author_orm = (await self.session.execute(
             select(User)
-            .where(User.id==author_id)
+            .where(User.id==mapping['author_id'])
         )).scalar_one()
 
         article_orm = (await self.session.execute(
             select(Article)
-            .where(Article.id==article_id)
+            .where(Article.id==mapping['article_id'])
         )).scalar_one()
 
         comment = Comments(
-            content=content,
-            author_id=author_id,
-            article_id=article_id,
+            content=mapping['content'],
+            author_id=mapping['author_id'],
+            article_id=mapping['article_id'],
             author=author_orm,
             article=article_orm,
         )
@@ -41,30 +41,32 @@ class CommentRepository(ICommentRepository):
 
         return comments[0]
 
-    async def show_by_article(self, article_id: int) -> list[CommentEntity]:
+    async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
+            .options(selectinload(Comments.article))
             .where(Comments.article_id==int(article_id))
         )
 
         comments = comments_orm.scalars().all()
 
-        return await self._to_entity(comments)
+        return await self._to_entity(comments) if comments else None
 
-    async def show_by_author(self, user_id: int) -> list[CommentEntity]:
+    async def show_by_author(self, user_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comments)
             .options(selectinload(Comments.author))
+            .options(selectinload(Comments.article))
             .where(Comments.author_id==user_id)
         )
 
         comments = comments_orm.scalars().all()
 
-        return await self._to_entity(comments)
+        return await self._to_entity(comments) if comments else None
 
 
-    async def delete(self, comment_id: int) -> int:
+    async def delete(self, comment_id: int) -> int | None:
         comments_del_orm = await self.session.execute(
             delete(Comments)
             .where(Comments.id==comment_id)
@@ -73,11 +75,12 @@ class CommentRepository(ICommentRepository):
         article_id = comments_del_orm.scalar_one()
         await self.session.commit()
 
-        return article_id
+        return article_id if article_id else None
 
     async def _to_entity(self, entity: Sequence[Comments]):
         return [CommentEntity(
             id=comment.id,
+            title_of_article=comment.article.title,
             author_id=comment.author_id,
             article_id=comment.article_id,
             content=comment.content,

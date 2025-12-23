@@ -19,7 +19,7 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(self, email: str, password_hash: str, username: str, nickname: str) -> UserEntity:
+    async def create(self, user_data: dict) -> UserEntity:
         pass
 
     @abstractmethod

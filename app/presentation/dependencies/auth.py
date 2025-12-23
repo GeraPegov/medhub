@@ -21,6 +21,7 @@ def get_user_repository(session: AsyncSession = Depends(get_db)) -> IUserReposit
 def get_user_service(repository: IUserRepository = Depends(get_user_repository)) -> UserService:
     return UserService(repository)
 
+
 def get_auth_login(
         user_repo: UserRepository = Depends(get_user_repository),
         auth_service: AuthService = Depends(get_auth_service)
@@ -29,6 +30,7 @@ def get_auth_login(
         user_repo=user_repo,
         auth_service=auth_service
     )
+
 
 def get_auth_registration(
         user_repo: UserRepository = Depends(get_user_repository),

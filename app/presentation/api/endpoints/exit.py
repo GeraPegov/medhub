@@ -10,6 +10,7 @@ async def exit(
             url='/',
             status_code=303
         )
+
     response.delete_cookie(
         key='access_token'
     )

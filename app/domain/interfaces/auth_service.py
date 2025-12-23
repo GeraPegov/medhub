@@ -9,7 +9,6 @@ class IAuthService(ABC):
 
     @abstractmethod
     async def verify_token(self, token: str) -> int:
-        '''Возвращает user_id из токена'''
         pass
 
     @abstractmethod
