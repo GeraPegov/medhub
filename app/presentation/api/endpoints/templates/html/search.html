@@ -4,183 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Результаты поиска</title>
-    <style>
-        /* Используйте тот же CSS что и в articles.html */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: white;
-            text-align: center;
-            font-size: 2.5em;
-            margin-bottom: 40px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .article-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .article-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-        }
-        
-        .article-header {
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-        
-        .article-title {
-            color: #333;
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
-        
-        .article-meta {
-            display: flex;
-            gap: 20px;
-            color: #666;
-            font-size: 0.9em;
-        }
-        
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .meta-item::before {
-            content: "•";
-            color: #667eea;
-            font-weight: bold;
-        }
-        
-        .article-content {
-            color: #444;
-            line-height: 1.8;
-            font-size: 1.1em;
-        }
-        
-        .author {
-            color: #667eea;
-            font-weight: 600;
-        }
-        
-        .date {
-            color: #888;
-        }
-        
-        .no-results {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            text-align: center;
-            color: #666;
-        }
-        
-        .back-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        
-        .home-button-container {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-
-        .home-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            color: #667eea;
-            text-decoration: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .home-button:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        .home-button:active {
-            transform: translateY(0);
-        }
-
-    </style>
+    <link rel="stylesheet" href="/static/css/search.css">
+    <script src="/static/js/menu.js" defer></script>
 </head>
 <body>
-    <div class="home-button-container">
-        <a href="/" class="home-button">
-            🏠 Домой
+    <button class="menu-icon">
+        <i class="fa-solid fa-align-justify"></i>
+    </button>
+    <div class='menu-items'>  
+        {% if not auth %}
+        <a href="/auth" class="item-menu">
+            Войти
         </a>
-    </div>
-
-
-    <div class="container">
-        <h1>🔍 Результаты поиска: "{{ title }}"</h1>
-        
-        {% if articles %}
-            {% for article in articles %}
-            <div class="article-card">
-                <div class="article-header">
-                    <h2 class="article-title">{{ article.title }}</h2>
-                    <div class="article-meta">
-                        <div class="meta-item">
-                            <span class="author">{{ article.author }}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="article-content">
-                    <p>{{ article.content }}</p>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="no-results">
-                <h2>Ничего не найдено 😔</h2>
-                <p>Попробуйте изменить запрос</p>
-                <a href="/" class="back-link">Вернуться назад</a>
-            </div>
+        {% endif %}  
+        <a href="/article/submit" class="item-menu">
+            Добавить статью
+        </a>
+        <a href="/articles/search" class="item-menu">
+            Поиск
+        </a>
+        {% if auth %}
+        <a href="/exit"  class="item-menu">
+            Выход
+        </a>
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
+            Профиль
+        </a>
         {% endif %}
     </div>
+    <div class="container">
+        <div class="category-menu">
+            <a href="/articles/search/category/Питание" class="category-link">Питание</a>
+            <a href="/articles/search/category/Биомеханика" class="category-link">Биомеханика</a>
+            <a href="/articles/search/category/Биохимия" class="category-link">Биохимия и метаболизм</a>
+            <a href="/articles/search/category/Физиология" class="category-link">Физиология</a>
+            <a href="/articles/search/category/Исследования" class="category-link">Анализ исследований</a>
+        </div>
+{% if articles %}
+        {% for article in articles %}
+        <div class="article-card">
+            <div class="article-header">
+                <h2 class="article-title">{{ article.title }}</h2>
+                <div class="article-meta">
+                    <div class="meta-item">
+                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="author">{{ article.nickname }}</span>
+                        <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
+                    </div>
+                    <div class="meta-item">
+                        <span class="category">{{ article.category }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>{{ article.content[0:300] }}...
+                    <a href="/article/{{ article.article_id }}" class="read-more">
+                        Показать полностью
+                    </a>
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
 </body>
 </html>

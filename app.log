@@ -13,3 +13,25 @@
 2025-12-19 17:46:15,561 - venv - INFO - user []
 2025-12-19 17:46:24,162 - venv - INFO - user ['chinaski']
 2025-12-23 13:38:47,621 - venv - INFO - user []
+2025-12-25 11:41:39,397 - venv - INFO - user []
+2025-12-25 12:06:13,088 - venv - INFO - user []
+2025-12-25 12:06:21,647 - venv - INFO - user []
+2025-12-25 13:42:30,710 - venv - INFO - user []
+2025-12-25 13:42:32,498 - venv - INFO - user []
+2025-12-25 13:42:34,004 - venv - INFO - user []
+2025-12-25 13:42:58,144 - venv - INFO - user []
+2025-12-25 13:44:44,729 - venv - INFO - user []
+2025-12-25 16:26:59,858 - venv - INFO - user []
+2025-12-25 17:06:26,476 - app.domain.logging - INFO - start of form register
+2025-12-25 17:06:49,665 - app.domain.logging - INFO - create hash = Wording123
+2025-12-25 17:08:41,635 - app.domain.logging - INFO - start of form register
+2025-12-25 17:09:01,280 - app.domain.logging - INFO - create hash = Wording1233
+2025-12-25 17:15:35,804 - app.domain.logging - INFO - start of form register
+2025-12-25 17:16:18,289 - venv - INFO - user []
+2025-12-25 17:17:44,374 - venv - INFO - user []
+2025-12-25 17:19:32,795 - venv - INFO - user []
+2025-12-25 17:22:53,560 - app.domain.logging - INFO - start of form register
+2025-12-25 17:23:23,691 - venv - INFO - user []
+2025-12-25 17:23:34,104 - venv - INFO - user []
+2025-12-25 17:24:06,503 - venv - INFO - user []
+2025-12-25 17:25:53,895 - venv - INFO - user []

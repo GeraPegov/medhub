@@ -15,7 +15,13 @@ class UserService:
         return await self.repository.get_by_email(email)
 
     async def create(self, email: str, password_hash: str, username: str, nickname: str) -> UserEntity:
-        return await self.repository.create(email, password_hash, username, nickname)
+        mapping = {
+            'password_hash': password_hash,
+            'username': username,
+            'email': email,
+            'nickname': nickname
+        }
+        return await self.repository.create(mapping)
 
     async def get_by_username(self, username: str) -> UserEntity | None:
         return await self.repository.get_by_username(username)

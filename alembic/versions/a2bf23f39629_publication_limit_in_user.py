@@ -1,22 +1,21 @@
-"""init
+"""publication limit in user
 
-Revision ID: 220deecddfcd
+Revision ID: a2bf23f39629
 Revises: 
-Create Date: 2025-12-19 17:31:51.762885
+Create Date: 2025-12-25 17:22:20.496002
 
 """
-from collections.abc import Sequence
+from typing import Sequence, Union
 
+from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
-from alembic import op
-
 # revision identifiers, used by Alembic.
-revision: str = '220deecddfcd'
-down_revision: str | Sequence[str] | None = None
-branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = None
+revision: str = 'a2bf23f39629'
+down_revision: Union[str, Sequence[str], None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
@@ -30,6 +29,8 @@ def upgrade() -> None:
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('registration_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('subscriptions', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('publication_limit', sa.Integer(), nullable=True),
+    sa.Column('first_publication_date', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('unique_username')

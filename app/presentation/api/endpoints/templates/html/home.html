@@ -23,6 +23,9 @@
         <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
             Профиль
         </a>
+        <a href="/articles/search" class="item-menu">
+            Поиск
+        </a>
         {% if login %}
         <a href="/exit"  class="item-menu">
             Выход
@@ -31,7 +34,7 @@
     </div>
     <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
     <div class="search-container">
-        <form action="/articles/search" method="get" class="search-form-wrapper">
+        <form action="/articles/search/title" method="get" class="search-form-wrapper">
             <div class="search-wrapper" id="searchWrapper">
                 <input 
                     type="text" 

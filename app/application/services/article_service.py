@@ -1,38 +1,47 @@
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.articleRepositories import IArticleRepository
+from app.domain.interfaces.logic_repository import ILogicRepository
 
 
 class ArticleService:
-    def __init__(self, repository: IArticleRepository):
-        self.repository = repository
+    def __init__(
+            self,
+            base_repository: IArticleRepository,
+            logic_repository: ILogicRepository
+            ):
+        self.base_repository = base_repository
+        self.logic_repository = logic_repository
 
     async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
-        return await self.repository.search_by_category(category)
+        return await self.base_repository.search_by_category(category)
 
-    async def submit_article(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity:
+    async def submit_article(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity | None:
+        check_limited = await self.logic_repository.check_limited(author_id)
+        if not check_limited:
+            return None
         mapping = {
             'title': dto.title,
             'content': dto.content,
             'author_id': author_id,
             'category': dto.category
         }
-        return await self.repository.save(mapping, author_id)
+        return await self.base_repository.save(mapping, author_id)
 
     async def delete_article(self, article_id: int) -> dict:
-        return await self.repository.delete(article_id)
+        return await self.base_repository.delete(article_id)
 
     async def show_all_articles(self) -> list[ArticleEntity] | None:
-        return await self.repository.all()
+        return await self.base_repository.all()
 
-    async def search_article(self, title: str) -> list[ArticleEntity]:
-        return await self.repository.search_by_title(title)
+    async def search_by_title(self, title: str) -> list[ArticleEntity]:
+        return await self.base_repository.search_by_title(title)
 
     async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
-        return await self.repository.get_user_articles(user_id)
+        return await self.base_repository.get_user_articles(user_id)
 
     async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
-        return await self.repository.get_by_id(article_id)
+        return await self.base_repository.get_by_id(article_id)
 
     async def change_article(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity]:
         mapping = {
@@ -40,4 +49,4 @@ class ArticleService:
             'content': dto.content,
             'category': dto.category
         }
-        return await self.repository.change(mapping, article_id)
+        return await self.base_repository.change(mapping, article_id)

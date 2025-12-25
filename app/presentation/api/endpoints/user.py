@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
-from app.application.services.cache_service import CachedService
+from app.application.services.cache_service import CachedServiceUser
 from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
@@ -24,7 +24,7 @@ router = APIRouter()
 async def profile_another_user_by_username(
     request: Request,
     unique_username: str,
-    cache_service: CachedService = Depends(get_cache_user),
+    cache_service: CachedServiceUser = Depends(get_cache_user),
     auth: UserEntity = Depends(get_current_user)
 ):
     entity_user = await cache_service.get_cache_user(unique_username)
@@ -42,7 +42,7 @@ async def profile_another_user_by_username(
 async def articles(
     request: Request,
     unique_username: str,
-    cache_service: CachedService = Depends(get_cache_user),
+    cache_service: CachedServiceUser = Depends(get_cache_user),
     article_service: ArticleService = Depends(get_article_manager),
     auth: UserEntity = Depends(get_current_user)
 ):
@@ -63,7 +63,7 @@ async def articles(
 async def comments(
     request: Request,
     unique_username: str,
-    cache_service: CachedService = Depends(get_cache_user),
+    cache_service: CachedServiceUser = Depends(get_cache_user),
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
@@ -86,7 +86,7 @@ async def subscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
-    cache_service: CachedService = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await user_service.subscribe(
         subscriber_id=auth.user_id,
@@ -102,7 +102,7 @@ async def unsubscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
-    cache_service: CachedService = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await user_service.unsubscribe(
         subscriber_id=auth.user_id,
@@ -118,7 +118,7 @@ async def subscriptions(
     request: Request,
     unique_username: str,
     auth: UserEntity = Depends(get_current_user),
-    cache_service: CachedService = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await cache_service.get_cache_user(unique_username)
 

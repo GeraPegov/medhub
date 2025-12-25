@@ -2,8 +2,7 @@ import asyncio
 
 from app.infrastructure.database.connection import (
     create_database_if_not_exists,
-    create_tables,
-    prod_engine,
+    prod_engine
 )
 
 
@@ -12,7 +11,7 @@ async def init_production_db():
 
     await create_database_if_not_exists('medhub')
 
-    await create_tables(prod_engine)
+    # await create_tables(prod_engine)
 
     await prod_engine.dispose()
 

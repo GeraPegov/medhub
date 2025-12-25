@@ -15,6 +15,7 @@ class UserAuthenticationService:
 
     async def execute(self, email: str, password: str) -> str | None:
         user = await self.user_repo.get_by_email(email)
+        print(user.password_hash)
 
         if not user:
             return None

@@ -5,7 +5,7 @@ from fastapi import Depends, FastAPI
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
 
-from app.application.services.cache_service import CachedService
+from app.application.services.cache_service import CachedServiceUser, CachedServiceArticle
 from app.infrastructure.config import settings
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
@@ -49,7 +49,7 @@ async def get_cache_user(
     cache: CachedRepository = Depends(get_cash_repositories),
     repo_user: UserRepository = Depends(get_user_repository)
         ):
-    return CachedService(
+    return CachedServiceUser(
         cache=cache,
         repo_user = repo_user
     )
@@ -58,7 +58,7 @@ async def get_cache_article(
     cache: CachedRepository = Depends(get_cash_repositories),
     repo_article: ArticleRepository = Depends(get_article_repository)
         ):
-    return CachedService(
+    return CachedServiceArticle(
         cache=cache,
         repo_article=repo_article
     )

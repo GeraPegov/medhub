@@ -1,3 +1,9 @@
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
 body {
     font-family: cursive;
     background: linear-gradient(135deg, #1A1A1D 0%, #C5C6C7 100%);
@@ -13,7 +19,7 @@ body {
     background-size: 25px;
     position: fixed;
     display: flex;
-    border: 2px solid #042c8380;
+    border: 2px solid #090a0c80;
     border-radius: 10px;
     height: 40px;
     cursor: pointer;

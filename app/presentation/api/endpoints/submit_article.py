@@ -15,7 +15,15 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
 
 @router.get("/article/submit", response_class=HTMLResponse)
-async def add(request: Request):
+async def add(
+    request: Request,
+    auth: UserEntity = Depends(get_current_user)
+    ):
+    if not auth:
+        return RedirectResponse(
+            url='/auth',
+            status_code=303
+        )
     return templates.TemplateResponse(
         name="submit_article.html",
         context={
@@ -30,7 +38,9 @@ async def create_article(
     manager: ArticleService = Depends(get_article_manager),
     user: UserEntity = Depends(get_current_user)
 ):
-    await manager.submit_article(dto, user.user_id)
+    article = await manager.submit_article(dto, user.user_id)
+    if not article:
+        return 'limited publication'
     response = RedirectResponse(
         url=f'/user/profile/{user.unique_username}',
         status_code=303

@@ -11,27 +11,26 @@ from app.infrastructure.database.repositories.cache_repository import CachedRepo
 from app.infrastructure.database.repositories.user_repository import UserRepository
 
 
-class CachedService:
-    def __init__(self,
-                cache: CachedRepository,
-                repo_user: UserRepository | None = None,
-                repo_article: ArticleRepository | None = None
-                ):
+class BasedCachedService:
+    def __init__(self, cache: CachedRepository):
         self.cache = cache
-        self.repo_user = repo_user
-        self.repo_article = repo_article
 
     async def _safe_cache(
             self,
-            action: str,
             key: str | int,
             mapping: dict,
             ttl: int = 3600
     ):
-        try:
-            await self.cache.create_cache(action, key, mapping, ttl)
-        except Exception as e:
-            logger.error(f"Failed to cache {action}:{key}: {e}")
+        await self.cache.create_cache('user', key, mapping, ttl)
+
+
+class CachedServiceUser(BasedCachedService):
+    def __init__(self,
+                cache: CachedRepository,
+                repo_user: UserRepository
+                ):
+        super().__init__(cache)
+        self.repo_user = repo_user
 
     async def update_user(
             self,
@@ -46,7 +45,6 @@ class CachedService:
                 'subscriptions': json.dumps(list(user.subscriptions))
             }
         await self._safe_cache(
-            'user',
             user.unique_username,
             mapping=mapping
         )
@@ -76,11 +74,19 @@ class CachedService:
                 'subscriptions': json.dumps(list(result.subscriptions))
             }
             await self._safe_cache(
-                'user',
                 cache_key,
                 mapping=mapping
             )
         return result
+
+
+class CachedServiceArticle(BasedCachedService):
+    def __init__(self,
+                cache: CachedRepository,
+                repo_article: ArticleRepository
+                ):
+        super().__init__(cache)
+        self.repo_article = repo_article
 
     async def get_cache_article(
             self,
@@ -103,7 +109,6 @@ class CachedService:
                 'article_id': result.article_id
             }
             await self._safe_cache(
-                'article',
                 key,
                 mapping=mapping
             )

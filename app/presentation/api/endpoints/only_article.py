@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
-from app.application.services.cache_service import CachedService
+from app.application.services.cache_service import CachedServiceArticle
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_manager
@@ -21,7 +21,7 @@ router = APIRouter()
 async def show_article(
     request: Request,
     article_id: int,
-    cache_service: CachedService = Depends(get_cache_article),
+    cache_service: CachedServiceArticle = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
