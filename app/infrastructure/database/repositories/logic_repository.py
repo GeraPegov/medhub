@@ -1,9 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import  date, datetime
 
-from sqlalchemy import select, update
+from sqlalchemy.sql import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.interfaces.logic_repository import ILogicRepository
+from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.user import User
 
 
@@ -14,43 +15,14 @@ class LogicRepository(ILogicRepository):
     ):
         self.session = session
 
-    async def check_limited(self, user_id: int) -> bool:
+    async def check_limited(self, user_id: int):
+        today = datetime.now().date()
         quanity_publication = (await self.session.execute(
-            select(User)
-            .where(User.id==user_id)
-        )).scalar_one()
-        print(f'hello it is quanity_publication {quanity_publication}')
-        if quanity_publication.publication_limit < 2:
-            if quanity_publication.publication_limit == 0:
-                update_orm = await self.session.execute(
-                    update(User)
-                    .where(User.id==user_id)
-                    .values(first_publication_date=datetime.now(),
-                            publication_limit=User.publication_limit+1)
-                    .returning(User.publication_limit)
-                )
-                print(f'hello tthis is how end quanity publication 1 {update_orm.scalar_one_or_none()}')
-                return True
-            else:
-                update_orm = await self.session.execute(
-                    update(User)
-                    .where(User.id==user_id)
-                    .values(publication_limit=User.publication_limit+1)
-                    .returning(User.publication_limit)
-                )
-                print(f'hello tthis is how end quanity publication 2 {update_orm.scalar_one_or_none()}')
-                return True
-        else:
-            time_add = timedelta(days=1)
-            if quanity_publication.first_publication_date < quanity_publication.first_publication_date + time_add:
-                return False
-            else:
-                update_orm = await self.session.execute(
-                    update(User)
-                    .where(User.id==user_id)
-                    .values(publication_limit=1,
-                            first_publication_date=datetime.now())
-                    .returning(User.first_publication_date)
-                )
-                print(f'hello this is how end quanity publication 3 {update_orm.scalar_one_or_none()}')
-                return True
+            select(func.count(Article.id))
+            .where(Article.author_id==user_id)
+            .where(func.date(Article.created_at)==today)
+        ))
+
+        result = quanity_publication.scalar_one()
+        return True if result < 3 else False
+

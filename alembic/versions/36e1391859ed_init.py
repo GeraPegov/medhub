@@ -1,8 +1,8 @@
-"""publication limit in user
+"""init
 
-Revision ID: a2bf23f39629
+Revision ID: 36e1391859ed
 Revises: 
-Create Date: 2025-12-25 17:22:20.496002
+Create Date: 2025-12-28 13:52:38.869545
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision: str = 'a2bf23f39629'
+revision: str = '36e1391859ed'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -29,8 +29,6 @@ def upgrade() -> None:
     sa.Column('password_hash', sa.String(length=255), nullable=False),
     sa.Column('registration_date', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
     sa.Column('subscriptions', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
-    sa.Column('publication_limit', sa.Integer(), nullable=True),
-    sa.Column('first_publication_date', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('unique_username')
