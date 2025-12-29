@@ -71,14 +71,25 @@ async def create_article_access(
     request: Request,
     article_id: int,
     dto: ArticleCreateDTO = Depends(parse_article_form),
-    manager: ArticleService = Depends(get_article_manager),
+    article_service: ArticleService = Depends(get_article_manager),
+    auth: UserEntity = Depends(get_current_user)
 ):
-    article = await manager.change_article(dto, article_id)
+    article = await article_service.change_article(dto, article_id)
 
     return templates.TemplateResponse(
         'only_article.html',
         {
+        'auth': auth,
         'request': request,
         'article': article
         }
     )
+
+
+@router.post('/article/like')
+async def like(
+    request: Request,
+    auth: UserEntity = Depends(get_current_user),
+    article_service: ArticleService = Depends(get_article_manager)
+):
+    pass

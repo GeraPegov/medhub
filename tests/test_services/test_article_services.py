@@ -15,7 +15,8 @@ async def test_mock_service_article_true(mock_logic_db_repository, mock_article_
     )
 
     mock_logic_db_repository.check_limited.return_value = True
-    mock_article_db_repository.save.return_value = ArticleEntity(article_id=1,
+    mock_article_db_repository.save.return_value = ArticleEntity(
+        article_id=1,
         title='Test',
         content='Contentcontent',
         author_id=123,

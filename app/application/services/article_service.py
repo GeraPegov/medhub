@@ -50,3 +50,6 @@ class ArticleService:
             'category': dto.category
         }
         return await self.base_repository.change(mapping, article_id)
+    
+    async def like(self, article_id: int, user_id: int):
+        return await self.base_repository.like(article_id, user_id)

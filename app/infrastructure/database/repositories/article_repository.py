@@ -106,6 +106,7 @@ class ArticleRepository(IArticleRepository):
             return None
         return await self._to_entity(articles)
 
+
     async def change(self, mapping: dict, article_id: int) -> ArticleEntity | None:
         orm_articles = await self.session.execute(
             update(Article)
@@ -125,6 +126,13 @@ class ArticleRepository(IArticleRepository):
             return None
         entities = await self._to_entity(articles)
         return entities[0]
+
+
+    async def like(self, user_id: int, article_id: int) -> ArticleEntity:
+        orm_article = await self.session.execute(
+            select(Article)
+            .where(Article.id==article_id)
+        )
 
 
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:

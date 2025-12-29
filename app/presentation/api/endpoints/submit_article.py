@@ -27,7 +27,8 @@ async def add(
     return templates.TemplateResponse(
         name="submit_article.html",
         context={
-            "request": request
+            "request": request,
+            'auth': auth
             })
 
 
@@ -35,15 +36,14 @@ async def add(
 async def create_article(
     response: Response,
     dto: ArticleCreateDTO = Depends(parse_article_form),
-    manager: ArticleService = Depends(get_article_manager),
-    user: UserEntity = Depends(get_current_user)
+    article_service: ArticleService = Depends(get_article_manager),
+    auth: UserEntity = Depends(get_current_user)
 ):
-    article = await manager.submit_article(dto, user.user_id)
+    article = await article_service.submit_article(dto, auth.user_id)
     if not article:
         return 'limited publication'
     response = RedirectResponse(
-        url=f'/user/profile/{user.unique_username}',
+        url=f'/user/profile/{auth.unique_username}',
         status_code=303
     )
-
     return response

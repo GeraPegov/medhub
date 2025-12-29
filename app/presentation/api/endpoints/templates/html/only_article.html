@@ -59,13 +59,20 @@
         
             </div>
         </div>
-        
-        <!-- Секция комментариев -->
-        <!-- <div class="comments-section">
-            <h2 class="comments-header">
-                Комментарии ({{ comments|length }})
-            </h2> -->
-            
+        <div class="like-text">
+            Понравилась статья? Поставь лайк, поддержи автора! 
+        </div>
+        <div class="like-dislike">
+            <form action="/article/like" method="POST">
+                <button type="submit" class="like-btn">
+                </button>
+            </form>
+            <form action="/article/dislike" method="POST">
+                <button type="submit" class="dislike-btn">
+                </button>
+            </form>
+        </div>
+
         <h2>Комментарии</h2>
         <div class="comment-section">
             {% if auth %}

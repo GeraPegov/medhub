@@ -17,8 +17,8 @@ class Comments(Base, AsyncAttrs):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id'))
     article_id: Mapped[int] = mapped_column(Integer, ForeignKey('articles.id', ondelete='CASCADE'))
 
     article: Mapped['Article'] = relationship('Article', back_populates='comments')
-    author: Mapped['User'] = relationship('User', back_populates='comments')
+    user: Mapped['User'] = relationship('User', back_populates='comments')

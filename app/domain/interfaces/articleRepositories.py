@@ -23,7 +23,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
+    async def get_by_id(self, article_id: int) -> ArticleEntity:
         pass
 
     @abstractmethod
@@ -39,6 +39,10 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def change(self, mapping: dict, article_id: int) -> list[ArticleEntity]:
+    async def change(self, mapping: dict, article_id: int) -> ArticleEntity:
+        pass
+
+    @abstractmethod
+    async def like(self, user_id: int, article_id: int) -> ArticleEntity:
         pass
 

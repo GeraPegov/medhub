@@ -12,7 +12,7 @@ body {
     text-align: center;
     flex-direction: column;
     margin: 0 100px;
-    gap: 30px
+    gap: 15px
 }
 
 .article-card {
@@ -140,4 +140,30 @@ form {
 .item-menu:hover {
     background-color: #1A1A1D;
     color: white
+}
+
+.like-dislike {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.like-btn {
+    background-image: url('/static/images/like.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    background-size: 20px;
+    margin: auto;
+    border: none;
+    background-color: rgba(255, 192, 203, 0);
+}
+
+.dislike-btn {
+    background-image: url('/static/images/dislike.png');
+    background-repeat: no-repeat;
+    background-position: 15px;
+    background-size: 20px;
+    margin: auto;
+    border: none;
+    background-color: rgba(255, 192, 203, 0);
 }

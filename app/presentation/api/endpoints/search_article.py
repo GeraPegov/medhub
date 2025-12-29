@@ -16,12 +16,13 @@ templates = Jinja2Templates(directory="app/presentation/api/endpoints/templates/
 
 @router.get('/articles/search')
 async def search(
-    request: Request
+    request: Request,
+    auth: UserEntity = Depends(get_current_user)
 ):
-    
     return templates.TemplateResponse(
         'search.html',
         {
+        'auth': auth,
         'request': request
         }
     )

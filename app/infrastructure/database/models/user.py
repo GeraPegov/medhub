@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Integer, NotNullable, String, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.mutable import MutableList
@@ -13,6 +13,13 @@ if TYPE_CHECKING:
     from app.infrastructure.database.models.article import Article
     from app.infrastructure.database.models.comment import Comments
 
+article_likes = Table(
+    'article_likes',
+    Base.metadata,
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('article_id', Integer, ForeignKey('articles.id'), primary_key=True),
+    Column('liked_at', DateTime, server_default=func.now())  # опционально
+)
 
 class User(Base, AsyncAttrs):
     __tablename__ = 'user'
@@ -26,5 +33,6 @@ class User(Base, AsyncAttrs):
     registration_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     subscriptions: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSONB), default=list)
 
-    articles: Mapped[list['Article']] = relationship('Article', back_populates='author')
-    comments: Mapped[list['Comments']] = relationship('Comments', back_populates='author')
+    liked_articles: Mapped[list['Article']] = relationship('Article', secondary=article_likes, back_populates='like_by_users')
+    articles: Mapped[list['Article']] = relationship('Article', back_populates='user')
+    comments: Mapped[list['Comments']] = relationship('Comments', back_populates='user')
