@@ -1,5 +1,6 @@
 
 import json
+from typing import Optional
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
@@ -8,6 +9,7 @@ from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
+from app.infrastructure.database.repositories.logic_repository import LogicRepository
 from app.infrastructure.database.repositories.user_repository import UserRepository
 
 
@@ -83,17 +85,25 @@ class CachedServiceUser(BasedCachedService):
 class CachedServiceArticle(BasedCachedService):
     def __init__(self,
                 cache: CachedRepository,
-                repo_article: ArticleRepository
+                repo_article: ArticleRepository,
+                repo_logic: LogicRepository
                 ):
         super().__init__(cache)
         self.repo_article = repo_article
+        self.repo_logic = repo_logic
 
     async def get_cache_article(
             self,
-            key: int
+            key: int,
+            user_id: int | None
     ) -> ArticleEntity | None:
         result = await self.cache.get_cache_article(key)
         if result:
+            if user_id:
+                reaction = await self.repo_logic.check_reaction(
+                    user_id=user_id,
+                    article_id=key
+                )
             return result
 
         result = await self.repo_article.get_by_id(key)
@@ -102,11 +112,13 @@ class CachedServiceArticle(BasedCachedService):
                 'unique_username': result.unique_username,
                 'title': result.title,
                 'content': result.content,
-                'author_id': result.author_id,
+                'user_id': result.user_id,
                 'nickname': result.nickname,
                 'created_at': result.created_at.timestamp(),
                 'category': result.category,
-                'article_id': result.article_id
+                'article_id': result.article_id,
+                'likes': result.likes,
+                'dislike': result.dislikes
             }
             await self._safe_cache(
                 key,

@@ -15,9 +15,9 @@ class CommentRepository(ICommentRepository):
         self.session = session
 
     async def create(self, mapping: dict) -> CommentEntity:
-        author_orm = (await self.session.execute(
+        user_orm = (await self.session.execute(
             select(User)
-            .where(User.id==mapping['author_id'])
+            .where(User.id==mapping['user_id'])
         )).scalar_one()
 
         article_orm = (await self.session.execute(
@@ -29,7 +29,7 @@ class CommentRepository(ICommentRepository):
             content=mapping['content'],
             author_id=mapping['author_id'],
             article_id=mapping['article_id'],
-            author=author_orm,
+            user=user_orm,
             article=article_orm,
         )
 
@@ -44,7 +44,7 @@ class CommentRepository(ICommentRepository):
     async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comments)
-            .options(selectinload(Comments.author))
+            .options(selectinload(Comments.user))
             .options(selectinload(Comments.article))
             .where(Comments.article_id==int(article_id))
         )
@@ -56,9 +56,9 @@ class CommentRepository(ICommentRepository):
     async def show_by_author(self, user_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comments)
-            .options(selectinload(Comments.author))
+            .options(selectinload(Comments.user))
             .options(selectinload(Comments.article))
-            .where(Comments.author_id==user_id)
+            .where(Comments.user_id==user_id)
         )
 
         comments = comments_orm.scalars().all()
@@ -81,10 +81,10 @@ class CommentRepository(ICommentRepository):
         return [CommentEntity(
             id=comment.id,
             title_of_article=comment.article.title,
-            author_id=comment.author_id,
+            author_id=comment.user_id,
             article_id=comment.article_id,
             content=comment.content,
             created_at=comment.created_at,
-            nickname=comment.author.nickname,
-            unique_username=comment.author.unique_username
+            nickname=comment.user.nickname,
+            unique_username=comment.user.unique_username
         ) for comment in entity]

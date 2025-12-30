@@ -18,7 +18,7 @@ article_likes = Table(
     Base.metadata,
     Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
     Column('article_id', Integer, ForeignKey('articles.id'), primary_key=True),
-    Column('liked_at', DateTime, server_default=func.now())  # опционально
+    Column('reaction_type', String(10), nullable=False)
 )
 
 class User(Base, AsyncAttrs):

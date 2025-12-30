@@ -13,18 +13,18 @@ class CommentService:
     async def show_by_author(self, author_id: int):
         return await self.comment_repository.show_by_author(author_id)
 
-    async def create(self, article_id, content, author_id):
+    async def create(self, article_id, content, user_id):
         mapping = {
             'article_id': article_id,
             'content': content,
-            'author_id': author_id
+            'user_id': user_id
         }
         return await self.comment_repository.create(
             mapping
         )
 
-    async def delete(self, comment_id, author_id):
-        client = await self.user_repository.get_by_id(author_id)
-        if not client:
+    async def delete(self, comment_id, user_id):
+        user = await self.user_repository.get_by_id(user_id)
+        if not user:
             return 'warning: you are not holder of comment'
         return await self.comment_repository.delete(comment_id)

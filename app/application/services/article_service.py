@@ -16,17 +16,17 @@ class ArticleService:
     async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
         return await self.base_repository.search_by_category(category)
 
-    async def submit_article(self, dto: ArticleCreateDTO, author_id: int) -> ArticleEntity | None:
-        check_limited = await self.logic_repository.check_limited(author_id)
+    async def submit_article(self, dto: ArticleCreateDTO, user_id: int) -> ArticleEntity | None:
+        check_limited = await self.logic_repository.check_limited(user_id)
         if not check_limited:
             return None
         mapping = {
             'title': dto.title,
             'content': dto.content,
-            'author_id': author_id,
+            'user_id': user_id,
             'category': dto.category
         }
-        return await self.base_repository.save(mapping, author_id)
+        return await self.base_repository.save(mapping, user_id)
 
     async def delete_article(self, article_id: int) -> dict:
         return await self.base_repository.delete(article_id)
@@ -40,16 +40,25 @@ class ArticleService:
     async def list_user_articles(self, user_id: int) -> list[ArticleEntity]:
         return await self.base_repository.get_user_articles(user_id)
 
-    async def get_by_id(self, article_id: int) -> list[ArticleEntity]:
-        return await self.base_repository.get_by_id(article_id)
+    async def get_by_id(self, user_id: int) -> ArticleEntity:
+        return await self.base_repository.get_by_id(user_id)
 
-    async def change_article(self, dto: ArticleCreateDTO, article_id: int) -> list[ArticleEntity]:
+    async def change_article(self, dto: ArticleCreateDTO, article_id: int) -> ArticleEntity:
         mapping = {
             'title': dto.title,
             'content': dto.content,
             'category': dto.category
         }
         return await self.base_repository.change(mapping, article_id)
-    
+
     async def like(self, article_id: int, user_id: int):
         return await self.base_repository.like(article_id, user_id)
+
+    async def dislike(self, article_id: int, user_id: int):
+        return await self.base_repository.dislike(article_id, user_id)
+    
+    async def unlike(self, article_id: int, user_id: int):
+        return await self.base_repository.unlike(article_id, user_id)
+
+    async def undislike(self, article_id: int, user_id: int):
+        return await self.base_repository.undislike(article_id, user_id)

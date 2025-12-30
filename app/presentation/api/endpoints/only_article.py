@@ -25,8 +25,9 @@ async def show_article(
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    article = await cache_service.get_cache_article(article_id)
+    article = await cache_service.get_cache_article(article_id, auth.user_id)
     comments = await comment_service.show_by_article(article_id)
+    print(article.article_id if article else None)
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
@@ -35,6 +36,7 @@ async def show_article(
          'auth': auth
         }
     )
+
 
 @router.post('/article/delete/{article_id}')
 async def delete_article(
@@ -48,6 +50,7 @@ async def delete_article(
         status_code=303,
         url=f'/user/profile/{auth.unique_username}'
     )
+
 
 @router.get('/article/change/{article_id}')
 async def change_article(
@@ -86,10 +89,19 @@ async def create_article_access(
     )
 
 
-@router.post('/article/like')
+@router.post('/article/like/{article_id}')
 async def like(
     request: Request,
+    article_id: int,
     auth: UserEntity = Depends(get_current_user),
     article_service: ArticleService = Depends(get_article_manager)
 ):
-    pass
+    like = await article_service.like(
+        article_id,
+        auth.user_id
+    )
+
+    return RedirectResponse(
+        url=f'/article/{article_id}',
+        status_code=303
+    )

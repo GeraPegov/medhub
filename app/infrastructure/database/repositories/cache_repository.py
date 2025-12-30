@@ -55,7 +55,7 @@ class CachedRepository:
             unique_username = from_cache['unique_username'],
             title = from_cache['title'],
             content = from_cache['content'],
-            author_id = from_cache['author_id'],
+            user_id = from_cache['user_id'],
             nickname = from_cache['nickname'],
             category = from_cache['category'],
             created_at = datetime.fromtimestamp(float(from_cache['created_at'])),
