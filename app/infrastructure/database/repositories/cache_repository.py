@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from venv import logger
 
 from redis.asyncio import Redis
 
@@ -50,17 +51,21 @@ class CachedRepository:
         from_cache = await self.connection.hgetall(f'article:{key}')
         if not  from_cache:
             return None
-
-        return ArticleEntity(
-            unique_username = from_cache['unique_username'],
-            title = from_cache['title'],
-            content = from_cache['content'],
-            user_id = from_cache['user_id'],
-            nickname = from_cache['nickname'],
-            category = from_cache['category'],
-            created_at = datetime.fromtimestamp(float(from_cache['created_at'])),
-            article_id = int(from_cache['article_id'])
-        )
+        try:
+            return ArticleEntity(
+                unique_username = from_cache['unique_username'],
+                title = from_cache['title'],
+                content = from_cache['content'],
+                user_id = from_cache['user_id'],
+                nickname = from_cache['nickname'],
+                category = from_cache['category'],
+                created_at = datetime.fromtimestamp(float(from_cache['created_at'])),
+                article_id = int(from_cache['article_id']),
+                likes = from_cache['likes'],
+                dislikes = from_cache['dislikes']
+            )
+        except:
+            return None
 
     async def delete_user(
             self,

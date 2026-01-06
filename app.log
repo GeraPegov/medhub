@@ -1,105 +1,15 @@
-2025-12-18 13:18:12,840 - venv - INFO - user []
-2025-12-18 13:22:48,699 - venv - INFO - user []
-2025-12-19 17:32:14,826 - app.domain.logging - INFO - start of form register
-2025-12-19 17:32:21,498 - app.domain.logging - INFO - create hash = qwer
-2025-12-19 17:44:03,205 - venv - INFO - user []
-2025-12-19 17:44:18,951 - venv - INFO - user []
-2025-12-19 17:44:22,899 - app.domain.logging - INFO - start of form register
-2025-12-19 17:44:33,533 - app.domain.logging - INFO - create hash = qwer
-2025-12-19 17:44:53,919 - venv - INFO - user []
-2025-12-19 17:45:09,235 - venv - INFO - user []
-2025-12-19 17:46:09,476 - venv - INFO - user []
-2025-12-19 17:46:14,430 - venv - INFO - user []
-2025-12-19 17:46:15,561 - venv - INFO - user []
-2025-12-19 17:46:24,162 - venv - INFO - user ['chinaski']
-2025-12-23 13:38:47,621 - venv - INFO - user []
-2025-12-25 11:41:39,397 - venv - INFO - user []
-2025-12-25 12:06:13,088 - venv - INFO - user []
-2025-12-25 12:06:21,647 - venv - INFO - user []
-2025-12-25 13:42:30,710 - venv - INFO - user []
-2025-12-25 13:42:32,498 - venv - INFO - user []
-2025-12-25 13:42:34,004 - venv - INFO - user []
-2025-12-25 13:42:58,144 - venv - INFO - user []
-2025-12-25 13:44:44,729 - venv - INFO - user []
-2025-12-25 16:26:59,858 - venv - INFO - user []
-2025-12-25 17:06:26,476 - app.domain.logging - INFO - start of form register
-2025-12-25 17:06:49,665 - app.domain.logging - INFO - create hash = Wording123
-2025-12-25 17:08:41,635 - app.domain.logging - INFO - start of form register
-2025-12-25 17:09:01,280 - app.domain.logging - INFO - create hash = Wording1233
-2025-12-25 17:15:35,804 - app.domain.logging - INFO - start of form register
-2025-12-25 17:16:18,289 - venv - INFO - user []
-2025-12-25 17:17:44,374 - venv - INFO - user []
-2025-12-25 17:19:32,795 - venv - INFO - user []
-2025-12-25 17:22:53,560 - app.domain.logging - INFO - start of form register
-2025-12-25 17:23:23,691 - venv - INFO - user []
-2025-12-25 17:23:34,104 - venv - INFO - user []
-2025-12-25 17:24:06,503 - venv - INFO - user []
-2025-12-25 17:25:53,895 - venv - INFO - user []
-2025-12-26 17:08:16,129 - venv - INFO - user []
-2025-12-26 17:08:26,966 - venv - INFO - user []
-2025-12-26 17:08:39,855 - venv - INFO - user []
-2025-12-26 17:08:45,402 - venv - INFO - user []
-2025-12-26 17:08:51,701 - venv - INFO - user []
-2025-12-26 17:08:53,796 - venv - INFO - user []
-2025-12-26 17:08:55,792 - venv - INFO - user []
-2025-12-26 17:09:02,106 - venv - INFO - user []
-2025-12-26 17:09:04,378 - venv - INFO - user []
-2025-12-26 17:09:05,487 - venv - INFO - user []
-2025-12-26 17:09:06,584 - venv - INFO - user []
-2025-12-26 17:09:07,605 - venv - INFO - user []
-2025-12-26 17:12:23,036 - venv - INFO - user []
-2025-12-26 17:12:32,113 - venv - INFO - user []
-2025-12-26 17:12:39,037 - venv - INFO - user []
-2025-12-26 17:12:56,582 - venv - INFO - user []
-2025-12-26 17:13:23,607 - venv - INFO - user []
-2025-12-26 17:15:40,668 - venv - INFO - user []
-2025-12-26 17:16:22,122 - venv - INFO - user []
-2025-12-26 17:16:26,038 - venv - INFO - user []
-2025-12-26 17:17:08,151 - venv - INFO - user []
-2025-12-26 17:17:25,419 - venv - INFO - user []
-2025-12-26 17:17:28,786 - venv - INFO - user []
-2025-12-26 17:17:56,656 - venv - INFO - user []
-2025-12-26 17:17:59,612 - venv - INFO - user []
-2025-12-28 13:43:44,945 - venv - INFO - user []
-2025-12-28 13:43:46,989 - venv - INFO - user []
-2025-12-28 13:43:48,113 - venv - INFO - user []
-2025-12-28 13:43:48,986 - venv - INFO - user []
-2025-12-28 13:43:49,766 - venv - INFO - user []
-2025-12-28 13:43:50,546 - venv - INFO - user []
-2025-12-28 13:43:51,257 - venv - INFO - user []
-2025-12-28 13:43:52,147 - venv - INFO - user []
-2025-12-28 13:43:52,940 - venv - INFO - user []
-2025-12-28 13:43:53,967 - venv - INFO - user []
-2025-12-28 13:43:55,077 - venv - INFO - user []
-2025-12-29 16:06:03,765 - app.domain.logging - INFO - start of form register
-2025-12-29 16:06:35,049 - venv - INFO - user []
-2025-12-29 16:07:04,889 - venv - INFO - user []
-2025-12-29 16:07:15,206 - venv - INFO - user []
-2025-12-29 16:10:39,371 - venv - INFO - user []
-2025-12-29 16:23:35,449 - venv - INFO - user []
-2025-12-29 16:23:43,983 - venv - INFO - user []
-2025-12-29 16:30:06,363 - venv - INFO - user []
-2025-12-29 16:30:59,473 - venv - INFO - user []
-2025-12-29 16:31:15,567 - venv - INFO - user []
-2025-12-29 16:31:18,126 - venv - INFO - user []
-2025-12-29 16:31:26,697 - venv - INFO - user []
-2025-12-29 16:31:32,110 - venv - INFO - user []
-2025-12-29 16:32:18,269 - venv - INFO - user []
-2025-12-29 16:32:20,711 - venv - INFO - user []
-2025-12-29 16:32:26,586 - venv - INFO - user []
-2025-12-29 16:32:37,697 - venv - INFO - user []
-2025-12-29 16:32:39,912 - venv - INFO - user []
-2025-12-29 16:32:48,924 - venv - INFO - user []
-2025-12-29 16:32:59,066 - venv - INFO - user []
-2025-12-29 16:33:00,991 - venv - INFO - user []
-2025-12-29 16:33:07,875 - venv - INFO - user []
-2025-12-29 16:34:31,412 - venv - INFO - user []
-2025-12-29 16:34:34,103 - venv - INFO - user []
-2025-12-29 16:34:40,962 - venv - INFO - user []
-2025-12-29 16:34:47,464 - venv - INFO - user []
-2025-12-29 16:35:18,236 - venv - INFO - user []
-2025-12-29 16:35:20,347 - venv - INFO - user []
-2025-12-30 12:46:45,661 - app.domain.logging - INFO - start of form register
-2025-12-30 12:50:02,437 - venv - INFO - user []
-2025-12-30 16:41:41,652 - app.domain.logging - INFO - start of form register
-2025-12-30 16:41:58,113 - venv - INFO - user []
+2026-01-06 13:35:25,054 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:35:52,866 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:36:16,262 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:36:40,716 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:37:20,393 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:37:59,478 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:37:59,488 - app.domain.logging - INFO - note get_cache_user
+2026-01-06 13:38:12,319 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:38:12,320 - app.domain.logging - INFO - note get_cache_user
+2026-01-06 13:38:12,323 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:38:12,324 - app.domain.logging - INFO - note get_cache_user
+2026-01-06 13:38:12,328 - venv - INFO - user []
+2026-01-06 13:40:31,148 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:40:31,157 - app.domain.logging - INFO - we start in get_cache_user
+2026-01-06 13:40:31,158 - venv - INFO - user []

@@ -68,7 +68,7 @@
                     {{article.likes}}
                 </button>
             </form>
-            <form action="/article/dislike" method="POST">
+            <form action="/article/dislike/{{article.article_id}}" method="POST">
                 <button type="submit" class="dislike-btn">
                     {{article.dislikes}}
                 </button>

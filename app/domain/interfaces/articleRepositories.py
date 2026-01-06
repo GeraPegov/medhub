@@ -43,6 +43,6 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def set_reaction(self, user_id: int, article_id: int):
+    async def set_reaction(self, user_id: int, article_id: int, reaction: str):
         pass
 

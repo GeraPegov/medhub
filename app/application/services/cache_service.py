@@ -21,9 +21,10 @@ class BasedCachedService:
             self,
             key: str | int,
             mapping: dict,
+            action: str,
             ttl: int = 3600
     ):
-        await self.cache.create_cache('user', key, mapping, ttl)
+        await self.cache.create_cache(action, key, mapping, ttl)
 
 
 class CachedServiceUser(BasedCachedService):
@@ -48,7 +49,8 @@ class CachedServiceUser(BasedCachedService):
             }
         await self._safe_cache(
             user.unique_username,
-            mapping=mapping
+            mapping=mapping,
+            action='user'
         )
         return True
 
@@ -59,7 +61,6 @@ class CachedServiceUser(BasedCachedService):
         result = await self.cache.get_cache_user(key)
         if result:
             return result
-
         if isinstance(key, str):
             result = await self.repo_user.get_by_username(key)
             cache_key = result.unique_username if result else None
@@ -77,7 +78,8 @@ class CachedServiceUser(BasedCachedService):
             }
             await self._safe_cache(
                 cache_key,
-                mapping=mapping
+                mapping=mapping,
+                action='user'
             )
         return result
 
@@ -95,7 +97,7 @@ class CachedServiceArticle(BasedCachedService):
     async def get_cache_article(
             self,
             key: int,
-            user_id: int | None
+            user_id: int | None = None
     ) -> ArticleEntity | None:
         result = await self.cache.get_cache_article(key)
         if result:
@@ -104,6 +106,7 @@ class CachedServiceArticle(BasedCachedService):
                     user_id=user_id,
                     article_id=key
                 )
+                result.reaction = reaction
             return result
 
         result = await self.repo_article.get_by_id(key)
@@ -122,7 +125,8 @@ class CachedServiceArticle(BasedCachedService):
             }
             await self._safe_cache(
                 key,
-                mapping=mapping
+                mapping=mapping,
+                action='article'
             )
 
         return result

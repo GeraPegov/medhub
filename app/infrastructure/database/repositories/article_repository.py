@@ -135,6 +135,7 @@ class ArticleRepository(IArticleRepository):
             user_id: int,
             reaction: str
     ):
+        print(f'{reaction} in reaction')
         article = await self.session.get(Article, article_id)
         if not article:
             return {"success": False, "error": "Article not found"}
@@ -143,6 +144,25 @@ class ArticleRepository(IArticleRepository):
         if not user:
             return {"success": False, "error": "User not found"}
 
+        value = await self.session.execute(
+            select(article_likes)
+            .where(
+                article_likes.c.user_id==user_id,
+                article_likes.c.article_id==article_id
+                )
+        )
+        if value:
+            reaction_orm = (await self.session.execute(
+                article_likes.delete().where(
+                    (article_likes.c.user_id == user_id) &
+                    (article_likes.c.article_id == article_id)
+                ).returning(article_likes.c.reaction_type))).scalar_one()
+            if 'like' == reaction_orm:
+                article.like -= 1
+            elif 'dislike' == reaction_orm:
+                article.dislike -= 1
+            
+
         await self.session.execute(
             article_likes.insert().values(
                 user_id=user_id,
@@ -150,11 +170,16 @@ class ArticleRepository(IArticleRepository):
                 reaction_type=reaction
             )
         )
-
         if reaction == 'like':
             article.like += 1
         elif reaction == 'dislike':
             article.dislike += 1
+
+        await self.session.commit()
+
+        result = await self._to_entity([article])
+
+        return result[0]
 
 
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:

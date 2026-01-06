@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -25,9 +25,13 @@ async def show_article(
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    article = await cache_service.get_cache_article(article_id, auth.user_id)
+    if auth:
+        article = await cache_service.get_cache_article(article_id, auth.user_id)
+    else:
+        article = await cache_service.get_cache_article(article_id)
+
     comments = await comment_service.show_by_article(article_id)
-    print(article.article_id if article else None)
+    print(article)
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
@@ -89,19 +93,26 @@ async def create_article_access(
     )
 
 
-@router.post('/article/like/{article_id}')
+@router.post('/article/{reaction}/{article_id}')
 async def like(
     request: Request,
     article_id: int,
+    reaction: str,
     auth: UserEntity = Depends(get_current_user),
-    article_service: ArticleService = Depends(get_article_manager)
+    article_service: ArticleService = Depends(get_article_manager),
+    comment_service: CommentService = Depends(get_comment_service)
 ):
-    like = await article_service.like(
+    like = await article_service.set_reaction(
         article_id,
-        auth.user_id
+        auth.user_id,
+        reaction
     )
-
-    return RedirectResponse(
-        url=f'/article/{article_id}',
-        status_code=303
+    comments = await comment_service.show_by_article(article_id)
+    return templates.TemplateResponse(
+        'only_article.html',
+        {'request': request,
+         'article': like,
+         'comments': comments,
+         'auth': auth
+        }
     )
