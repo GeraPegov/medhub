@@ -28,7 +28,6 @@ async def profile_another_user_by_username(
     auth: UserEntity = Depends(get_current_user)
 ):
     entity_user = await cache_service.get_cache_user(unique_username)
-    logger.info(f'user {entity_user.subscriptions}')
     return templates.TemplateResponse(
         'profile.html',
         {

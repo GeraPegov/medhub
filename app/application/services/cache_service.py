@@ -27,6 +27,7 @@ class BasedCachedService:
         await self.cache.create_cache(action, key, mapping, ttl)
 
 
+
 class CachedServiceUser(BasedCachedService):
     def __init__(self,
                 cache: CachedRepository,

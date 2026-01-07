@@ -1,7 +1,12 @@
-import time
+def decorator(func):
+    def wrapper(*args, **kwargs):
+        return func(3)
+    return wrapper
 
-# Измеряем СУММАРНОЕ время (как для пользователя)
-a = list(range(10000))  # создаем список заранее
+@decorator
+def get(num):
+    suma = num + 2
+    return suma
 
-print("Начинаем поиск...")
-real_start = time.time()  # или time.perf_counter() для точности
+
+print(get)

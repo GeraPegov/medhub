@@ -22,7 +22,7 @@ async def create(
     await comment_manager.create(
         article_id=article_id,
         content=content,
-        author_id=user.user_id
+        user_id=user.user_id
     )
 
     response = RedirectResponse(
@@ -40,7 +40,7 @@ async def delete(
 ):
     result = await comment_manager.delete(
         comment_id=comment_id,
-        author_id=auth.user_id
+        user_id=auth.user_id
     )
 
     response = RedirectResponse(

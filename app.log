@@ -1,15 +1,52 @@
-2026-01-06 13:35:25,054 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:35:52,866 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:36:16,262 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:36:40,716 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:37:20,393 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:37:59,478 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:37:59,488 - app.domain.logging - INFO - note get_cache_user
-2026-01-06 13:38:12,319 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:38:12,320 - app.domain.logging - INFO - note get_cache_user
-2026-01-06 13:38:12,323 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:38:12,324 - app.domain.logging - INFO - note get_cache_user
-2026-01-06 13:38:12,328 - venv - INFO - user []
-2026-01-06 13:40:31,148 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:40:31,157 - app.domain.logging - INFO - we start in get_cache_user
-2026-01-06 13:40:31,158 - venv - INFO - user []
+2026-01-07 11:25:00,094 - venv - INFO - user []
+2026-01-07 11:38:30,302 - venv - INFO - warning in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:39:14,795 - venv - INFO - warning in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:43:43,239 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:43:47,372 - venv - WARNING - warning connection/time/redis in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:46:54,767 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:46:58,925 - venv - WARNING - warning connection/time/redis in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:48:23,913 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:48:28,073 - venv - WARNING - warning connection/time/redis in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:50:37,378 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:50:41,534 - venv - WARNING - warning connection/time/redis in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:51:10,758 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:51:14,956 - venv - WARNING - Redis connection error: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 11:53:55,724 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:53:56,812 - venv - WARNING - Redis timeout error: Timeout connecting to server
+2026-01-07 11:53:59,521 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:54:00,527 - venv - WARNING - Redis timeout error: Timeout connecting to server
+2026-01-07 11:58:17,303 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:58:18,391 - venv - WARNING - warning connection/time/redis in create_cache: Timeout connecting to server
+2026-01-07 11:58:34,387 - venv - WARNING - warning time/connection/redis in get_cache_user: 
+2026-01-07 11:58:38,547 - venv - WARNING - warning connection/time/redis in create_cache: Error Multiple exceptions: [Errno 10061] Connect call failed ('::1', 6379, 0, 0), [Errno 10061] Connect call failed ('127.0.0.1', 6379) connecting to localhost:6379.
+2026-01-07 12:11:32,893 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 12:11:34,089 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 12:19:01,912 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 12:19:02,987 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 12:19:25,354 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 12:19:26,427 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:16:56,606 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:16:57,697 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:17:12,497 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:17:13,505 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:17:14,518 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:17:15,527 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:17:15,528 - venv - INFO - user []
+2026-01-07 14:18:19,288 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:18:20,365 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:18:22,937 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:18:23,947 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:18:24,959 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-07 14:18:25,969 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-07 14:18:25,969 - venv - INFO - user []
+2026-01-07 14:19:23,432 - venv - INFO - user []
+2026-01-07 15:22:29,259 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:22:41,385 - app.domain.logging - INFO - start of form register
+2026-01-07 15:42:39,269 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:42:48,624 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:43:20,794 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:43:34,223 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:43:55,835 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:43:56,989 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:44:12,951 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-07 15:44:14,672 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'

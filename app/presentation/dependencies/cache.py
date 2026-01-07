@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
+from redis import RedisError
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
 
@@ -25,7 +26,11 @@ async def lifespan(app: FastAPI):
         f'redis://{settings.HOST_REDIS}:{settings.PORT_REDIS}',
         decode_responses=True,
         encoding='utf-8',
-        max_connections=10)
+        max_connections=10,
+        socket_timeout=1.0,
+        socket_connect_timeout=1.0,
+        retry_on_timeout=False
+        )
     yield
 
     await redis_pool.aclose()
@@ -43,7 +48,6 @@ async def get_cash_repositories(
         connect: Redis = Depends(get_redis)
 ) -> CachedRepository:
     return CachedRepository(connect)
-
 
 
 async def get_cache_user(

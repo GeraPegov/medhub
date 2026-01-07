@@ -27,7 +27,7 @@ class CommentRepository(ICommentRepository):
 
         comment = Comments(
             content=mapping['content'],
-            author_id=mapping['author_id'],
+            user_id=mapping['user_id'],
             article_id=mapping['article_id'],
             user=user_orm,
             article=article_orm,
