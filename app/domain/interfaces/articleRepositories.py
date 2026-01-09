@@ -46,3 +46,6 @@ class IArticleRepository(ABC):
     async def set_reaction(self, user_id: int, article_id: int, reaction: str):
         pass
 
+    @abstractmethod
+    async def liked_articles_by_user(self, user_id: int):
+        pass

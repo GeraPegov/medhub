@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -7,7 +7,7 @@ from app.application.services.article_service import ArticleService
 from app.application.services.cache_service import CachedServiceArticle
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
-from app.presentation.dependencies.articles_dependencies import get_article_manager
+from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.cache import get_cache_article
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
@@ -25,7 +25,7 @@ async def show_article(
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    article = await cache_article.get_cache_article(article_id, auth.user_id)
+    article = await cache_article.get_cache_article(article_id)
 
     comments = await comment_service.show_by_article(article_id)
 
@@ -43,7 +43,7 @@ async def show_article(
 async def delete_article(
     article_id: int,
     auth: UserEntity = Depends(get_current_user),
-    article_service: ArticleService = Depends(get_article_manager),
+    article_service: ArticleService = Depends(get_article_service),
 ):
     await article_service.delete_article(article_id)
 
@@ -57,7 +57,7 @@ async def delete_article(
 async def change_article(
     request: Request,
     article_id: int,
-    articles_service: ArticleService = Depends(get_article_manager),
+    articles_service: ArticleService = Depends(get_article_service),
 ):
     articles = await articles_service.get_by_id(article_id)
 
@@ -75,7 +75,7 @@ async def create_article_access(
     request: Request,
     article_id: int,
     dto: ArticleCreateDTO = Depends(parse_article_form),
-    article_service: ArticleService = Depends(get_article_manager),
+    article_service: ArticleService = Depends(get_article_service),
     auth: UserEntity = Depends(get_current_user)
 ):
     article = await article_service.change_article(dto, article_id)
@@ -100,10 +100,15 @@ async def like(
     comment_service: CommentService = Depends(get_comment_service)
 ):
     like = await cache_article.set_reaction(
-        article_id,
-        auth.user_id,
-        reaction
+        article_id=article_id,
+        user_id=auth.user_id,
+        reaction=reaction
     )
+    if not like:
+        return RedirectResponse(
+            url=f'/article/{article_id}/',
+            status_code=303
+        )
 
     comments = await comment_service.show_by_article(article_id)
     return templates.TemplateResponse(

@@ -64,6 +64,8 @@
             <a href="/user/profile/{{ user.unique_username }}/articles" class="action-btn">Статьи</a>
             <a href="/user/profile/{{ user.unique_username }}/comments" class="action-btn">Комментарии</a>
             <a href="/user/profile/{{ user.unique_username }}/subscriptions" class="action-btn">Подписки</a>
+            <a href="/user/profile/{{ user.unique_username }}/liked" class="action-btn">Вам понравилось</a>
+
         </div>
     {% if articles %}
         {% for article in articles %}

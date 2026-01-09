@@ -144,34 +144,46 @@ form {
 
 .like-dislike {
     display: flex;
-    flex-direction: row;
+    gap: 20px;
     justify-content: center;
+    align-items: center;
 }
 
-.like-btn {
-    font-size: large;
-    background-image: url('/static/images/like.png');
-    background-repeat: no-repeat;
-    background-position: 15px 0;
-    background-size: 20px;
-    margin: auto;
-    border: none;
-    background-color: rgba(255, 192, 203, 0);
-}
-
+.like-btn,
 .dislike-btn {
-    font-size: large;
-    background-image: url('/static/images/dislike.png');
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+}
+
+
+.like-btn::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-image: url('/static/images/like.png');
+    background-size: contain;
     background-repeat: no-repeat;
-    background-position: 15px 0;
-    background-size: 20px;
-    margin: auto;
-    border: none;
-    background-color: rgba(255, 192, 203, 0);
+    background-position: center;
+}
+
+.dislike-btn::before {
+    content: '';
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-image: url('/static/images/dislike.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .form-reaction {
-    display: flex;
-    flex-direction: row;
-    
+    display: inline-block;
 }

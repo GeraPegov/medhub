@@ -1,7 +1,5 @@
 from passlib.context import CryptContext
 
-from app.domain.logging import logger
-
 
 class PasswordHasher:
 

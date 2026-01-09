@@ -11,7 +11,3 @@ class ILogicRepository(ABC):
     @abstractmethod
     async def check_limited(self, user_id):
         pass
-
-    @abstractmethod
-    async def check_reaction(self, user_id: int, article_id: int):
-        pass

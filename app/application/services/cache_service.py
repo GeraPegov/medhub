@@ -1,4 +1,5 @@
 
+from datetime import date, datetime
 import json
 from typing import Optional
 
@@ -62,6 +63,7 @@ class CachedServiceUser(BasedCachedService):
         result = await self.cache.get_cache_user(key)
         if result:
             return result
+
         if isinstance(key, str):
             result = await self.repo_user.get_by_username(key)
             cache_key = result.unique_username if result else None
@@ -97,18 +99,9 @@ class CachedServiceArticle(BasedCachedService):
 
     async def get_cache_article(
             self,
-            key: int,
-            user_id: int | None = None
+            key: int
     ) -> ArticleEntity | None:
         result = await self.cache.get_cache_article(key)
-        if result:
-            if user_id:
-                reaction = await self.repo_logic.check_reaction(
-                    user_id=user_id,
-                    article_id=key
-                )
-                result.reaction = reaction
-            return result
 
         result = await self.repo_article.get_by_id(key)
         if result:
@@ -138,25 +131,25 @@ class CachedServiceArticle(BasedCachedService):
             article_id: int,
             reaction: str
     ):
-        result = await self.cache.get_reaction(user_id, article_id)
-
+        result = await self.cache.get_date_reaction(user_id, article_id)
         if not result:
-            check_reaction = await self.repo_logic.check_reaction(user_id, article_id)
+            return None
 
+        set_reaction = await self.repo_article.set_reaction(
+            article_id=article_id,
+            user_id=user_id,
+            reaction=reaction
+        )
+        if set_reaction:
             mapping = {
-                'created_at': check_reaction['created_at']
+                'reaction_date': (set_reaction.date_of_reaction.timestamp())
             }
 
             await self._safe_cache(
-                key=f'user{user_id}',
-                action=f'article{article_id}',
+                action=f'user{user_id}',
+                key=f'article{article_id}',
                 mapping=mapping
             )
 
-            await self.repo_article.set_reaction(article_id, user_id, reaction)
-        
+        return set_reaction
 
-
-
-        
-            

@@ -1,5 +1,5 @@
 from datetime import datetime
-from unittest.mock import Mock
+
 import pytest
 
 from app.application.dto.articleCreate_dto import ArticleCreateDTO

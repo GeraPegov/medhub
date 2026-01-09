@@ -1,12 +1,10 @@
-from functools import wraps
 import json
+from collections.abc import Awaitable, Callable
 from datetime import datetime
-from typing import Any, Awaitable, ParamSpec, TypeVar
-from collections.abc import Callable
+from functools import wraps
+from typing import Any, ParamSpec, TypeVar
 from venv import logger
-import asyncio 
 
-from redis import RedisError
 from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
 from redis.exceptions import TimeoutError as RedisTimeoutError
@@ -110,14 +108,18 @@ class CachedRepository:
     ) -> int | None:
         result = await self.connection.delete(f'article:{article_id}')
         return result
-    
-    
-    async def get_reaction(
+
+
+    async def get_date_reaction(
             self,
             user_id: int,
             article_id: int
     ):
         result = await self.connection.hgetall(f'user{user_id}:article{article_id}')
-        if not result: 
+
+        if not result:
+            return True
+        if (datetime.now()).date() == datetime.fromtimestamp(float(result['reaction_date'])).date():
             return None
-        return result 
+
+        return True

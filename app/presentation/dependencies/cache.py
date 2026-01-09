@@ -2,11 +2,13 @@ from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
 from fastapi import Depends, FastAPI
-from redis import RedisError
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
 
-from app.application.services.cache_service import CachedServiceUser, CachedServiceArticle
+from app.application.services.cache_service import (
+    CachedServiceArticle,
+    CachedServiceUser,
+)
 from app.infrastructure.config import settings
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
@@ -14,7 +16,10 @@ from app.infrastructure.database.repositories.article_repository import (
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
 from app.infrastructure.database.repositories.logic_repository import LogicRepository
 from app.infrastructure.database.repositories.user_repository import UserRepository
-from app.presentation.dependencies.articles_dependencies import get_article_repository, get_logic_repository
+from app.presentation.dependencies.articles_dependencies import (
+    get_article_repository,
+    get_logic_repository,
+)
 from app.presentation.dependencies.auth import get_user_repository
 
 redis_pool = None

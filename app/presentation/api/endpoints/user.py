@@ -9,7 +9,7 @@ from app.application.services.cache_service import CachedServiceUser
 from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
-from app.presentation.dependencies.articles_dependencies import get_article_manager
+from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cache_user
 from app.presentation.dependencies.comments import get_comment_service
@@ -21,7 +21,7 @@ router = APIRouter()
 
 
 @router.get('/user/profile/{unique_username}')
-async def profile_another_user_by_username(
+async def profile(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
@@ -42,7 +42,7 @@ async def articles(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
-    article_service: ArticleService = Depends(get_article_manager),
+    article_service: ArticleService = Depends(get_article_service),
     auth: UserEntity = Depends(get_current_user)
 ):
     user = await cache_service.get_cache_user(unique_username)
@@ -129,5 +129,24 @@ async def subscriptions(
         'user': user,
         'article': None,
         'subscriptions': user.subscriptions
+        }
+    )
+
+
+@router.get('/user/profile/{unique_username}/liked')
+async def liked(
+    request: Request,
+    auth: UserEntity = Depends(get_current_user),
+    article_service: ArticleService = Depends(get_article_service)
+):
+    articles = await article_service.liked_articles_by_user(auth.user_id)
+    print(articles)
+    return templates.TemplateResponse(
+        'profile.html',
+        {
+        'auth': auth,
+        'request': request,
+        'user': auth,
+        'articles': articles
         }
     )

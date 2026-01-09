@@ -14,6 +14,6 @@ class ArticleEntity:
     article_id: int
     likes: int
     dislikes: int
-    reaction: str | None = None
+    date_of_reaction: datetime | None = None
 
 

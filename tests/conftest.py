@@ -1,20 +1,18 @@
 
+import asyncio
 import json
 from unittest.mock import AsyncMock
+
 import pytest
-import asyncio
-
-from redis.asyncio.connection import ConnectionPool
 from redis.asyncio import Redis
+from redis.asyncio.connection import ConnectionPool
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from app.application.services.article_service import ArticleService
 from app.infrastructure.config import settings
 from app.infrastructure.database.connection import Base
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comments
 from app.infrastructure.database.models.user import User
-from app.infrastructure.database.repositories.article_repository import ArticleRepository
 
 TEST_DATABASE_URL = settings.TEST_DB_URL
 

@@ -2,7 +2,7 @@ import asyncio
 
 from app.infrastructure.database.connection import (
     create_database_if_not_exists,
-    prod_engine
+    prod_engine,
 )
 
 

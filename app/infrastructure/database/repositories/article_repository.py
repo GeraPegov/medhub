@@ -4,10 +4,10 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.infrastructure.database.models.user import article_likes
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.articleRepositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User
 
 
@@ -139,48 +139,45 @@ class ArticleRepository(IArticleRepository):
             select(Article)
             .options(selectinload(Article.user))
             .where(Article.id==article_id)
-        )).scalar_one_or_none()
+            )).scalar_one_or_none()
 
         if not article:
             return None
+        user = await self.session.get(User, user_id)
+        if not user:
+            return None
 
-        value = await self.session.execute(
-            select(article_likes)
-            .where(
-                article_likes.c.user_id==user_id,
-                article_likes.c.article_id==article_id
-                )
+        new_reaction = Reaction(
+            user_id=user_id,
+            article_id=article_id,
+            reaction_type=reaction
         )
 
-        if value:
-            reaction_orm = (await self.session.execute(
-                article_likes.delete().where(
-                    (article_likes.c.user_id == user_id) &
-                    (article_likes.c.article_id == article_id)
-                ).returning(article_likes.c.reaction_type))).scalar_one_or_none()
-            if reaction_orm:
-                if 'like' == reaction_orm:
-                    article.like -= 1
-                elif 'dislike' == reaction_orm:
-                    article.dislike -= 1
-
-        await self.session.execute(
-            article_likes.insert().values(
-                user_id=user_id,
-                article_id=article_id,
-                reaction_type=reaction
-            )
-        )
         if reaction == 'like':
             article.like += 1
         elif reaction == 'dislike':
             article.dislike += 1
 
+        self.session.add(new_reaction)
         await self.session.commit()
+        await self.session.refresh(new_reaction)
 
         result = await self._to_entity([article])
-
+        result[0].date_of_reaction = new_reaction.created_at
         return result[0]
+
+
+    async def liked_articles_by_user(self, user_id: int):
+        reaction_orm = await self.session.execute(
+            select(Reaction)
+            .options(selectinload(Reaction.article))
+            .options(selectinload(Reaction.user))
+            .where(Reaction.user_id==user_id)
+        )
+
+        reaction = reaction_orm.scalars().all()
+        only_articles = [article.article for article in reaction]
+        return await self._to_entity(only_articles) if only_articles else None
 
 
     async def _to_entity(self, articles: Sequence[Article]) -> list[ArticleEntity]:

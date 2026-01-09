@@ -12,15 +12,8 @@ from app.infrastructure.database.connection import Base
 if TYPE_CHECKING:
     from app.infrastructure.database.models.article import Article
     from app.infrastructure.database.models.comment import Comments
+    from app.infrastructure.database.models.reaction import Reaction
 
-article_likes = Table(
-    'article_likes',
-    Base.metadata,
-    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
-    Column('article_id', Integer, ForeignKey('articles.id'), primary_key=True),
-    Column('reaction_type', String(10), nullable=False),
-    Column('created_at', DateTime, server_default=func.now())
-)
 
 class User(Base, AsyncAttrs):
     __tablename__ = 'user'
@@ -34,6 +27,6 @@ class User(Base, AsyncAttrs):
     registration_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     subscriptions: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSONB), default=list)
 
-    liked_articles: Mapped[list['Article']] = relationship('Article', secondary=article_likes, back_populates='like_by_users')
+    reaction: Mapped[list['Reaction']] = relationship('Reaction', back_populates='user')
     articles: Mapped[list['Article']] = relationship('Article', back_populates='user')
     comments: Mapped[list['Comments']] = relationship('Comments', back_populates='user')

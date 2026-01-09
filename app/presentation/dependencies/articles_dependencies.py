@@ -21,7 +21,7 @@ def get_logic_repository(
 ) -> ILogicRepository:
     return LogicRepository(session)
 
-def get_article_manager(
+def get_article_service(
         base_repository: IArticleRepository = Depends(get_article_repository),
         logic_repository: ILogicRepository = Depends(get_logic_repository)
 ) -> ArticleService:

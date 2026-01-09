@@ -1,8 +1,8 @@
-from asyncio import timeout
-import time
 import pytest
 
-from app.infrastructure.database.repositories.article_repository import ArticleRepository
+from app.infrastructure.database.repositories.article_repository import (
+    ArticleRepository,
+)
 from app.infrastructure.database.repositories.logic_repository import LogicRepository
 
 
