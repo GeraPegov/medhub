@@ -30,7 +30,7 @@ class LogicRepository(ILogicRepository):
     
     async def check_reaction(self, user_id: int, article_id: int):
         current_reaction_result = await self.session.execute(
-            select(article_likes.c.reaction_type)
+            select(article_likes.c.created_at)
             .where(
                 and_(
                     article_likes.c.user_id==user_id,
@@ -39,4 +39,11 @@ class LogicRepository(ILogicRepository):
             )
         )
         current_reaction = current_reaction_result.scalar_one_or_none()
-        return current_reaction
+        result = True
+        if current_reaction.date() == (func.now()).date():
+            result = None
+            
+        return {
+            'result': result,
+            'created_at': current_reaction.date()
+        }

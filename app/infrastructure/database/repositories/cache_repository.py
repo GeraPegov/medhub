@@ -110,3 +110,14 @@ class CachedRepository:
     ) -> int | None:
         result = await self.connection.delete(f'article:{article_id}')
         return result
+    
+    
+    async def get_reaction(
+            self,
+            user_id: int,
+            article_id: int
+    ):
+        result = await self.connection.hgetall(f'user{user_id}:article{article_id}')
+        if not result: 
+            return None
+        return result 

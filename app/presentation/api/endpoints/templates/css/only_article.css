@@ -149,9 +149,10 @@ form {
 }
 
 .like-btn {
+    font-size: large;
     background-image: url('/static/images/like.png');
     background-repeat: no-repeat;
-    background-position: 15px;
+    background-position: 15px 0;
     background-size: 20px;
     margin: auto;
     border: none;
@@ -159,11 +160,18 @@ form {
 }
 
 .dislike-btn {
+    font-size: large;
     background-image: url('/static/images/dislike.png');
     background-repeat: no-repeat;
-    background-position: 15px;
+    background-position: 15px 0;
     background-size: 20px;
     margin: auto;
     border: none;
     background-color: rgba(255, 192, 203, 0);
+}
+
+.form-reaction {
+    display: flex;
+    flex-direction: row;
+    
 }

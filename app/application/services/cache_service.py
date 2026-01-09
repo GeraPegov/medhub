@@ -131,3 +131,32 @@ class CachedServiceArticle(BasedCachedService):
             )
 
         return result
+
+    async def set_reaction(
+            self,
+            user_id: int,
+            article_id: int,
+            reaction: str
+    ):
+        result = await self.cache.get_reaction(user_id, article_id)
+
+        if not result:
+            check_reaction = await self.repo_logic.check_reaction(user_id, article_id)
+
+            mapping = {
+                'created_at': check_reaction['created_at']
+            }
+
+            await self._safe_cache(
+                key=f'user{user_id}',
+                action=f'article{article_id}',
+                mapping=mapping
+            )
+
+            await self.repo_article.set_reaction(article_id, user_id, reaction)
+        
+
+
+
+        
+            

@@ -135,14 +135,14 @@ class ArticleRepository(IArticleRepository):
             user_id: int,
             reaction: str
     ):
-        print(f'{reaction} in reaction')
-        article = await self.session.get(Article, article_id)
-        if not article:
-            return {"success": False, "error": "Article not found"}
+        article = (await self.session.execute(
+            select(Article)
+            .options(selectinload(Article.user))
+            .where(Article.id==article_id)
+        )).scalar_one_or_none()
 
-        user = await self.session.get(User, user_id)
-        if not user:
-            return {"success": False, "error": "User not found"}
+        if not article:
+            return None
 
         value = await self.session.execute(
             select(article_likes)
@@ -151,17 +151,18 @@ class ArticleRepository(IArticleRepository):
                 article_likes.c.article_id==article_id
                 )
         )
+
         if value:
             reaction_orm = (await self.session.execute(
                 article_likes.delete().where(
                     (article_likes.c.user_id == user_id) &
                     (article_likes.c.article_id == article_id)
-                ).returning(article_likes.c.reaction_type))).scalar_one()
-            if 'like' == reaction_orm:
-                article.like -= 1
-            elif 'dislike' == reaction_orm:
-                article.dislike -= 1
-            
+                ).returning(article_likes.c.reaction_type))).scalar_one_or_none()
+            if reaction_orm:
+                if 'like' == reaction_orm:
+                    article.like -= 1
+                elif 'dislike' == reaction_orm:
+                    article.dislike -= 1
 
         await self.session.execute(
             article_likes.insert().values(

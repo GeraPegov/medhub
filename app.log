@@ -50,3 +50,18 @@
 2026-01-07 15:43:56,989 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
 2026-01-07 15:44:12,951 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
 2026-01-07 15:44:14,672 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 14:58:06,584 - app.domain.logging - INFO - start of form register
+2026-01-08 16:35:50,240 - app.domain.logging - INFO - start of form register
+2026-01-08 16:36:26,736 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:36:31,144 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:36:52,761 - app.domain.logging - INFO - start of form register
+2026-01-08 16:37:08,978 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:37:11,200 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:41:43,518 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:43:37,644 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:55:22,718 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:55:32,739 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:55:38,408 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 16:55:42,345 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 17:15:55,895 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'
+2026-01-08 17:31:01,131 - venv - ERROR - Unexpected error in get_cache_article: 'dislikes'

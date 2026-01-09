@@ -61,5 +61,8 @@ class ArticleService:
 
 
     async def set_reaction(self, article_id: int, user_id: int, reaction: str):
+        check = await self.logic_repository.check_reaction(article_id, user_id)
+        if not check: 
+            return None
         return await self.base_repository.set_reaction(article_id, user_id, reaction)
 

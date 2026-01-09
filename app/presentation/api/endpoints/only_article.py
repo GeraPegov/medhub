@@ -21,17 +21,14 @@ router = APIRouter()
 async def show_article(
     request: Request,
     article_id: int,
-    cache_service: CachedServiceArticle = Depends(get_cache_article),
+    cache_article: CachedServiceArticle = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    if auth:
-        article = await cache_service.get_cache_article(article_id, auth.user_id)
-    else:
-        article = await cache_service.get_cache_article(article_id)
+    article = await cache_article.get_cache_article(article_id, auth.user_id)
 
     comments = await comment_service.show_by_article(article_id)
-    print(article)
+
     return templates.TemplateResponse(
         'only_article.html',
         {'request': request,
@@ -99,14 +96,15 @@ async def like(
     article_id: int,
     reaction: str,
     auth: UserEntity = Depends(get_current_user),
-    article_service: ArticleService = Depends(get_article_manager),
+    cache_article: CachedServiceArticle = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_service)
 ):
-    like = await article_service.set_reaction(
+    like = await cache_article.set_reaction(
         article_id,
         auth.user_id,
         reaction
     )
+
     comments = await comment_service.show_by_article(article_id)
     return templates.TemplateResponse(
         'only_article.html',
