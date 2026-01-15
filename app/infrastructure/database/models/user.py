@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Table, func
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.mutable import MutableList
@@ -26,6 +26,7 @@ class User(Base, AsyncAttrs):
     password_hash: Mapped[str] = mapped_column(String(255))
     registration_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     subscriptions: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSONB), default=list)
+    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, server_default='false')
 
     reaction: Mapped[list['Reaction']] = relationship('Reaction', back_populates='user')
     articles: Mapped[list['Article']] = relationship('Article', back_populates='user')

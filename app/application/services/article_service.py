@@ -64,6 +64,5 @@ class ArticleService:
         return await self.base_repository.set_reaction(article_id, user_id, reaction)
 
     async def liked_articles_by_user(self, user_id: int):
-        result =  await self.base_repository.liked_articles_by_user(user_id)
-        print(result)
+        result = await self.base_repository.liked_articles_by_user(user_id)
         return result

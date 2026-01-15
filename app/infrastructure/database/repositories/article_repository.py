@@ -170,8 +170,7 @@ class ArticleRepository(IArticleRepository):
     async def liked_articles_by_user(self, user_id: int):
         reaction_orm = await self.session.execute(
             select(Reaction)
-            .options(selectinload(Reaction.article))
-            .options(selectinload(Reaction.user))
+            .options(selectinload(Reaction.article).selectinload(Article.user))
             .where(Reaction.user_id==user_id)
         )
 

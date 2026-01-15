@@ -34,32 +34,34 @@
     </div>
 {% if user %}  
     <div class="container">
-        <div class="card-wrapper">
             <div class="card-group">
                 <div class="image-profile">
                     {{ user.images }}
                 </div>
                 <div class="group-header">
-                    {{ user.nickname }}
-                    <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
+                    <div class="only-name">
+                        {{ user.nickname }}
+                        <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
+                        {% if auth.user_id != user.user_id %}
+                            {% if user.unique_username not in auth.subscriptions %}
+                                <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
+                                    <button type="submit" class="subscribe-user-btn" id="followButton">
+                                        Подписаться
+                                    </button>
+                                </form>  
+                            {% elif user.unique_username in auth.subscriptions %}
+                                <form action="/user/profile/{{ user.unique_username }}/unsubscribe" method="post" class="unsubscribe-user">
+                                    <button type="submit" class="unsubscribe-user-btn" id="followButton">
+                                        Отписаться
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}    
+                    </div>
+                    <a href="/user/profile/{{ user.unique_username }}/delete" class="delete-profile">Удалить профиль</a>
                 </div>
-                {% if auth.user_id != user.user_id %}
-                    {% if user.unique_username not in auth.subscriptions %}
-                        <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
-                            <button type="submit" class="subscribe-user-btn" id="followButton">
-                                Подписаться
-                            </button>
-                        </form>  
-                    {% elif user.unique_username in auth.subscriptions %}
-                        <form action="/user/profile/{{ user.unique_username }}/unsubscribe" method="post" class="unsubscribe-user">
-                            <button type="submit" class="unsubscribe-user-btn" id="followButton">
-                                Отписаться
-                            </button>
-                        </form>
-                    {% endif %}
-                {% endif %}       
+                   
             </div> 
-        </div>
         <div class="action">
             <a href="/user/profile/{{ user.unique_username }}/articles" class="action-btn">Статьи</a>
             <a href="/user/profile/{{ user.unique_username }}/comments" class="action-btn">Комментарии</a>

@@ -140,7 +140,6 @@ async def liked(
     article_service: ArticleService = Depends(get_article_service)
 ):
     articles = await article_service.liked_articles_by_user(auth.user_id)
-    print(articles)
     return templates.TemplateResponse(
         'profile.html',
         {
@@ -150,3 +149,10 @@ async def liked(
         'articles': articles
         }
     )
+
+@router.get('/user/profile/{unique_username}/delete')
+async def delete_profile(
+    request: Request,
+    user_service: UserService = Depends(get_user_service)
+):
+    pass

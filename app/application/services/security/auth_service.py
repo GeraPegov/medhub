@@ -4,7 +4,6 @@ from app.domain.interfaces.auth_service import IAuthService
 
 
 class AuthService(IAuthService):
-    '''Реализация сервиса авторизации'''
 
     def __init__(self):
         self.jwt_handler = JWTHandler()

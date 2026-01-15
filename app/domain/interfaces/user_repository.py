@@ -34,3 +34,6 @@ class IUserRepository(ABC):
     async def unsubscribe(self, subscriber_id, author_unique_username) -> bool:
         pass
 
+    @abstractmethod
+    async def delete_profile(self, user_id):
+        pass

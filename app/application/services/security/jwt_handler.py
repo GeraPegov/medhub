@@ -6,10 +6,9 @@ from app.infrastructure.config import settings
 
 
 class JWTHandler:
-    """Работа с JWT токенами"""
 
     def create_token(self, user_id: int) -> str:
-        expire = datetime.utcnow() + timedelta(
+        expire = datetime.now() + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
 
@@ -20,8 +19,8 @@ class JWTHandler:
 
         return jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
+
     def verify_token(self, token: str) -> int | None:
-        '''Возвращает user_id или выбрасывает исключение'''
 
         try:
             payload = jwt.decode(

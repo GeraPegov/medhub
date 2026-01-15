@@ -102,7 +102,8 @@ class CachedServiceArticle(BasedCachedService):
             key: int
     ) -> ArticleEntity | None:
         result = await self.cache.get_cache_article(key)
-
+        if result:
+            return result
         result = await self.repo_article.get_by_id(key)
         if result:
             mapping = {
@@ -115,7 +116,7 @@ class CachedServiceArticle(BasedCachedService):
                 'category': result.category,
                 'article_id': result.article_id,
                 'likes': result.likes,
-                'dislike': result.dislikes
+                'dislikes': result.dislikes
             }
             await self._safe_cache(
                 key,

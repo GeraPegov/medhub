@@ -18,7 +18,6 @@ dependencies = [
     "python-jose[cryptography]",
     "passlib[bcrypt]",
     "python-multipart",
-    # добавь все свои зависимости из requirements.txt
 ]
 
 [project.optional-dependencies]

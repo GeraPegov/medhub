@@ -92,8 +92,22 @@ button:hover {
 
 .card-group {
     display: flex;
-    flex-direction: column;
     padding: 20px;
+    width: 100%;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.group-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+.delete-profile {
+    text-decoration: none;
 }
 
 .action-btn {
@@ -268,3 +282,4 @@ button {
     padding: 5px;
     box-sizing: border-box;
 }
+

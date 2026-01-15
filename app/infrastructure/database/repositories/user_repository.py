@@ -93,6 +93,10 @@ class UserRepository(IUserRepository):
             return await self._to_entity(user)
 
         return None
+    
+
+    async def delete_profile(self, user_id: int):
+        pass
 
 
     async def _to_entity(self, model: User) -> UserEntity:

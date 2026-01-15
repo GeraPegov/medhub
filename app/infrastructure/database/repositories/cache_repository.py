@@ -109,7 +109,7 @@ class CachedRepository:
         result = await self.connection.delete(f'article:{article_id}')
         return result
 
-
+    @handle_redis_errors(default_return=None)
     async def get_date_reaction(
             self,
             user_id: int,
