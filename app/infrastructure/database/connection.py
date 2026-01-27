@@ -4,8 +4,8 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-from app.infrastructure.config import settings
 from app.domain.logging import logger
+from app.infrastructure.config import settings
 
 BASE_DIR = Path(__file__).parent.parent.parent.parent
 
@@ -15,7 +15,7 @@ async def create_database_if_not_exists(db_name: str):
         echo=False,
         isolation_level="AUTOCOMMIT"
     )
-    
+
     try:
         async with admin_engine.connect() as conn:
             result = await conn.execute(
@@ -27,14 +27,14 @@ async def create_database_if_not_exists(db_name: str):
             if not exists:
                 if not db_name.replace('_', '').replace('-', '').isalnum():
                     raise ValueError(f"Invalid database name: {db_name}")
-                
+
                 await conn.execute(
                     text(f'CREATE DATABASE "{db_name}"')
                 )
                 logger.info(f'Database created: {db_name}')
             else:
                 logger.info(f'Database already exists: {db_name}')
-                
+
     finally:
         await admin_engine.dispose()
 

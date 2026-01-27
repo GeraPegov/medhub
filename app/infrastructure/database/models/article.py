@@ -9,8 +9,8 @@ from app.infrastructure.database.connection import Base
 
 if TYPE_CHECKING:
     from app.infrastructure.database.models.comment import Comments
-    from app.infrastructure.database.models.user import User
     from app.infrastructure.database.models.reaction import Reaction
+    from app.infrastructure.database.models.user import User
 
 
 class Article(Base, AsyncAttrs):

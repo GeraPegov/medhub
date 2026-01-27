@@ -1,4 +1,3 @@
-from asyncpg import UniqueViolationError
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 

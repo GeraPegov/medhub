@@ -1,7 +1,13 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String, Table, func
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    Integer,
+    String,
+    func,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.ext.mutable import MutableList

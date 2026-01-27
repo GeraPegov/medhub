@@ -1,14 +1,12 @@
+import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import pytest
-
+from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.comment import Comments
+from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.comment_repository import (
     CommentRepository,
 )
-from app.infrastructure.database.models.user import User
-from app.infrastructure.database.models.article import Article
-from app.infrastructure.database.models.comment import Comments
-
 
 
 @pytest.mark.asyncio

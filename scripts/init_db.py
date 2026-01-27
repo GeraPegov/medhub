@@ -1,7 +1,6 @@
 import asyncio
 
 from app.domain.logging import logger
-
 from app.infrastructure.database.connection import (
     create_database_if_not_exists,
     prod_engine,

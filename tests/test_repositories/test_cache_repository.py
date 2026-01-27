@@ -4,9 +4,9 @@ import pytest
 from redis.asyncio import Redis
 
 from app.domain.entities.user import UserEntity
-from app.infrastructure.database.repositories.cache_repository import CachedRepository
-from app.infrastructure.database.models.user import User
 from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.user import User
+from app.infrastructure.database.repositories.cache_repository import CachedRepository
 
 
 @pytest.mark.asyncio

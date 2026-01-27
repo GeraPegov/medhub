@@ -1,6 +1,7 @@
+from app.domain.entities. comment import CommentEntity
+
 from app.domain.interfaces.comment_repositories import ICommentRepository
 from app.domain.interfaces.user_repository import IUserRepository
-from app.domain.entities. comment import CommentEntity
 
 
 class CommentService:

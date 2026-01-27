@@ -1,12 +1,11 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
-from app.infrastructure.database.models.user import User
-from app.infrastructure.database.models.article import Article
-
 
 
 @pytest.mark.asyncio

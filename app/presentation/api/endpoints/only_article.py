@@ -105,5 +105,5 @@ async def like(
 
     if not like:
         return {'warning': None}
-    
+
     return like

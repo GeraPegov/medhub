@@ -4,7 +4,6 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.dto.articleAuth_dto import UserDTO
 from app.application.services.register_user import UserRegistrationService
-from app.domain.logging import logger
 from app.presentation.dependencies.auth import get_auth_registration
 from app.presentation.dependencies.parse_user import parse_auth_form
 
