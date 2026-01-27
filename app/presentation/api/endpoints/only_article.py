@@ -104,18 +104,8 @@ async def like(
         user_id=auth.user_id,
         reaction=reaction
     )
+    print('hello')
     if not like:
-        return RedirectResponse(
-            url=f'/article/{article_id}/',
-            status_code=303
-        )
-
-    comments = await comment_service.show_by_article(article_id)
-    return templates.TemplateResponse(
-        'only_article.html',
-        {'request': request,
-         'article': like,
-         'comments': comments,
-         'auth': auth
-        }
-    )
+        return {'warning': None}
+    
+    return like

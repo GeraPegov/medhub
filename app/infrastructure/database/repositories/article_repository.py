@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from datetime import datetime
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -135,37 +136,34 @@ class ArticleRepository(IArticleRepository):
             user_id: int,
             reaction: str
     ):
-        article = (await self.session.execute(
-            select(Article)
-            .options(selectinload(Article.user))
-            .where(Article.id==article_id)
-            )).scalar_one_or_none()
-
-        if not article:
-            return None
-        user = await self.session.get(User, user_id)
-        if not user:
-            return None
-
         new_reaction = Reaction(
             user_id=user_id,
             article_id=article_id,
             reaction_type=reaction
         )
-
         if reaction == 'like':
-            article.like += 1
+            quantity_reaction = (await self.session.execute(
+                update(Article)
+                .where(Article.id == article_id)
+                .values(like=Article.like + 1)
+                .returning(Article.like)
+                )).scalar_one()
         elif reaction == 'dislike':
-            article.dislike += 1
+            quantity_reaction = (await self.session.execute(
+                update(Article)
+                .where(Article.id == article_id)
+                .values(dislike=Article.dislike + 1)
+                .returning(Article.dislike)
+                )).scalar_one()
 
         self.session.add(new_reaction)
         await self.session.commit()
         await self.session.refresh(new_reaction)
 
-        result = await self._to_entity([article])
-        result[0].date_of_reaction = new_reaction.created_at
-        return result[0]
-
+        return {
+            reaction: quantity_reaction,
+            'date_of_reaction': datetime.now()
+        }
 
     async def liked_articles_by_user(self, user_id: int):
         reaction_orm = await self.session.execute(

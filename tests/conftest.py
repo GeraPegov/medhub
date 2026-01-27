@@ -116,9 +116,11 @@ async def test_article(db_session, test_user1):
     article = Article(
         title='testtitle for you',
         content='testcontent',
-        author_id='testauthor_id',
-        author=test_user1,
-        category='testcategory'
+        user_id='testauthor_id',
+        user=test_user1,
+        category='testcategory',
+        like=0,
+        dislike=0
     )
 
     db_session.add(article)
@@ -132,10 +134,10 @@ async def test_article(db_session, test_user1):
 async def test_comment(db_session, test_user1, test_article):
     comment = Comments(
         content='test_content',
-        author_id=test_user1.id,
+        user_id=test_user1.id,
         article_id=test_article.id,
         article=test_article,
-        author=test_user1
+        user=test_user1
     )
 
     db_session.add(comment)
@@ -168,11 +170,13 @@ async def test_cache_article_example(db_redis, test_article, test_user1):
         'unique_username': test_user1.unique_username,
         'title': test_article.title,
         'content': test_article.content,
-        'author_id': test_article.author_id,
+        'user_id': test_article.user_id,
         'nickname': test_user1.nickname,
         'created_at': test_article.created_at.timestamp(),
         'category': test_article.category,
-        'article_id': test_article.id
+        'article_id': test_article.id,
+        'likes': test_article.like,
+        'dislikes': test_article.dislike
     }
 
     await db_redis.hset(f'article:{test_article.id}', mapping=mapping)

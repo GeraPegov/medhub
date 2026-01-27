@@ -14,7 +14,7 @@ async def test_check_limited(db_session, test_user1):
     mapping = {
         'title': 'testtitle',
         'content': 'testcontent',
-        'author_id': test_user1.id,
+        'user_id': test_user1.id,
         'category': 'testcategory'
     }
 

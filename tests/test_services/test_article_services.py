@@ -19,10 +19,12 @@ async def test_mock_service_article_true(mock_logic_db_repository, mock_article_
         article_id=1,
         title='Test',
         content='Contentcontent',
-        author_id=123,
+        user_id=123,
         category='Tech',
         unique_username='testuser',
         nickname='Test User',
+        likes=0,
+        dislikes=0,
         created_at=datetime.now())
 
     dto = ArticleCreateDTO(
@@ -31,7 +33,7 @@ async def test_mock_service_article_true(mock_logic_db_repository, mock_article_
         content='contentcontent'
     )
     result = await base_service.submit_article(dto, 123)
-    assert result.author_id == 123
+    assert result.user_id == 123
     assert result.title == 'Test'
 
 

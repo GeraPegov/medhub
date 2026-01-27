@@ -12,13 +12,13 @@ async def test_create(db_session, test_user1, test_article):
 
     mapping = {
         'content': 'testcontent',
-        'author_id': test_user1.id,
+        'user_id': test_user1.id,
         'article_id': test_article.id
     }
     comment = await repo.create(mapping)
 
     assert comment.article_id == test_article.id
-    assert comment.author_id == test_user1.id
+    assert comment.user_id == test_user1.id
     assert comment.content == 'testcontent'
     assert comment.unique_username == test_user1.unique_username
     assert comment.title_of_article == test_article.title
@@ -62,7 +62,7 @@ async def test_to_entity(db_session, test_comment, test_user1, test_article):
     comment = await repo._to_entity([test_comment])
 
     assert comment[0].title_of_article == test_article.title
-    assert comment[0].author_id == test_comment.author_id
+    assert comment[0].user_id == test_comment.user_id
     assert comment[0].article_id == test_comment.article_id
     assert comment[0].content == test_comment.content
     assert comment[0].created_at == test_comment.created_at

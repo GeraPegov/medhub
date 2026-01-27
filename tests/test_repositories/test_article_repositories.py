@@ -11,18 +11,18 @@ async def test_save(db_session, test_user1):
     mapping = {
         'title': 'testtitle',
         'content': 'testcontent',
-        'author_id': test_user1.id,
+        'user_id': test_user1.id,
         'category': 'testcategory'
     }
 
     article = await repo.save(
         mapping=mapping,
-        author_id=test_user1.id
+        user_id=test_user1.id
     )
 
     assert article.title == 'testtitle'
     assert article.content == 'testcontent'
-    assert article.author_id == test_user1.id
+    assert article.user_id == test_user1.id
     assert article.category == 'testcategory'
 
 @pytest.mark.asyncio
@@ -50,7 +50,7 @@ async def test_delete(db_session, test_article):
     article = await repo.delete(test_article.id)
 
     assert await repo.get_by_id(test_article.id) is None
-    assert article == True
+    assert article is True
 
 
 @pytest.mark.asyncio
@@ -70,12 +70,12 @@ async def test_get_user_articles(db_session, test_user1):
     mapping = {
         'title': 'testtitle',
         'content': 'testcontent',
-        'author_id': test_user1.id,
+        'user_id': test_user1.id,
         'category': 'testcategory'
     }
     await repo.save(
         mapping=mapping,
-        author_id=test_user1.id
+        user_id=test_user1.id
     )
 
     articles = await repo.get_user_articles(test_user1.id)
@@ -131,5 +131,5 @@ async def test_to_entity(db_session, test_article, test_user1):
     assert article[0].unique_username == test_user1.unique_username
     assert article[0].nickname == test_user1.nickname
     assert article[0].created_at == test_article.created_at
-    assert article[0].author_id == test_article.author_id
+    assert article[0].user_id == test_article.user_id
     assert article[0].category == test_article.category

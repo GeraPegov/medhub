@@ -78,11 +78,12 @@ class CachedRepository:
         from_cache = await self.connection.hgetall(f'article:{key}')
         if not from_cache:
             return None
+
         return ArticleEntity(
             unique_username = from_cache['unique_username'],
             title = from_cache['title'],
             content = from_cache['content'],
-            user_id = from_cache['user_id'],
+            user_id = int(from_cache['user_id']),
             nickname = from_cache['nickname'],
             category = from_cache['category'],
             created_at = datetime.fromtimestamp(float(from_cache['created_at'])),

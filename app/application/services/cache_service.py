@@ -143,7 +143,7 @@ class CachedServiceArticle(BasedCachedService):
         )
         if set_reaction:
             mapping = {
-                'reaction_date': (set_reaction.date_of_reaction.timestamp())
+                'reaction_date': (set_reaction['date_of_reaction'].timestamp())
             }
 
             await self._safe_cache(

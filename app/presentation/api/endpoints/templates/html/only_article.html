@@ -7,6 +7,7 @@
     <title>{{ article.title }}</title>
     <link rel="stylesheet" href="/static/css/only_article.css">
     <script src="/static/js/menu.js" defer></script>
+    <script src="/static/js/reaction.js" defer></script>
 </head>
 <body>
     <button class="menu-icon">
@@ -63,16 +64,13 @@
             Понравилась статья? Поставь лайк, поддержи автора! 
         </div>
         <div class="like-dislike">
-            <form action="/article/like/{{article.article_id}}" method="POST" class="form-reaction">
-                <button type="submit" class="like-btn">
-                    {{article.likes}}
-                </button>
-            </form>
-            <form action="/article/dislike/{{article.article_id}}" method="POST" class="form-reaction">
-                <button type="submit" class="dislike-btn">
-                    {{article.dislikes}}
-                </button>
-            </form>
+            <button onclick="setReaction('like', {{ article.article_id }})" class="like-btn">
+                <span id="quantityLike">{{article.likes}}</span> 
+            </button>
+            <button onclick="setReaction('dislike', {{ article.article_id }})" class="dislike-btn">
+                <span id="quantityDislike">{{article.dislikes}}</span>
+            </button>
+
         </div>
 
         <h2>Комментарии</h2>

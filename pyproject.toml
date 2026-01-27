@@ -18,6 +18,9 @@ dependencies = [
     "python-jose[cryptography]",
     "passlib[bcrypt]",
     "python-multipart",
+    "pydantic[email]",
+    "redis",
+    "jinja2"
 ]
 
 [project.optional-dependencies]

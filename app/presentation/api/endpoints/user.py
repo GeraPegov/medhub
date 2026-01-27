@@ -152,7 +152,12 @@ async def liked(
 
 @router.get('/user/profile/{unique_username}/delete')
 async def delete_profile(
-    request: Request,
+    auth: UserEntity = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service)
 ):
-    pass
+    await user_service.delete_profile(auth.user_id)
+
+    return RedirectResponse(
+        url='/',
+        status_code=303
+    )

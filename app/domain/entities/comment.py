@@ -4,7 +4,7 @@ from datetime import datetime
 
 @dataclass
 class CommentEntity:
-    author_id: int
+    user_id: int
     article_id: int
     content: str
     created_at: datetime

@@ -8,6 +8,9 @@ pydantic-settings
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
+pydantic[email]
+redis
+jinja2
 
 [dev]
 pytest

@@ -1,6 +1,7 @@
 pyproject.toml
 alembic/env.py
-alembic/versions/7fccdaf75cbd_init.py
+alembic/versions/0090e5338285_is_deleted.py
+alembic/versions/95af1db7c2a8_init.py
 app/application/__init__.py
 app/application/dto/__init__.py
 app/application/dto/articleAuth_dto.py
@@ -8,7 +9,7 @@ app/application/dto/articleCreate_dto.py
 app/application/services/__init__.py
 app/application/services/article_service.py
 app/application/services/cache_service.py
-app/application/services/comment_manager.py
+app/application/services/comment_service.py
 app/application/services/register_user.py
 app/application/services/user_service.py
 app/application/services/security/auth_service.py
@@ -25,6 +26,7 @@ app/domain/interfaces/__init__.py
 app/domain/interfaces/articleRepositories.py
 app/domain/interfaces/auth_service.py
 app/domain/interfaces/commentRepositories.py
+app/domain/interfaces/logic_repository.py
 app/domain/interfaces/user_repository.py
 app/infrastructure/__init__.py
 app/infrastructure/config.py
@@ -33,11 +35,13 @@ app/infrastructure/database/connection.py
 app/infrastructure/database/models/__init__.py
 app/infrastructure/database/models/article.py
 app/infrastructure/database/models/comment.py
+app/infrastructure/database/models/reaction.py
 app/infrastructure/database/models/user.py
 app/infrastructure/database/repositories/__init__.py
 app/infrastructure/database/repositories/article_repository.py
 app/infrastructure/database/repositories/cache_repository.py
 app/infrastructure/database/repositories/comment_repository.py
+app/infrastructure/database/repositories/logic_repository.py
 app/infrastructure/database/repositories/user_repository.py
 app/presentation/__init__.py
 app/presentation/api/__init__.py

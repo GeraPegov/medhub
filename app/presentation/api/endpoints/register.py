@@ -16,7 +16,6 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 async def page_of_register(
     request: Request
 ):
-    logger.info('start of form register')
     return templates.TemplateResponse(
         'register.html',
         {'request': request}

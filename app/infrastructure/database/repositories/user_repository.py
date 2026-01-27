@@ -1,5 +1,5 @@
-
-from sqlalchemy import select
+from asyncpg import UniqueViolationError
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import UserEntity
@@ -16,6 +16,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.id==user_id)
+            .where(User.is_deleted == False)
         )
         user = user_db.scalar_one_or_none()
 
@@ -26,6 +27,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.email==email)
+            .where(User.is_deleted == False)
         )
         user = user_db.scalar_one_or_none()
 
@@ -36,6 +38,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.unique_username==unique_username)
+            .where(User.is_deleted == False)
         )
         user = user_db.scalar_one_or_none()
         return await self._to_entity(user) if user else None
@@ -60,6 +63,7 @@ class UserRepository(IUserRepository):
         result = await self.session.execute(
             select(User)
             .where(User.id==subscribe_id)
+
         )
 
         user = result.scalar_one_or_none()
@@ -93,10 +97,20 @@ class UserRepository(IUserRepository):
             return await self._to_entity(user)
 
         return None
-    
 
-    async def delete_profile(self, user_id: int):
-        pass
+
+    async def delete_profile(self, user_id: int) -> bool:
+        user_orm = await self.session.execute(
+            update(User)
+            .where(User.id==user_id)
+            .values(is_deleted=True)
+            .returning(User.id)
+        )
+
+        await self.session.commit()
+
+        user = user_orm.scalar_one_or_none()
+        return True if user else False
 
 
     async def _to_entity(self, model: User) -> UserEntity:

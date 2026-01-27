@@ -10,7 +10,6 @@ class UserDTO(BaseModel):
     @field_validator('email')
     @classmethod
     def validate_email_domain(cls, v: str) -> str:
-        # Проверка на временные email сервисы
         temporary_domains = [
             'temp-mail.org', '10minutemail.com', 'guerrillamail.com',
             'yopmail.com', 'mailinator.com', 'trashmail.com'
@@ -23,7 +22,6 @@ class UserDTO(BaseModel):
     @field_validator('password')
     @classmethod
     def validate_password_strength(cls, v: str) -> str:
-        """Валидация сложности пароля"""
         if len(v) < 8:
             raise ValueError('Пароль должен содержать минимум 8 символов')
 

@@ -38,7 +38,6 @@ class CommentRepository(ICommentRepository):
         await self.session.refresh(comment)
 
         comments = await self._to_entity([comment])
-
         return comments[0]
 
     async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
@@ -81,7 +80,7 @@ class CommentRepository(ICommentRepository):
         return [CommentEntity(
             id=comment.id,
             title_of_article=comment.article.title,
-            author_id=comment.user_id,
+            user_id=comment.user_id,
             article_id=comment.article_id,
             content=comment.content,
             created_at=comment.created_at,

@@ -13,6 +13,9 @@ Requires-Dist: pydantic-settings
 Requires-Dist: python-jose[cryptography]
 Requires-Dist: passlib[bcrypt]
 Requires-Dist: python-multipart
+Requires-Dist: pydantic[email]
+Requires-Dist: redis
+Requires-Dist: jinja2
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: pytest-asyncio; extra == "dev"
