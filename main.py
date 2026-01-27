@@ -10,12 +10,5 @@ app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
 app.mount("/static", StaticFiles(directory="app/presentation/api/endpoints/templates"), name="static")
-# @app.exception_handler(HTTPException)
-# async def handle_http_exception(request: Request, exc: HTTPException):
-#     return templates.TemplateResponse(
-#         "error.html",
-#         {"request": request, "error": exc.detail},
-#         status_code=exc.status_code
-#     )
 
 app.include_router(api_router)

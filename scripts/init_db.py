@@ -1,5 +1,7 @@
 import asyncio
 
+from app.domain.logging import logger
+
 from app.infrastructure.database.connection import (
     create_database_if_not_exists,
     prod_engine,
@@ -7,7 +9,7 @@ from app.infrastructure.database.connection import (
 
 
 async def init_production_db():
-    print('initializing productiuon database')
+    logger.info('initializing production database')
 
     await create_database_if_not_exists('medhub')
 
@@ -16,7 +18,7 @@ async def init_production_db():
     await prod_engine.dispose()
 
 async def init_test_db():
-    print('initializing test database')
+    logger.info('initializing test database')
 
     await create_database_if_not_exists('testmedhub')
 

@@ -9,5 +9,5 @@ class ILogicRepository(ABC):
         pass
 
     @abstractmethod
-    async def check_limited(self, user_id):
+    async def can_publish_today(self, user_id):
         pass

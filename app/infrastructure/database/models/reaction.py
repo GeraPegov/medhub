@@ -21,3 +21,4 @@ class Reaction(Base):
 
     user: Mapped['User'] = relationship('User', back_populates='reaction')
     article: Mapped['Article'] = relationship('Article', back_populates='reaction')
+

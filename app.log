@@ -4,3 +4,11 @@
 2026-01-27 12:40:07,883 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
 2026-01-27 12:40:11,258 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
 2026-01-27 12:40:12,269 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-27 13:46:43,348 - app.domain.logging - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 13:46:44,440 - app.domain.logging - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-27 14:24:13,837 - app.domain.logging - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 14:24:42,718 - app.domain.logging - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 14:24:52,171 - app.domain.logging - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 14:24:53,259 - app.domain.logging - WARNING - Redis error in set_cache: Timeout connecting to server
+2026-01-27 14:24:57,353 - app.domain.logging - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 14:24:58,366 - app.domain.logging - WARNING - Redis error in set_cache: Timeout connecting to server

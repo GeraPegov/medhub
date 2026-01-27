@@ -25,7 +25,7 @@ async def show_article(
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    article = await cache_article.get_cache_article(article_id)
+    article = await cache_article.get_article(article_id)
 
     comments = await comment_service.show_by_article(article_id)
 
@@ -97,7 +97,7 @@ async def like(
     auth: UserEntity = Depends(get_current_user),
     cache_article: CachedServiceArticle = Depends(get_cache_article)
 ):
-    like = await cache_article.set_reaction(
+    like = await cache_article.add_reaction(
         article_id=article_id,
         user_id=auth.user_id,
         reaction=reaction

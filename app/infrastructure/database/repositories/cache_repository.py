@@ -3,7 +3,6 @@ from collections.abc import Awaitable, Callable
 from datetime import datetime
 from functools import wraps
 from typing import Any, ParamSpec, TypeVar
-from venv import logger
 
 from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
@@ -11,6 +10,7 @@ from redis.exceptions import TimeoutError as RedisTimeoutError
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
+from app.domain.logging import logger
 
 P = ParamSpec('P')
 T= TypeVar('T')
@@ -23,9 +23,6 @@ def handle_redis_errors(default_return: Any = None):
                 return await func(*args, **kwargs)
             except (RedisConnectionError, RedisTimeoutError) as e:
                 logger.warning(f'Redis error in {func.__name__}: {e}')
-                return default_return
-            except Exception as e:
-                logger.error(f'Unexpected error in {func.__name__}: {e}')
                 return default_return
         return wrapper
     return decorator
@@ -40,14 +37,14 @@ class CachedRepository:
 
 
     @handle_redis_errors(default_return=None)
-    async def create_cache(
+    async def set_cache(
             self,
-            action: str,
+            prefix: str,
             key: str | int,
             mapping: dict,
             ttl: int = 3600
     ) -> bool | None:
-        cache_key = f"{action}:{key}"
+        cache_key = f"{prefix}:{key}"
         await self.connection.hset(cache_key, mapping=mapping)
         await self.connection.expire(cache_key, ttl)
         return True
@@ -111,7 +108,7 @@ class CachedRepository:
         return result
 
     @handle_redis_errors(default_return=None)
-    async def get_date_reaction(
+    async def can_react_today(
             self,
             user_id: int,
             article_id: int

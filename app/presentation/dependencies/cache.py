@@ -49,14 +49,14 @@ async def get_redis() -> AsyncGenerator[Redis, None]:
     finally:
         await r.aclose()
 
-async def get_cash_repositories(
+async def get_cache_repository(
         connect: Redis = Depends(get_redis)
 ) -> CachedRepository:
     return CachedRepository(connect)
 
 
 async def get_cache_user(
-    cache: CachedRepository = Depends(get_cash_repositories),
+    cache: CachedRepository = Depends(get_cache_repository),
     repo_user: UserRepository = Depends(get_user_repository)
         ):
     return CachedServiceUser(
@@ -65,7 +65,7 @@ async def get_cache_user(
     )
 
 async def get_cache_article(
-    cache: CachedRepository = Depends(get_cash_repositories),
+    cache: CachedRepository = Depends(get_cache_repository),
     repo_article: ArticleRepository = Depends(get_article_repository),
     repo_logic: LogicRepository = Depends(get_logic_repository)
         ):

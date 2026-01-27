@@ -15,6 +15,6 @@ async def get_current_user(
     if not token:
         return None
     user_id = auth_service.verify_token(token)
-    user = await user_service.get_cache_user(user_id)
+    user = await user_service.get_user(user_id)
     return user
 

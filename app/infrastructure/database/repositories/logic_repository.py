@@ -14,14 +14,14 @@ class LogicRepository(ILogicRepository):
     ):
         self.session = session
 
-    async def check_limited(self, user_id: int):
+    async def can_publish_today(self, user_id: int):
         today = datetime.now().date()
-        quanity_publication = (await self.session.execute(
+        publication_count = (await self.session.execute(
             select(func.count(Article.id))
             .where(Article.user_id==user_id)
             .where(func.date(Article.created_at)==today)
         ))
 
-        result = quanity_publication.scalar_one()
+        result = publication_count.scalar_one()
         return True if result < 3 else False
 

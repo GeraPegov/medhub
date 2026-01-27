@@ -5,7 +5,6 @@ from app.domain.interfaces.user_repository import IUserRepository
 
 
 class UserRegistrationService:
-    """Сценарий регистрации"""
     def __init__(
             self,
             user_repo: IUserRepository,

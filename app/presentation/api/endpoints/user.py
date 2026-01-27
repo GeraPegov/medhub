@@ -1,5 +1,3 @@
-from venv import logger
-
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -27,7 +25,7 @@ async def profile(
     cache_service: CachedServiceUser = Depends(get_cache_user),
     auth: UserEntity = Depends(get_current_user)
 ):
-    entity_user = await cache_service.get_cache_user(unique_username)
+    entity_user = await cache_service.get_user(unique_username)
     return templates.TemplateResponse(
         'profile.html',
         {
@@ -45,7 +43,7 @@ async def articles(
     article_service: ArticleService = Depends(get_article_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    user = await cache_service.get_cache_user(unique_username)
+    user = await cache_service.get_user(unique_username)
     entity_articles = await article_service.list_user_articles(user.user_id)
 
     return templates.TemplateResponse(
@@ -66,7 +64,7 @@ async def comments(
     comment_service: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_current_user)
 ):
-    user = await cache_service.get_cache_user(unique_username)
+    user = await cache_service.get_user(unique_username)
     comments = await comment_service.show_by_author(user.user_id)
 
     return templates.TemplateResponse(
@@ -119,7 +117,7 @@ async def subscriptions(
     auth: UserEntity = Depends(get_current_user),
     cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
-    user = await cache_service.get_cache_user(unique_username)
+    user = await cache_service.get_user(unique_username)
 
     return templates.TemplateResponse(
         'profile.html',

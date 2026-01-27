@@ -1,11 +1,7 @@
-
-from datetime import date, datetime
 import json
-from typing import Optional
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
-from app.domain.logging import logger
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
@@ -14,22 +10,22 @@ from app.infrastructure.database.repositories.logic_repository import LogicRepos
 from app.infrastructure.database.repositories.user_repository import UserRepository
 
 
-class BasedCachedService:
+class BaseCachedService:
     def __init__(self, cache: CachedRepository):
         self.cache = cache
 
-    async def _safe_cache(
+    async def _set_cache(
             self,
             key: str | int,
             mapping: dict,
-            action: str,
+            prefix: str,
             ttl: int = 3600
     ):
-        await self.cache.create_cache(action, key, mapping, ttl)
+        await self.cache.set_cache(prefix, key, mapping, ttl)
 
 
 
-class CachedServiceUser(BasedCachedService):
+class CachedServiceUser(BaseCachedService):
     def __init__(self,
                 cache: CachedRepository,
                 repo_user: UserRepository
@@ -49,16 +45,16 @@ class CachedServiceUser(BasedCachedService):
                 'nickname': user.nickname,
                 'subscriptions': json.dumps(list(user.subscriptions))
             }
-        await self._safe_cache(
+        await self._set_cache(
             user.unique_username,
             mapping=mapping,
             action='user'
         )
         return True
 
-    async def get_cache_user(
+    async def get_user(
             self,
-            key
+            key: int | str
     ) -> UserEntity | None:
         result = await self.cache.get_cache_user(key)
         if result:
@@ -79,15 +75,15 @@ class CachedServiceUser(BasedCachedService):
                 'nickname': result.nickname,
                 'subscriptions': json.dumps(list(result.subscriptions))
             }
-            await self._safe_cache(
+            await self._set_cache(
                 cache_key,
                 mapping=mapping,
-                action='user'
+                prefix='user'
             )
         return result
 
 
-class CachedServiceArticle(BasedCachedService):
+class CachedServiceArticle(BaseCachedService):
     def __init__(self,
                 cache: CachedRepository,
                 repo_article: ArticleRepository,
@@ -97,7 +93,7 @@ class CachedServiceArticle(BasedCachedService):
         self.repo_article = repo_article
         self.repo_logic = repo_logic
 
-    async def get_cache_article(
+    async def get_article(
             self,
             key: int
     ) -> ArticleEntity | None:
@@ -118,21 +114,21 @@ class CachedServiceArticle(BasedCachedService):
                 'likes': result.likes,
                 'dislikes': result.dislikes
             }
-            await self._safe_cache(
+            await self._set_cache(
                 key,
                 mapping=mapping,
-                action='article'
+                prefix='article'
             )
 
         return result
 
-    async def set_reaction(
+    async def add_reaction(
             self,
             user_id: int,
             article_id: int,
             reaction: str
     ):
-        result = await self.cache.get_date_reaction(user_id, article_id)
+        result = await self.cache.can_react_today(user_id, article_id)
         if not result:
             return None
 
@@ -146,8 +142,8 @@ class CachedServiceArticle(BasedCachedService):
                 'reaction_date': (set_reaction['date_of_reaction'].timestamp())
             }
 
-            await self._safe_cache(
-                action=f'user{user_id}',
+            await self._set_cache(
+                prefix=f'user{user_id}',
                 key=f'article{article_id}',
                 mapping=mapping
             )

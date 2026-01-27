@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.orm import declarative_base
 
 from app.infrastructure.config import settings
+from app.domain.logging import logger
 
 BASE_DIR = Path(__file__).parent.parent.parent.parent
 
@@ -12,19 +13,28 @@ async def create_database_if_not_exists(db_name: str):
     admin_engine = create_async_engine(
         settings.ADMIN_DB_URL,
         echo=False,
-        isolation_level="AUTOCOMMIT")
+        isolation_level="AUTOCOMMIT"
+    )
+    
     try:
         async with admin_engine.connect() as conn:
             result = await conn.execute(
-                text(f"SELECT 1 from pg_database WHERE datname = '{db_name}'")
+                text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                {"db_name": db_name}
             )
             exists = result.scalar_one_or_none()
 
             if not exists:
-                await conn.execute(text(f"CREATE DATABASE {db_name}"))
-                print(f'base save {db_name}')
+                if not db_name.replace('_', '').replace('-', '').isalnum():
+                    raise ValueError(f"Invalid database name: {db_name}")
+                
+                await conn.execute(
+                    text(f'CREATE DATABASE "{db_name}"')
+                )
+                logger.info(f'Database created: {db_name}')
             else:
-                print(f'base already save {db_name}')
+                logger.info(f'Database already exists: {db_name}')
+                
     finally:
         await admin_engine.dispose()
 

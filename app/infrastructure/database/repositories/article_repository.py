@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.article import ArticleEntity
-from app.domain.interfaces.articleRepositories import IArticleRepository
+from app.domain.interfaces.article_repositories import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User

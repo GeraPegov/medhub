@@ -4,7 +4,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.comment import CommentEntity
-from app.domain.interfaces.commentRepositories import AsyncSession, ICommentRepository
+from app.domain.interfaces.comment_repositories import AsyncSession, ICommentRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comments
 from app.infrastructure.database.models.user import User

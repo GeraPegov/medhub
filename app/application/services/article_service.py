@@ -1,6 +1,6 @@
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
-from app.domain.interfaces.articleRepositories import IArticleRepository
+from app.domain.interfaces.article_repositories import IArticleRepository
 from app.domain.interfaces.logic_repository import ILogicRepository
 
 
