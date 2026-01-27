@@ -1,0 +1,6 @@
+2026-01-27 11:43:45,350 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 11:43:46,437 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-27 12:40:06,872 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 12:40:07,883 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
+2026-01-27 12:40:11,258 - venv - WARNING - Redis error in get_cache_user: Timeout connecting to server
+2026-01-27 12:40:12,269 - venv - WARNING - Redis error in create_cache: Timeout connecting to server
