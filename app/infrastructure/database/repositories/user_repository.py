@@ -38,7 +38,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.unique_username==unique_username)
-            .where(User.is_deleted == False)
+            .where(User.is_deleted==False)
         )
         user = user_db.scalar_one_or_none()
         return await self._to_entity(user) if user else None
@@ -59,7 +59,7 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user)
 
 
-    async def subscribe(self, subscribe_id, author_unique_username) -> UserEntity | None:
+    async def subscribe(self, subscribe_id: int, unique_username: str) -> UserEntity | None:
         result = await self.session.execute(
             select(User)
             .where(User.id==subscribe_id)
@@ -71,15 +71,15 @@ class UserRepository(IUserRepository):
         if not user:
             return None
 
-        if author_unique_username not in user.subscriptions:
-            user.subscriptions.append(author_unique_username)
+        if unique_username not in user.subscriptions:
+            user.subscriptions.append(unique_username)
             await self.session.commit()
             await self.session.refresh(user)
             return await self._to_entity(user)
         return None
 
 
-    async def unsubscribe(self, subscribe_id, author_unique_username) -> UserEntity | None:
+    async def unsubscribe(self, subscribe_id: int, unique_username: str) -> UserEntity | None:
         result = await self.session.execute(
             select(User)
             .where(User.id==subscribe_id)
@@ -90,8 +90,8 @@ class UserRepository(IUserRepository):
         if not user:
             return None
 
-        if author_unique_username in user.subscriptions:
-            user.subscriptions.remove(author_unique_username)
+        if unique_username in user.subscriptions:
+            user.subscriptions.remove(unique_username)
             await self.session.commit()
             await self.session.refresh(user)
             return await self._to_entity(user)

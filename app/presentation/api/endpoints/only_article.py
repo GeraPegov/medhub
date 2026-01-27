@@ -92,19 +92,17 @@ async def create_article_access(
 
 @router.post('/article/{reaction}/{article_id}')
 async def like(
-    request: Request,
     article_id: int,
     reaction: str,
     auth: UserEntity = Depends(get_current_user),
-    cache_article: CachedServiceArticle = Depends(get_cache_article),
-    comment_service: CommentService = Depends(get_comment_service)
+    cache_article: CachedServiceArticle = Depends(get_cache_article)
 ):
     like = await cache_article.set_reaction(
         article_id=article_id,
         user_id=auth.user_id,
         reaction=reaction
     )
-    print('hello')
+
     if not like:
         return {'warning': None}
     

@@ -16,6 +16,7 @@ Requires-Dist: python-multipart
 Requires-Dist: pydantic[email]
 Requires-Dist: redis
 Requires-Dist: jinja2
+Requires-Dist: argon2_cffi
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
 Requires-Dist: pytest-asyncio; extra == "dev"

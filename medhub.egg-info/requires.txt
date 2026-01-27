@@ -11,6 +11,7 @@ python-multipart
 pydantic[email]
 redis
 jinja2
+argon2_cffi
 
 [dev]
 pytest

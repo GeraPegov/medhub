@@ -1,13 +1,15 @@
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
 from app.infrastructure.database.repositories.logic_repository import LogicRepository
+from app.infrastructure.database.models.user import User
 
 
 @pytest.mark.asyncio
-async def test_check_limited(db_session, test_user1):
+async def test_check_limited(db_session: AsyncSession, test_user1: User):
     repo_logic = LogicRepository(db_session)
     repo_article = ArticleRepository(db_session)
 

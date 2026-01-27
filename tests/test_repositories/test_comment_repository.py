@@ -1,13 +1,18 @@
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import pytest
 
 from app.infrastructure.database.repositories.comment_repository import (
     CommentRepository,
 )
+from app.infrastructure.database.models.user import User
+from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.comment import Comments
+
 
 
 @pytest.mark.asyncio
-async def test_create(db_session, test_user1, test_article):
+async def test_create(db_session: AsyncSession, test_user1: User, test_article: Article):
     repo = CommentRepository(db_session)
 
     mapping = {
@@ -25,7 +30,7 @@ async def test_create(db_session, test_user1, test_article):
 
 
 @pytest.mark.asyncio
-async def test_show_by_article(db_session, test_article, test_comment):
+async def test_show_by_article(db_session: AsyncSession, test_article: Article, test_comment: Comments):
     repo = CommentRepository(db_session)
 
     comment = await repo.show_by_article(test_article.id)
@@ -34,7 +39,7 @@ async def test_show_by_article(db_session, test_article, test_comment):
 
 
 @pytest.mark.asyncio
-async def test_show_by_author(db_session, test_user1, test_comment):
+async def test_show_by_author(db_session: AsyncSession, test_user1: User, test_comment: Comments):
     repo = CommentRepository(db_session)
 
     comment = await repo.show_by_author(test_user1.id)
@@ -43,7 +48,7 @@ async def test_show_by_author(db_session, test_user1, test_comment):
 
 
 @pytest.mark.asyncio
-async def test_delete(db_session, test_comment, test_article):
+async def test_delete(db_session: AsyncSession, test_comment: Comments, test_article: Article):
     repo = CommentRepository(db_session)
 
     comment = await repo.delete(test_comment.id)
@@ -56,7 +61,12 @@ async def test_delete(db_session, test_comment, test_article):
 
 
 @pytest.mark.asyncio
-async def test_to_entity(db_session, test_comment, test_user1, test_article):
+async def test_to_entity(
+    db_session: AsyncSession,
+    test_comment: Comments,
+    test_user1: User,
+    test_article: Article
+    ):
     repo = CommentRepository(db_session)
 
     comment = await repo._to_entity([test_comment])

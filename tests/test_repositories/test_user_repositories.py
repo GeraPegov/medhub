@@ -1,10 +1,12 @@
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.repositories.user_repository import UserRepository
+from app.infrastructure.database.models.user import User
 
 
 @pytest.mark.asyncio
-async def test_create(db_session):
+async def test_create(db_session: AsyncSession):
     repo = UserRepository(db_session)
     user_data = {
         'email': 'asd@mail.ru',
@@ -22,7 +24,7 @@ async def test_create(db_session):
 
 
 @pytest.mark.asyncio
-async def test_get_by_id(db_session, test_user1):
+async def test_get_by_id(db_session: AsyncSession, test_user1: User):
     repo = UserRepository(db_session)
     user = await repo.get_by_id(test_user1.id)
 
@@ -30,7 +32,7 @@ async def test_get_by_id(db_session, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_get_by_email(db_session, test_user1):
+async def test_get_by_email(db_session: AsyncSession, test_user1: User):
     repo = UserRepository(db_session)
     user = await repo.get_by_email(test_user1.email)
 
@@ -38,7 +40,7 @@ async def test_get_by_email(db_session, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_get_by_username(db_session, test_user1):
+async def test_get_by_username(db_session: AsyncSession, test_user1: User):
     repo = UserRepository(db_session)
     user = await repo.get_by_username(test_user1.unique_username)
 
@@ -46,7 +48,7 @@ async def test_get_by_username(db_session, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_subscribe_and_unsubscribe(db_session, test_user1, test_user2):
+async def test_subscribe_and_unsubscribe(db_session: AsyncSession, test_user1: User, test_user2: User):
     repo = UserRepository(db_session)
     user = await repo.subscribe(
         subscribe_id=test_user1.id,
@@ -64,7 +66,7 @@ async def test_subscribe_and_unsubscribe(db_session, test_user1, test_user2):
 
 
 @pytest.mark.asyncio
-async def test_to_entity(db_session, test_user1):
+async def test_to_entity(db_session: AsyncSession, test_user1: User):
     repo = UserRepository(db_session)
 
     user = await repo._to_entity(test_user1)

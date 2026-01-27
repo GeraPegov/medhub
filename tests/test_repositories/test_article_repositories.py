@@ -1,12 +1,16 @@
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
+from app.infrastructure.database.models.user import User
+from app.infrastructure.database.models.article import Article
+
 
 
 @pytest.mark.asyncio
-async def test_save(db_session, test_user1):
+async def test_save(db_session: AsyncSession, test_user1: User):
     repo = ArticleRepository(db_session)
     mapping = {
         'title': 'testtitle',
@@ -26,7 +30,7 @@ async def test_save(db_session, test_user1):
     assert article.category == 'testcategory'
 
 @pytest.mark.asyncio
-async def test_get_by_id(db_session, test_article):
+async def test_get_by_id(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
     article = await repo.get_by_id(test_article.id)
 
@@ -34,7 +38,7 @@ async def test_get_by_id(db_session, test_article):
 
 
 @pytest.mark.asyncio
-async def test_get_by_all(db_session, test_article):
+async def test_get_by_all(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
     article = await repo.all()
 
@@ -44,7 +48,7 @@ async def test_get_by_all(db_session, test_article):
 
 
 @pytest.mark.asyncio
-async def test_delete(db_session, test_article):
+async def test_delete(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
 
     article = await repo.delete(test_article.id)
@@ -54,7 +58,7 @@ async def test_delete(db_session, test_article):
 
 
 @pytest.mark.asyncio
-async def test_search_by_title(db_session, test_article):
+async def test_search_by_title(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
 
     article1 = await repo.search_by_title(test_article.title)
@@ -65,7 +69,7 @@ async def test_search_by_title(db_session, test_article):
 
 
 @pytest.mark.asyncio
-async def test_get_user_articles(db_session, test_user1):
+async def test_get_user_articles(db_session: AsyncSession, test_user1: User):
     repo = ArticleRepository(db_session)
     mapping = {
         'title': 'testtitle',
@@ -85,7 +89,7 @@ async def test_get_user_articles(db_session, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_search_by_category(db_session, test_article):
+async def test_search_by_category(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
 
     articles = await repo.search_by_category(test_article.category)
@@ -94,7 +98,7 @@ async def test_search_by_category(db_session, test_article):
 
 
 @pytest.mark.asyncio
-async def test_change(db_session, test_article):
+async def test_change(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
 
     old_article = await repo.get_by_id(test_article.id)
@@ -120,7 +124,11 @@ async def test_change(db_session, test_article):
     assert new_article.category == 'testchangecategory'
 
 @pytest.mark.asyncio
-async def test_to_entity(db_session, test_article, test_user1):
+async def test_to_entity(
+    db_session: AsyncSession,
+    test_article: Article,
+    test_user1: User
+    ):
     repo = ArticleRepository(db_session)
 
     article = await repo._to_entity([test_article])

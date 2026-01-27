@@ -20,7 +20,8 @@ dependencies = [
     "python-multipart",
     "pydantic[email]",
     "redis",
-    "jinja2"
+    "jinja2",
+    "argon2_cffi"
 ]
 
 [project.optional-dependencies]

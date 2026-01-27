@@ -1,13 +1,16 @@
 import json
 
 import pytest
+from redis.asyncio import Redis
 
 from app.domain.entities.user import UserEntity
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
+from app.infrastructure.database.models.user import User
+from app.infrastructure.database.models.article import Article
 
 
 @pytest.mark.asyncio
-async def test_create_cash(db_redis, test_user1):
+async def test_create_cash(db_redis: Redis, test_user1: User):
     repo = CachedRepository(db_redis)
     mapping = {
         'user_id': test_user1.id,
@@ -34,7 +37,7 @@ async def test_create_cash(db_redis, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_cache_user(db_redis, test_cache_user_example, test_user1):
+async def test_cache_user(db_redis: Redis, test_cache_user_example, test_user1: User):
     repo = CachedRepository(db_redis)
 
     cache = await repo.get_cache_user(test_user1.id)
@@ -47,7 +50,7 @@ async def test_cache_user(db_redis, test_cache_user_example, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_cache_article(db_redis, test_cache_article_example, test_article):
+async def test_cache_article(db_redis: Redis, test_cache_article_example, test_article: Article):
     repo = CachedRepository(db_redis)
 
     cache = await repo.get_cache_article(test_article.id)
@@ -56,7 +59,7 @@ async def test_cache_article(db_redis, test_cache_article_example, test_article)
 
 
 @pytest.mark.asyncio
-async def test_delete_user(db_redis, test_cache_user_example, test_user1):
+async def test_delete_user(db_redis: Redis, test_cache_user_example, test_user1: User):
     repo = CachedRepository(db_redis)
     user = UserEntity(
         user_id=test_user1.id,
@@ -71,7 +74,7 @@ async def test_delete_user(db_redis, test_cache_user_example, test_user1):
 
 
 @pytest.mark.asyncio
-async def test_delete_article(db_redis, test_cache_article_example, test_article):
+async def test_delete_article(db_redis: Redis, test_cache_article_example, test_article: Article):
     repo = CachedRepository(db_redis)
 
     cache = await repo.delete_article(test_article.id)
