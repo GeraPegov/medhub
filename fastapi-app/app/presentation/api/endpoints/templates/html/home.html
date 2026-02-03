@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статьи</title>
+    <link rel="stylesheet" href="/static/css/home.css">
+    <script src="/static/js/menu.js" defer></script>
+</head>
+<body>
+    <button class="menu-icon">
+        <i class="fa-solid fa-align-justify"></i>
+    </button>
+    <div class='menu-items'>  
+        {% if not auth %}
+            <a href="/auth" class="item-menu">
+                Войти
+            </a>
+        {% endif %}  
+        <a href="/article/submit" class="item-menu">
+            Добавить статью
+        </a>
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
+            Профиль
+        </a>
+        <a href="/articles/search" class="item-menu">
+            Поиск
+        </a>
+        {% if login %}
+        <a href="/exit"  class="item-menu">
+            Выход
+        </a>
+        {% endif %}
+    </div>
+    <!-- НОВЫЙ КОД: Раскрывающийся поиск -->
+    <div class="search-container">
+        <form action="/articles/search/title" method="get" class="search-form-wrapper">
+            <div class="search-wrapper" id="searchWrapper">
+                <input 
+                    type="text" 
+                    name="query" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Поиск по названию..."
+                >
+                <button type="button" class="search-icon-btn" id="searchToggle">
+                    🔍
+                </button>
+            </div>
+        </form>
+    </div>
+
+    {% if articles %}
+        {% for article in articles %}
+        <div class="article-card">
+            <div class="article-header">
+                <h2 class="article-title">{{ article.title }}</h2>
+                <div class="article-meta">
+                    <div class="meta-item">
+                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="author">{{ article.nickname }}</span>
+                        <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
+                    </div>
+                    <div class="meta-item">
+                        <span class="category">{{ article.category }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p>{{ article.content[0:300] }}...
+                    <a href="/article/{{ article.article_id }}" class="read-more">
+                        Показать полностью
+                    </a>
+                </p>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

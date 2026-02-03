@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить статью</title>
+    <link rel="stylesheet" href="/static/css/submit_article.css">
+    <script src="/static/js/menu.js" defer></script>
+</head>
+<body>
+    <button class="menu-icon">
+        <i class="fa-solid fa-align-justify"></i>
+    </button>
+    <div class='menu-items'> 
+        <a href="/" class="item-menu">
+            Домой
+        </a> 
+        <a href="/user/profile/{{auth.unique_username}}" class="item-menu">
+            Профиль
+        </a>
+        <a href="/exit"  class="item-menu">
+            Выход
+        </a>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>Новая статья</h1>
+        </div>
+        <div class="form-container">
+            <form action="/article/submit/add" method="POST">
+
+                <div class="form-group">
+                    <label for="title">Название статьи:</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        maxlength="100"
+                        value="{% if articles %}{{ articles[0].title }} {% endif %}"
+                        required
+                        oninput="updateCounter('title', 'titleCounter', 100)"
+                    >
+                    <span id="titleCounter" class="counter">0/100</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Категория статьи:</label>
+                    <select
+                        id="category"
+                        name="category"
+                        required
+                    >
+                        <option value="">Выберите категорию</option>
+                        <option value="Питание">Питание</option>
+                        <option value="Биомеханика">Биомеханика</option>
+                        <option value="Биохимия">Биохимия и метаболизм</option>
+                        <option value="Физиология">Физиология</option>
+                        <option value="Исследования">Анализ исследований</option>
+                        <option value="другое">Другое</option>
+
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Текст статьи:</label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        required
+                        oninput="updateCounter('content', 'contentCounter', null)"
+                    >{% if articles %}{{ articles[0].content }}{% endif %}</textarea>
+                    <span id="contentCounter" class="counter">0 символов</span>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    Опубликовать статью
+                </button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Ваша статья будет доступна всем читателям после публикации</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function updateCounter(inputId, counterId, maxLength) {
+            const input = document.getElementById(inputId);
+            const counter = document.getElementById(counterId);
+            const currentLength = input.value.length;
+            
+            // Форматирование текста счетчика
+            if (maxLength) {
+                counter.textContent = `${currentLength}/${maxLength}`;
+            } else {
+                counter.textContent = `${currentLength} символов`;
+            }
+            
+            // Изменение цвета при приближении к лимиту (только для полей с лимитом)
+            if (maxLength) {
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#e74c3c'; // Красный
+                } else if (currentLength > maxLength * 0.7) {
+                    counter.style.color = '#f39c12'; // Оранжевый
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            } else {
+                // Для поля без лимита (текст статьи)
+                if (currentLength > 1000) {
+                    counter.style.color = '#27ae60'; // Зеленый (хорошая длина)
+                } else if (currentLength > 500) {
+                    counter.style.color = '#3498db'; // Синий
+                } else {
+                    counter.style.color = '#888'; // Серый
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <script src="/static/js/menu.js" defer></script>
+    <title>Профиль</title>
+</head>
+<body>
+    <button class="menu-icon">
+    </button>
+    <div class='menu-items'>  
+        {% if not auth %}
+            <a href="/login" class="item-menu">
+                Войти
+            </a>
+        {% endif %}  
+        <a href="/" class="item-menu">
+            Домой
+        </a>
+        {% if auth.user_id != user.user_id %}
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
+            Профиль
+        </a>
+        {% endif %}
+        <a href="/article/submit" class="item-menu">
+            Добавить статью
+        </a>
+        <a href="/exit"  class="item-menu">
+            Выход
+        </a>
+
+    </div>
+{% if user %}  
+    <div class="container">
+            <div class="card-group">
+                <div class="image-profile">
+                    {{ user.images }}
+                </div>
+                <div class="group-header">
+                    <div class="only-name">
+                        {{ user.nickname }}
+                        <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
+                        {% if auth.user_id != user.user_id %}
+                            {% if user.unique_username not in auth.subscriptions %}
+                                <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
+                                    <button type="submit" class="subscribe-user-btn" id="followButton">
+                                        Подписаться
+                                    </button>
+                                </form>  
+                            {% elif user.unique_username in auth.subscriptions %}
+                                <form action="/user/profile/{{ user.unique_username }}/unsubscribe" method="post" class="unsubscribe-user">
+                                    <button type="submit" class="unsubscribe-user-btn" id="followButton">
+                                        Отписаться
+                                    </button>
+                                </form>
+                            {% endif %}
+                        {% endif %}    
+                    </div>
+                    <a href="/user/profile/{{ user.unique_username }}/delete" class="delete-profile">Удалить профиль</a>
+                </div>
+                   
+            </div> 
+        <div class="action">
+            <a href="/user/profile/{{ user.unique_username }}/articles" class="action-btn">Статьи</a>
+            {% if auth.unique_username == user.unique_username %}
+            <a href="/user/profile/{{ user.unique_username }}/comments" class="action-btn">Комментарии</a>
+            <a href="/user/profile/{{ user.unique_username }}/subscriptions" class="action-btn">Подписки</a>
+            <a href="/user/profile/{{ user.unique_username }}/liked" class="action-btn">Вам понравилось</a>
+            {% endif %}
+
+        </div>
+    {% if articles %}
+        {% for article in articles %}
+            <div class="article-card">
+                    <h2 class="article-title">{{ article.title }}</h2>
+                    <div class="action-and-meta">
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="author">{{ article.nickname }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="category">{{ article.category }}</span>
+                            </div>
+                        </div>
+                        {% if auth.id == user.id %}
+                        <div class="action-in-card">
+                            <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
+                                <button type="submit" class="delete-article-btn">
+                                    Удалить
+                                </button>
+                            </form>
+                            <form action="/article/change/{{ article.article_id }}" method="GET" class="form-change-btn">
+                                <button type="submit" class="change-article-btn">
+                                    Изменить
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                <div class="article-content">
+                    <p>{{ article.content[0:300] }}...
+                        <a href="/article/{{ article.article_id }}" class="read-more">
+                            Показать полностью
+                        </a>
+                    </p>
+                </div>
+            </div>    
+        {% endfor %}
+    {% endif %} 
+                    
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <span class="comment-author">{{ comment.nickname }}</span>                    <span class="comment-date">
+                        {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
+                    </span>
+                </div>
+            {% if auth.id == user.id %}
+                <div class="action-in-card">
+                    <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                        <button type="submit" class="delete-comment-btn">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+                <div class="comment-content">
+                    {{ comment.content }}
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if subscriptions %}
+        <div class="subscriptions">
+        {% for subscribtion in subscriptions %}
+            <a href="/user/profile/{{subscribtion}}" class="link-subscribtion">{{ subscribtion }}</a>
+        {% endfor %}
+        </div>
+    {% endif %}
+    </div>
+{% else %}
+        <div class="else-not-user">
+            <h2>Ooups.. Войдите или зарегестрируйтесь, чтобы увидеть профиль</h2>
+            <a href="/login" class="link-login">Войти</a>
+            <a href="/register" class="link-login">Зарегестрироваться</a>
+        </div>
+{% endif %}
+</body>
+</html>
