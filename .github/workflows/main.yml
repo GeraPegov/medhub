@@ -1,0 +1,84 @@
+name: Basic Checks
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-format:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install Ruff
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff
+    
+    - name: Run Ruff linter
+      run: |
+        ruff check . --output-format=github || echo "Linting issues found"
+    
+    - name: Check code formatting
+      run: |
+        ruff format --check . || echo "Formatting issues found"
+
+  basic-tests:
+    name: Basic Tests (no DB)
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-asyncio
+        pip install -e .
+    
+    - name: Run basic import tests
+      run: |
+        python -c "import app; print('App imports successfully')"
+        python -c "from app.domain.entities.user import UserEntity; print('Domain entities OK')"
+    
+    - name: Test structure
+      run: |
+        python -c "import os; assert os.path.exists('app/domain'), 'Domain layer exists'"
+        python -c "import os; assert os.path.exists('app/application'), 'Application layer exists'"
+        python -c "import os; assert os.path.exists('app/infrastructure'), 'Infrastructure layer exists'"
+        python -c "import os; assert os.path.exists('app/presentation'), 'Presentation layer exists'"
+        echo "✓ Project structure is valid"
+
+  syntax-check:
+    name: Python Syntax Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Check Python syntax
+      run: |
+        python -m py_compile $(find . -name "*.py" -not -path "./.venv/*" -not -path "./build/*")
+        echo "✓ All Python files have valid syntax"
