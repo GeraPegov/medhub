@@ -1,18 +1,19 @@
 from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.article_repositories import IArticleRepository
-# from app.domain.interfaces.logic_repository import ILogicRepository
-from app.infrastructure.database.repositories.http_client import RateLimiterClient
+from app.domain.interfaces.logic_repository import ILogicRepository
+# from app.infrastructure.database.repositories.http_client import RateLimiterClient
 
 
 class ArticleService:
     def __init__(
             self,
             base_repository: IArticleRepository,
-            rate_limiter: RateLimiterClient
+            logic_repository: ILogicRepository
+            # rate_limiter: RateLimiterClient
             ):
         self.base_repository = base_repository
-        self.rate_limiter = rate_limiter
+        self.logic_repository = logic_repository
 
 
     async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
@@ -20,13 +21,10 @@ class ArticleService:
 
 
     async def submit_article(self, dto: ArticleCreateDTO, user_id: int) -> ArticleEntity | None:
-        check_limited = await self.rate_limiter.check_limit(
-            user_id=user_id,
-            action="create_article",
-            limit=3
+        check_limited = await self.logic_repository.can_publish_today(
+            user_id=user_id
             )
-
-        if not check_limited[0]:
+        if not check_limited:
             return None
         mapping = {
             'title': dto.title,
