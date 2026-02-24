@@ -1,0 +1,14 @@
+tests/
+.env
+.git
+__pycache__
+README.md
+docker-compose.yml
+Dockerfile
+scripts/
+.ruff_cache
+.venv
+.log
+.env.example
+.gitignore
+medhub.egg-info
