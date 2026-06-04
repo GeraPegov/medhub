@@ -23,10 +23,10 @@ async def test_check_limited(db_session: AsyncSession, test_user1: User):
     for _ in range(2):
         await repo_article.save(mapping, test_user1.id)
 
-    result = await repo_logic.check_limited(test_user1.id)
+    result = await repo_logic.can_publish_today(test_user1.id)
     assert result is True
 
     await repo_article.save(mapping, test_user1.id)
-    result = await repo_logic.check_limited(test_user1.id)
+    result = await repo_logic.can_publish_today(test_user1.id)
     assert result is False
 

@@ -3,7 +3,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.services.article_service import ArticleService
-from app.domain.interfaces.article_repositories import IArticleRepository
+from app.domain.interfaces.article_repository import IArticleRepository
 from app.domain.interfaces.logic_repository import ILogicRepository
 from app.infrastructure.database.connection import get_db
 # from app.infrastructure.database.repositories.http_client import RateLimiterClient
@@ -24,19 +24,19 @@ from app.infrastructure.database.repositories.logic_repository import LogicRepos
 #         )
 #     return _rate_limiter_client
 
-def get_article_repository(
+async def get_article_repository(
         session: AsyncSession = Depends(get_db)
 ) -> IArticleRepository:
     return ArticleRepository(session)
 
 
-def get_logic_repository(
+async def get_logic_repository(
         session: AsyncSession = Depends(get_db)
 ) -> ILogicRepository:
     return LogicRepository(session)
 
 
-def get_article_service(
+async def get_article_service(
         base_repository: IArticleRepository = Depends(get_article_repository),
         logic_repository: ILogicRepository = Depends(get_logic_repository)
 ) -> ArticleService:

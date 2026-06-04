@@ -25,6 +25,7 @@ class Article(Base, AsyncAttrs):
     category: Mapped[str] = mapped_column(String(64))
     like: Mapped[int] = mapped_column(Integer, default=0)
     dislike: Mapped[int] = mapped_column(Integer, default=0)
+    views_counter: Mapped[int] = mapped_column(Integer, default=0)
 
     reaction: Mapped[list['Reaction']] = relationship('Reaction', back_populates='article')
     user: Mapped['User'] = relationship('User', back_populates='articles')

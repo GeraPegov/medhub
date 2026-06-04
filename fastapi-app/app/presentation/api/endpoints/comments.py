@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.comments import get_comment_service
-from app.presentation.dependencies.current_user import get_current_user
+from app.presentation.dependencies.current_user import get_auth
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
@@ -17,7 +17,7 @@ async def create(
     article_id: int,
     content: str = Form(...),
     comment_manager: CommentService = Depends(get_comment_service),
-    user: UserEntity = Depends(get_current_user)
+    user: UserEntity = Depends(get_auth)
 ):
     await comment_manager.create(
         article_id=article_id,
@@ -36,7 +36,7 @@ async def create(
 async def delete(
     comment_id: int,
     comment_manager: CommentService = Depends(get_comment_service),
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
 ):
     result = await comment_manager.delete(
         comment_id=comment_id,

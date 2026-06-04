@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.services.comment_service import CommentService
-from app.domain.interfaces.comment_repositories import ICommentRepository
+from app.domain.interfaces.comment_repository import ICommentRepository
 from app.domain.interfaces.user_repository import IUserRepository
 from app.infrastructure.database.connection import get_db
 from app.infrastructure.database.repositories.comment_repository import (

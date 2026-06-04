@@ -1,15 +1,12 @@
 from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI
+from fastapi import Depends
 from redis.asyncio import Redis
-from redis.asyncio.connection import ConnectionPool
 
 from app.application.services.cache_service import (
     CachedServiceArticle,
     CachedServiceUser,
 )
-from app.infrastructure.config import settings
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
@@ -23,24 +20,7 @@ from app.presentation.dependencies.articles_dependencies import (
 from app.presentation.dependencies.auth import get_user_repository
 
 redis_pool = None
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    global redis_pool
-    redis_pool = ConnectionPool.from_url(
-        f'redis://{settings.HOST_REDIS}:{settings.PORT_REDIS}',
-        decode_responses=True,
-        encoding='utf-8',
-        max_connections=10,
-        socket_timeout=1.0,
-        socket_connect_timeout=1.0,
-        retry_on_timeout=False
-        )
-    yield
-
-    await redis_pool.aclose()
-
-async def get_redis() -> AsyncGenerator[Redis, None]:
+async def   get_redis() -> AsyncGenerator[Redis, None]:
     if redis_pool is None:
         raise RuntimeError('Redis pool not initialized')
     r = Redis(connection_pool=redis_pool)
@@ -48,6 +28,7 @@ async def get_redis() -> AsyncGenerator[Redis, None]:
         yield r
     finally:
         await r.aclose()
+
 
 async def get_cache_repository(
         connect: Redis = Depends(get_redis)
@@ -74,3 +55,4 @@ async def get_cache_article(
         repo_article=repo_article,
         repo_logic=repo_logic
     )
+

@@ -6,7 +6,7 @@ from app.application.dto.articleCreate_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_service
-from app.presentation.dependencies.current_user import get_current_user
+from app.presentation.dependencies.current_user import get_auth
 from app.presentation.dependencies.parse_article import parse_article_form
 
 router = APIRouter()
@@ -17,7 +17,7 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 @router.get("/article/submit", response_class=HTMLResponse)
 async def add(
     request: Request,
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_auth)
     ):
     if not auth:
         return RedirectResponse(
@@ -37,7 +37,7 @@ async def create_article(
     response: Response,
     dto: ArticleCreateDTO = Depends(parse_article_form),
     article_service: ArticleService = Depends(get_article_service),
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_auth)
 ):
     article = await article_service.submit_article(dto, auth.user_id)
     if not article:

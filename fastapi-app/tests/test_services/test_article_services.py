@@ -14,7 +14,7 @@ async def test_mock_service_article_true(mock_logic_db_repository, mock_article_
         logic_repository=mock_logic_db_repository
     )
 
-    mock_logic_db_repository.check_limited.return_value = True
+    mock_logic_db_repository.can_publish_today.return_value = True
     mock_article_db_repository.save.return_value = ArticleEntity(
         article_id=1,
         title='Test',
@@ -44,7 +44,7 @@ async def test_mock_service_article_false(mock_logic_db_repository, mock_article
         logic_repository=mock_logic_db_repository
     )
 
-    mock_logic_db_repository.check_limited.return_value = False
+    mock_logic_db_repository.can_publish_today.return_value = False
     dto = ArticleCreateDTO(
         title='title',
         category='category',
@@ -53,4 +53,3 @@ async def test_mock_service_article_false(mock_logic_db_repository, mock_article
     result = await base_service.submit_article(dto, 123)
 
     assert result is None
-

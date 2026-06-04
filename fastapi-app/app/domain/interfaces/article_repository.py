@@ -49,3 +49,7 @@ class IArticleRepository(ABC):
     @abstractmethod
     async def liked_articles_by_user(self, user_id: int):
         pass
+
+    @abstractmethod
+    async def check_reaction(self, article_id, user_id):
+        pass

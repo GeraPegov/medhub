@@ -3,57 +3,61 @@ package storage
 import (
 	"context"
 	"fmt"
+	"log"
+	"new_prog/internal/config"
+	"new_prog/internal/domain"
+	"sync"
 	"time"
 
 	"github.com/redis/go-redis/v9"
 )
 
-type RedisStorage struct {
-	client *redis.Client
-}
+var rdb *redis.Client
+var mu sync.Mutex
 
-func NewRedisStorage(addr string, db int) (*RedisStorage, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr: addr,
-		DB:   db,
-	})
-
+func CreateRedis() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+	rdb = redis.NewClient(&redis.Options{
+		Addr:     config.NewRedis.Addr,
+		Password: config.NewRedis.Password,
+		DB:       config.NewRedis.DB,
+	})
 
-	if err := client.Ping(ctx).Err(); err != nil {
-		return nil, fmt.Errorf("failes to connect to Redis: %w", err)
-	}
-
-	return &RedisStorage{client: client}, nil
-}
-
-func (r *RedisStorage) IncrementCounter(ctx context.Context, key string, ttl time.Duration) (int64, error) {
-	pipe := r.client.Pipeline()
-
-	incrCmd := pipe.Incr(ctx, key)
-
-	pipe.Expire(ctx, key, ttl)
-
-	_, err := pipe.Exec(ctx)
+	pong, err := rdb.Ping(ctx).Result()
 	if err != nil {
-		return 0, fmt.Errorf("failed to increment counter : %w", err)
+		log.Fatal("woow")
 	}
-
-	return incrCmd.Val(), nil
+	fmt.Println(pong)
 }
 
-func (r *RedisStorage) GetCounter(ctx context.Context, key string) (int64, error) {
-	val, err := r.client.Get(ctx, key).Int64()
-	if err == redis.Nil {
-		return 0, nil
+func Save(ctx context.Context, user domain.User) {
+	mu.Lock()
+	defer mu.Unlock()
+	now_time := time.Now().Format("03:04")
+	count, err := rdb.Get(ctx, now_time).Int()
+	if err != nil && err != redis.Nil {
+		fmt.Println(err)
+		return
 	}
+	if count > 5 {
+		fmt.Println("dohuya")
+		return
+	}
+	rdb.Incr(ctx, now_time)
+	user_id, _ := rdb.Incr(ctx, "id").Result()
+	key := fmt.Sprintf("user:%d", user_id)
+	err = rdb.Set(ctx, key, user.Name, 10*time.Minute).Err()
 	if err != nil {
-		return 0, fmt.Errorf("failed to get counter: %w", err)
+		fmt.Println("warning in Set ")
 	}
-	return val, nil
 }
 
-func (r *RedisStorage) Close() error {
-	return r.client.Close()
+func Get(ctx context.Context, id string) string {
+	from := fmt.Sprintf("user:%s", id)
+	msg, err := rdb.Get(ctx, from).Result()
+	if err != nil {
+		fmt.Println("not in redis")
+	}
+	return msg
 }

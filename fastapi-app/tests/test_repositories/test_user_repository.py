@@ -52,14 +52,14 @@ async def test_subscribe_and_unsubscribe(db_session: AsyncSession, test_user1: U
     repo = UserRepository(db_session)
     user = await repo.subscribe(
         subscribe_id=test_user1.id,
-        author_unique_username=test_user2.unique_username
+        unique_username=test_user2.unique_username
         )
 
     assert test_user2.unique_username in user.subscriptions
 
     user = await repo.unsubscribe(
         subscribe_id=test_user1.id,
-        author_unique_username=test_user2.unique_username
+        unique_username=test_user2.unique_username
         )
 
     assert test_user2.unique_username not in user.subscriptions

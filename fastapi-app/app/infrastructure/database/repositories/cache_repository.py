@@ -35,6 +35,12 @@ class CachedRepository:
         ):
         self.connection = connection
 
+    async def views_counter(self, article_id: int):
+        return await self.connection.incr(f"article_counter:{article_id}")
+    
+    async def update_views_counter(self):
+        async for key in self.connection.scan_iter("article_counter:*"):
+            print(key)
 
     @handle_redis_errors(default_return=None)
     async def set_cache(
@@ -108,7 +114,7 @@ class CachedRepository:
         return result
 
     @handle_redis_errors(default_return=None)
-    async def can_react_today(
+    async def can_reaction_today(
             self,
             user_id: int,
             article_id: int

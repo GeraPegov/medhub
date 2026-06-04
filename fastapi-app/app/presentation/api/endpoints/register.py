@@ -27,13 +27,12 @@ async def register(
     registration_service: UserRegistrationService = Depends(get_auth_registration)
 ):
     user = await registration_service.execute(user_data)
-
     if not user:
         return templates.TemplateResponse(
         'register.html',
         {
         'request': request,
-        'error': 'Email уже зарегестрирован'
+        'error': 'User с таким Email уже существует. Хотите восстановить аккаунт?'
         }
     )
     response = RedirectResponse(

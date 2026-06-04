@@ -26,7 +26,6 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.email==email)
-            .where(User.is_deleted == False)
         )
         user = user_db.scalar_one_or_none()
 

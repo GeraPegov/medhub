@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 
 from sqlalchemy import delete, select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.comment import CommentEntity
-from app.domain.interfaces.comment_repositories import AsyncSession, ICommentRepository
+from app.domain.interfaces.comment_repository import ICommentRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comments
 from app.infrastructure.database.models.user import User

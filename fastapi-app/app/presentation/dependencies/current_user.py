@@ -7,7 +7,7 @@ from app.presentation.dependencies.auth import get_auth_service
 from app.presentation.dependencies.cache import get_cache_user
 
 
-async def get_current_user(
+async def get_auth(
         token = Cookie(None, alias='access_token'),
         auth_service: AuthService = Depends(get_auth_service),
         user_service: CachedServiceUser = Depends(get_cache_user)

@@ -87,19 +87,19 @@
                                 <span class="category">{{ article.category }}</span>
                             </div>
                         </div>
-                        {% if auth.id == user.id %}
-                        <div class="action-in-card">
-                            <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
-                                <button type="submit" class="delete-article-btn">
-                                    Удалить
-                                </button>
-                            </form>
-                            <form action="/article/change/{{ article.article_id }}" method="GET" class="form-change-btn">
-                                <button type="submit" class="change-article-btn">
-                                    Изменить
-                                </button>
-                            </form>
-                        </div>
+                        {% if article.unique_username == auth.unique_username %}
+                            <div class="action-in-card">
+                                <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
+                                    <button type="submit" class="delete-article-btn">
+                                        Удалить
+                                    </button>
+                                </form>
+                                <form action="/article/change/{{ article.article_id }}" method="GET" class="form-change-btn">
+                                    <button type="submit" class="change-article-btn">
+                                        Изменить
+                                    </button>
+                                </form>
+                            </div>
                         {% endif %}
                     </div>
                 <div class="article-content">
@@ -121,7 +121,7 @@
                         {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </span>
                 </div>
-            {% if auth.id == user.id %}
+            {% if auth.user_id == user.user_id %}
                 <div class="action-in-card">
                     <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
                         <button type="submit" class="delete-comment-btn">

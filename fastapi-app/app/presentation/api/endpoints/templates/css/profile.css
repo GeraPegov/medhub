@@ -154,14 +154,14 @@ button:hover {
 .action-and-meta {
     display: flex;
     flex-direction: row-reverse;
-    /* gap: 60%; */
     margin: auto;
-    gap: 300px;
+    gap: 350px;
     border: solid;
     border-width: 1px;
     border-left: none;
     border-right: none;
     padding: 5px;
+    width: 100%;
 }
 
 .article-content {
@@ -181,6 +181,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    text-align: left;
 }
 
 .comment {

@@ -48,7 +48,7 @@ class CachedServiceUser(BaseCachedService):
         await self._set_cache(
             user.unique_username,
             mapping=mapping,
-            action='user'
+            prefix='user'
         )
         return True
 
@@ -92,7 +92,6 @@ class CachedServiceArticle(BaseCachedService):
         super().__init__(cache)
         self.repo_article = repo_article
         self.repo_logic = repo_logic
-
     async def get_article(
             self,
             key: int
@@ -122,16 +121,56 @@ class CachedServiceArticle(BaseCachedService):
 
         return result
 
+    async def update_article(
+            self,
+            article: ArticleEntity
+    ):
+        await self.cache.delete_article(article.article_id)
+        mapping = {
+                'unique_username': article.unique_username,
+                'title': article.title,
+                'content': article.content,
+                'user_id': article.user_id,
+                'nickname': article.nickname,
+                'created_at': article.created_at.timestamp(),
+                'category': article.category,
+                'article_id': article.article_id,
+                'likes': article.likes,
+                'dislikes': article.dislikes
+            }
+        await self._set_cache(
+                article.article_id,
+                mapping=mapping,
+                prefix='article'
+            )
+        return True
+    
+    async def views_counter(self, article_id: int):
+        return await self.cache.views_counter(article_id)
+    
+    async def update_views_counter(self):
+        await self.cache.update_views_counter()
+
+    async def check_reaction(
+            self,
+            user_id: int,
+            article_id: int
+    ):
+        check_reaction_today = await self.cache.can_reaction_today(user_id, article_id)
+        if not check_reaction_today:
+            return None
+        check_reaction = await self.repo_article.check_reaction(article_id, user_id)
+        if check_reaction:
+            return None
+        return True
+        
+
     async def add_reaction(
             self,
             user_id: int,
             article_id: int,
             reaction: str
     ):
-        result = await self.cache.can_react_today(user_id, article_id)
-        if not result:
-            return None
-
         set_reaction = await self.repo_article.set_reaction(
             article_id=article_id,
             user_id=user_id,
@@ -147,6 +186,6 @@ class CachedServiceArticle(BaseCachedService):
                 key=f'article{article_id}',
                 mapping=mapping
             )
-
-        return set_reaction
+        await self.update_article(set_reaction['reaction'])
+        return {'likes': set_reaction['reaction'].likes, 'dislikes': set_reaction['reaction'].dislikes}
 

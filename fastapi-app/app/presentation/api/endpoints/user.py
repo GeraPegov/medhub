@@ -11,7 +11,7 @@ from app.presentation.dependencies.articles_dependencies import get_article_serv
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cache_user
 from app.presentation.dependencies.comments import get_comment_service
-from app.presentation.dependencies.current_user import get_current_user
+from app.presentation.dependencies.current_user import get_auth
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 
@@ -23,7 +23,7 @@ async def profile(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_auth)
 ):
     entity_user = await cache_service.get_user(unique_username)
     return templates.TemplateResponse(
@@ -41,11 +41,10 @@ async def articles(
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
     article_service: ArticleService = Depends(get_article_service),
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_auth)
 ):
     user = await cache_service.get_user(unique_username)
     entity_articles = await article_service.list_user_articles(user.user_id)
-
     return templates.TemplateResponse(
         'profile.html',
         {
@@ -62,7 +61,7 @@ async def comments(
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
     comment_service: CommentService = Depends(get_comment_service),
-    auth: UserEntity = Depends(get_current_user)
+    auth: UserEntity = Depends(get_auth)
 ):
     user = await cache_service.get_user(unique_username)
     comments = await comment_service.show_by_author(user.user_id)
@@ -82,7 +81,7 @@ async def comments(
 async def subscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
     cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await user_service.subscribe(
@@ -98,7 +97,7 @@ async def subscribe(
 async def unsubscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
     cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await user_service.unsubscribe(
@@ -114,7 +113,7 @@ async def unsubscribe(
 async def subscriptions(
     request: Request,
     unique_username: str,
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
     cache_service: CachedServiceUser = Depends(get_cache_user)
 ):
     user = await cache_service.get_user(unique_username)
@@ -134,7 +133,7 @@ async def subscriptions(
 @router.get('/user/profile/{unique_username}/liked')
 async def liked(
     request: Request,
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
     article_service: ArticleService = Depends(get_article_service)
 ):
     articles = await article_service.liked_articles_by_user(auth.user_id)
@@ -150,7 +149,7 @@ async def liked(
 
 @router.get('/user/profile/{unique_username}/delete')
 async def delete_profile(
-    auth: UserEntity = Depends(get_current_user),
+    auth: UserEntity = Depends(get_auth),
     user_service: UserService = Depends(get_user_service)
 ):
     await user_service.delete_profile(auth.user_id)

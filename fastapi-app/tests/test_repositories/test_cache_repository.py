@@ -21,12 +21,12 @@ async def test_create_cash(db_redis: Redis, test_user1: User):
     }
     key = test_user1.id
 
-    action = 'user'
+    prefix = 'user'
 
-    cache = await repo.create_cache(
+    cache = await repo.set_cache(
         mapping=mapping,
         key=key,
-        action=action
+        prefix=prefix
     )
 
     assert cache is True
