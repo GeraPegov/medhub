@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(
         update_views_counter,
         trigger="interval",
-        seconds=10  
+        hours=12  
     )
     scheduler.start()
     yield

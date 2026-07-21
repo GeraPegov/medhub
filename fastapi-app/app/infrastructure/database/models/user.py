@@ -17,12 +17,12 @@ from app.infrastructure.database.connection import Base
 
 if TYPE_CHECKING:
     from app.infrastructure.database.models.article import Article
-    from app.infrastructure.database.models.comment import Comments
+    from app.infrastructure.database.models.comment import Comment
     from app.infrastructure.database.models.reaction import Reaction
 
 
 class User(Base, AsyncAttrs):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     __table_args__ = None
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -34,6 +34,6 @@ class User(Base, AsyncAttrs):
     subscriptions: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSONB), default=list)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, server_default='false')
 
-    reaction: Mapped[list['Reaction']] = relationship('Reaction', back_populates='user')
-    articles: Mapped[list['Article']] = relationship('Article', back_populates='user')
-    comments: Mapped[list['Comments']] = relationship('Comments', back_populates='user')
+    reactions: Mapped[list['Reaction']] = relationship('Reaction', back_populates='users')
+    articles: Mapped[list['Article']] = relationship('Article', back_populates='users')
+    comments: Mapped[list['Comment']] = relationship('Comment', back_populates='users')

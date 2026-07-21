@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.infrastructure.database.connection import Base
 
 if TYPE_CHECKING:
-    from app.infrastructure.database.models.comment import Comments
+    from app.infrastructure.database.models.comment import Comment
     from app.infrastructure.database.models.reaction import Reaction
     from app.infrastructure.database.models.user import User
 
@@ -20,13 +20,13 @@ class Article(Base, AsyncAttrs):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('user.id', ondelete='SET NULL'))
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='SET NULL'))
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     category: Mapped[str] = mapped_column(String(64))
     like: Mapped[int] = mapped_column(Integer, default=0)
     dislike: Mapped[int] = mapped_column(Integer, default=0)
     views_counter: Mapped[int] = mapped_column(Integer, default=0)
 
-    reaction: Mapped[list['Reaction']] = relationship('Reaction', back_populates='article')
-    user: Mapped['User'] = relationship('User', back_populates='articles')
-    comments: Mapped[list['Comments']] = relationship('Comments', back_populates='article')
+    reactions: Mapped[list['Reaction']] = relationship('Reaction', back_populates='articles')
+    users: Mapped['User'] = relationship('User', back_populates='articles')
+    comments: Mapped[list['Comment']] = relationship('Comment', back_populates='articles')

@@ -5,6 +5,3 @@ type Redis struct {
 	Password string
 	DB       int
 }
-type User struct {
-	Name string `json:"name"`
-}

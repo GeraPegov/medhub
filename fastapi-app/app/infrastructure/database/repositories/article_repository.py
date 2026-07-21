@@ -27,26 +27,26 @@ class ArticleRepository(IArticleRepository):
             select(User)
             .where(User.id==user_id)
         )).scalar_one()
-        articles = Article(
+        article = Article(
             title=mapping['title'],
             content=mapping['content'],
             user_id=mapping['user_id'],
-            user=user_orm,
+            users=user_orm,
             category=mapping['category']
         )
 
-        self.session.add(articles)
+        self.session.add(article)
         await self.session.commit()
-        await self.session.refresh(articles)
+        await self.session.refresh(article)
 
-        entities = await self._to_entity([articles])
+        entities = await self._to_entity([article])
         return entities[0]
 
 
     async def get_by_id(self, article_id: int) -> ArticleEntity | None:
         db_article = await self.session.execute(
             select(Article)
-            .options(selectinload(Article.user))
+            .options(selectinload(Article.users))
             .where(Article.id==article_id)
         )
         articles = db_article.scalars().all()
@@ -59,7 +59,7 @@ class ArticleRepository(IArticleRepository):
     async def all(self) -> list[ArticleEntity] | None:
         db_articles = await self.session.execute(
             select(Article)
-            .options(selectinload(Article.user))
+            .options(selectinload(Article.users))
         )
         articles = db_articles.scalars().all()
 
@@ -93,7 +93,7 @@ class ArticleRepository(IArticleRepository):
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity] | None:
         db_articles = await self.session.execute(
             select(Article)
-            .options(selectinload(Article.user))
+            .options(selectinload(Article.users))
             .where(Article.user_id==int(user_id))
         )
         articles = db_articles.scalars().all()
@@ -105,7 +105,7 @@ class ArticleRepository(IArticleRepository):
     async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
         db_articles = await self.session.execute(
             select(Article)
-            .options(selectinload(Article.user))
+            .options(selectinload(Article.users))
             .where(Article.category==category)
         )
         articles = db_articles.scalars().all()
@@ -118,7 +118,7 @@ class ArticleRepository(IArticleRepository):
         db_articles = await self.session.execute(
             update(Article)
             .where(Article.id==article_id)
-            .options(selectinload(Article.user))
+            .options(selectinload(Article.users))
             .values(
                 title=mapping['title'],
                 content=mapping['content'],
@@ -160,7 +160,7 @@ class ArticleRepository(IArticleRepository):
         )
         new_record_with_reaction = (await self.session.execute(
                 update(Article)
-                .options(selectinload(Article.user))
+                .options(selectinload(Article.users))
                 .where(Article.id == article_id)
                 .values(**{reaction: field_name[reaction] + 1})
                 .returning(Article)
@@ -177,7 +177,7 @@ class ArticleRepository(IArticleRepository):
     async def liked_articles_by_user(self, user_id: int):
         reaction_orm = await self.session.execute(
             select(Reaction)
-            .options(selectinload(Reaction.article).selectinload(Article.user))
+            .options(selectinload(Reaction.articles).selectinload(Article.users))
             .where(Reaction.user_id==user_id)
         )
 
@@ -193,8 +193,8 @@ class ArticleRepository(IArticleRepository):
                     article_id=article.id,
                     title=article.title,
                     content=article.content,
-                    unique_username=article.user.unique_username,
-                    nickname=article.user.nickname,
+                    unique_username=article.users.unique_username,
+                    nickname=article.users.nickname,
                     created_at=article.created_at,
                     user_id=article.user_id,
                     category=article.category)

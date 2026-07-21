@@ -9,3 +9,5 @@ var NewRedis domain.Redis = domain.Redis{
 	Password: "",
 	DB:       0,
 }
+
+var MedhubDB string = "postgres://postgres:2710@localhost:5432/medhub"
