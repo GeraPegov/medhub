@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация админа</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+    <main class="admin-auth">
+        <section class="auth-panel">
+            <h1>Регистрация админа</h1>
+
+            <form action="/admin/register/check" method="POST" class="auth-form">
+                <div class="form-group">
+                    <label for="login">Логин</label>
+                    <input
+                        type="text"
+                        id="login"
+                        name="login"
+                        maxlength="100"
+                        autocomplete="username"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Пароль</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        maxlength="100"
+                        autocomplete="new-password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">Зарегистрировать</button>
+            </form>
+        </section>
+    </main>
+</body>
+</html>

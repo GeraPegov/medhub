@@ -1,14 +1,12 @@
 
 from fastapi import APIRouter, Depends, Form
 from fastapi.responses import RedirectResponse
-from fastapi.templating import Jinja2Templates
 
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_auth
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates')
 
 router = APIRouter()
 

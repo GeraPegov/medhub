@@ -13,6 +13,7 @@ from app.presentation.api.endpoints.submit_article import (
     router as submit_article_router,
 )
 from app.presentation.api.endpoints.user import router as user_router
+from app.presentation.api.endpoints.admin import router as admin_router
 
 api_router = APIRouter()
 
@@ -25,3 +26,4 @@ api_router.include_router(user_router, tags=['UserArticles'])
 api_router.include_router(only_article_router, tags=['Show'])
 api_router.include_router(comments_router, tags=['Comments'])
 api_router.include_router(exit_router, tags=['Exit'])
+api_router.include_router(admin_router, tags=['Admin'])

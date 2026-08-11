@@ -25,7 +25,7 @@ func SearchUsers(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Query().Get("id")
 	email := r.URL.Query().Get("email")
 	if uniqueUsername == "" && id == "" && email == "" {
-		users, err := postgres.GetAllUsers(ctx)
+		users, err := postgres.AllUsers(ctx)
 		if err != nil {
 			http.Error(w, "warning for search all users", http.StatusInternalServerError)
 			return
@@ -54,7 +54,7 @@ func UserDelete(w http.ResponseWriter, r *http.Request) {
 
 func DeletedUsers(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	users, err := postgres.GetDeletedUsers(ctx)
+	users, err := postgres.DeletedUsers(ctx)
 	if err != nil {
 		http.Error(w, "warning for search deleted users", http.StatusInternalServerError)
 		return
