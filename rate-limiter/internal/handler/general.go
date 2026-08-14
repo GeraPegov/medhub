@@ -22,7 +22,7 @@ func Today(w http.ResponseWriter, r *http.Request) {
 	var articles []domain.Article
 	group.Go(func() error {
 		var err error
-		articles, err = postgres.GetArticlesByDate(ctx, date)
+		articles, err = postgres.ArticlesByDate(ctx, date)
 		if err != nil {
 			return fmt.Errorf("get articles by date: %w", err)
 		}
@@ -31,7 +31,7 @@ func Today(w http.ResponseWriter, r *http.Request) {
 
 	group.Go(func() error {
 		var err error
-		users, err = postgres.GetUsersByDate(ctx, date)
+		users, err = postgres.UsersByDate(ctx, date)
 		if err != nil {
 			return fmt.Errorf("get users by date: %w", err)
 		}

@@ -8,9 +8,9 @@ import (
 	"time"
 )
 
-func AllArticles(w http.ResponseWriter, r *http.Request) {
+func GetArticles(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	articles, err := postgres.AllArticles(ctx)
+	articles, err := postgres.GetArticles(ctx)
 	if err != nil {
 		fmt.Println("Плохие новости при выдаче всех статей")
 		return
@@ -19,10 +19,10 @@ func AllArticles(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(articles)
 }
 
-func ArticleDelete(w http.ResponseWriter, r *http.Request) {
+func DeleteArticles(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	article_id := r.URL.Query().Get("id")
-	err := postgres.ArticleDelete(ctx, article_id)
+	article_id := r.PathValue("id")
+	err := postgres.DeleteArticles(ctx, article_id)
 	if err != nil {
 		fmt.Println("плохие новости при удалении статьи")
 	} else {
@@ -30,13 +30,13 @@ func ArticleDelete(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ArticlesToday(w http.ResponseWriter, r *http.Request) {
+func ArticlesRegDate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	date, err := time.Parse("2006-01-02", r.URL.Query().Get("date"))
 	if err != nil {
 		http.Error(w, "неправильный формат даты", http.StatusBadRequest)
 	}
-	articles, err := postgres.GetArticlesByDate(ctx, date)
+	articles, err := postgres.ArticlesByDate(ctx, date)
 	if err != nil {
 		fmt.Println("плохие новости при показе новых статей за день")
 		return

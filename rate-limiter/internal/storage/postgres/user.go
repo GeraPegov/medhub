@@ -11,7 +11,7 @@ func DeleteUser(ctx context.Context, user_id string) error {
 	return err
 }
 
-func GetDeletedUsers(ctx context.Context) ([]domain.User, error) {
+func DeletedUsers(ctx context.Context) ([]domain.User, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE is_deleted = true")
 	if err != nil {
 		return nil, err
@@ -25,7 +25,7 @@ func GetDeletedUsers(ctx context.Context) ([]domain.User, error) {
 	return Users, nil
 }
 
-func GetAllUsers(ctx context.Context) ([]domain.User, error) {
+func AllUsers(ctx context.Context) ([]domain.User, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE is_deleted = false")
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func SearchUserEmail(ctx context.Context, email string) (*domain.User, error) {
 	return &u, nil
 }
 
-func GetUsersByDate(ctx context.Context, date time.Time) ([]domain.User, error) {
+func UsersByDate(ctx context.Context, date time.Time) ([]domain.User, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE registration_date::date = $1", date)
 	if err != nil {
 		return nil, err

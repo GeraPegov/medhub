@@ -9,18 +9,37 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(ctx context.Context, admin domain.Admin) (*string, error) {
-	id, err := postgres.Register(ctx, admin)
+func Register(ctx context.Context, admin domain.Admin) error {
+	hash, err := bcrypt.GenerateFromPassword(
+		[]byte(admin.Password),
+		bcrypt.DefaultCost,
+	)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	newToken, err := GenerateToken(*id)
+	return postgres.Register(ctx, admin.Login, hash)
+}
+
+func Login(ctx context.Context, admin domain.Admin) (string, error) {
+	id, hash, err := postgres.Login(ctx, admin.Login)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return &newToken, nil
+	err = bcrypt.CompareHashAndPassword(
+		[]byte(hash),
+		[]byte(admin.Password),
+	)
+	if err != nil {
+		return "", domain.ErrInvalidCredentials
+	}
+	newToken, err := GenerateToken(id)
+	if err != nil {
+		return "", err
+	}
+	return newToken, nil
 }
 
 var secretKey = []byte("6b33da986da8e74888c1efb080563b4cfc37a34a3ec4cccacc5512ddec47a070")

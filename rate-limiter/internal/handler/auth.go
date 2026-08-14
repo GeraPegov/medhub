@@ -2,36 +2,80 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
 	"new_prog/internal/domain"
 	"new_prog/internal/service"
-	"time"
 )
+
+// func Info(w http.ResponseWriter, r *http.Request) {
+// 	manyInfo := []domain.Info{
+// 		{
+// 			Method:      "get",
+// 			Path:        "/admin/articles",
+// 			Description: "You can use Id and Title for search article. Example: /admin/articles?id=1; /admin/articles?title=skelleton",
+// 		},
+// 		{
+// 			Method:      "delete",
+// 			Path:        "/admin/articles/",
+// 			Description: "You wanna use Id for delete article. Example: /admin/articles/1",
+// 		},
+// 		{
+// 			Method:      "get",
+// 			Path:        "/admin/users/{}",
+// 			Description: "You wanna use Id for search user. Example: /admin/users/1",
+// 		},
+// 		{
+// 			Method:      "delete",
+// 			Path:        "admin/users/{}",
+// 			Description: "You wanna use Id for delete user. Example: /admin/users/1",
+// 		},
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	json.NewEncoder(w).Encode(manyInfo)
+// }
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var NewAdmin domain.Admin
 	if err := json.NewDecoder(r.Body).Decode(&NewAdmin); err != nil {
-		http.Error(w, "bad news when parse body request", http.StatusBadRequest)
+		http.Error(w, "invalid request body", http.StatusBadRequest)
 		return
 	}
-	newToken, err := service.Register(ctx, NewAdmin)
+	err := service.Register(ctx, NewAdmin)
 	if err != nil {
-		fmt.Println(err)
-		http.Error(w, "плохие новости при регистрации админа", http.StatusBadRequest)
+		switch {
+		case errors.Is(err, domain.ErrAdminAlreadyExists):
+			http.Error(w, err.Error(), http.StatusConflict)
+		default:
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+		}
 		return
 	}
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    *newToken,
-		HttpOnly: true,
-		Path:     "/",
-		Expires:  time.Now().Add(24 * time.Hour),
-	})
-	fmt.Fprintln(w, "access")
+	w.WriteHeader(http.StatusCreated)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
+	ctx := r.Context()
+	var admin domain.Admin
+	if err := json.NewDecoder(r.Body).Decode(&admin); err != nil {
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+	newToken, err := service.Login(ctx, admin)
+	if err != nil {
+		switch {
+		case errors.Is(err, domain.ErrInvalidCredentials):
+			http.Error(w, err.Error(), http.StatusUnauthorized)
+		default:
+			http.Error(w, "internal server error", http.StatusInternalServerError)
+		}
+		return
+	}
+	response := domain.AuthResponse{
+		AccessToken: newToken,
+		TokenType:   "Bearer",
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(response)
 }

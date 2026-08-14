@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func AllArticles(ctx context.Context) ([]domain.Article, error) {
+func GetArticles(ctx context.Context) ([]domain.Article, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, title, user_id, created_at from articles")
 	if err != nil {
 		return nil, err
@@ -20,12 +20,12 @@ func AllArticles(ctx context.Context) ([]domain.Article, error) {
 	return Articles, nil
 }
 
-func ArticleDelete(ctx context.Context, articleId string) error {
+func DeleteArticles(ctx context.Context, articleId string) error {
 	_, err := Pool.Exec(ctx, "DELETE FROM articles WHERE id = $1", articleId)
 	return err
 }
 
-func GetArticlesByDate(ctx context.Context, date time.Time) ([]domain.Article, error) {
+func ArticlesByDate(ctx context.Context, date time.Time) ([]domain.Article, error) {
 
 	rows, err := Pool.Query(ctx, "SELECT id, title, user_id, created_at FROM articles WHERE created_at::date = $1", date)
 

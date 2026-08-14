@@ -6,15 +6,17 @@ import (
 	"net/http"
 	"new_prog/internal/service"
 	"new_prog/internal/storage/postgres"
+	"strings"
 )
 
 func SearchUsers(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("access_token")
-	if err != nil {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
 		http.Error(w, "not token", http.StatusBadRequest)
 		return
 	}
-	_, err = service.ValidateToken(cookie.Value)
+	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+	_, err := service.ValidateToken(tokenStr)
 	if err != nil {
 		fmt.Printf("not validate token: %s", err)
 		http.Error(w, "not valide token", http.StatusUnauthorized)
