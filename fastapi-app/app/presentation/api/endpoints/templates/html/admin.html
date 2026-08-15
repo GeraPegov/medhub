@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Админка{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-layout">
+        <div class="sidebar">
+            <h1 class="logo">MedHub</h1>
+            <nav class="sidebar-nav">
+                <a href="/admin">Dashboard</a>
+                <a href="/admin/users">Users</a>
+                <a href="/admin/articles">Articles</a>
+                <a href="/admin/comments">Comments</a>
+            </nav>
+        </div>
+    </div>
+{% endblock %}

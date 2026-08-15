@@ -1,17 +1,17 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Регистрация админа</title>
+{% extends "base.html" %}
+
+{% block title %}Авторизация админа{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="/static/css/admin.css">
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <main class="admin-auth">
         <section class="auth-panel">
-            <h1>Регистрация админа</h1>
+            <h1>Авторизация админа</h1>
 
-            <form action="/admin/register/check" method="POST" class="auth-form">
+            <form action="/admin/login" method="POST" class="auth-form">
                 <div class="form-group">
                     <label for="login">Логин</label>
                     <input
@@ -36,9 +36,8 @@
                     >
                 </div>
 
-                <button type="submit">Зарегистрировать</button>
+                <button type="submit">Авторизоваться</button>
             </form>
         </section>
     </main>
-</body>
-</html>
+{% endblock %}

@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Авторизация</title>
+{% extends "base.html" %}
+
+{% block title %}Авторизация{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="/static/css/login.css">
-</head>
-<body>
+{% endblock %}
+
+{% block body %}
     <div class="container">
         <div class="header">
             <h1>Авторизация</h1>
@@ -46,5 +46,4 @@
             </form>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

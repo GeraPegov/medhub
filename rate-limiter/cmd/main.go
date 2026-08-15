@@ -8,15 +8,16 @@ import (
 
 func main() {
 	postgres.StartPostgres()
-	http.HandleFunc("/admin/info", handler.Info)
+	// http.HandleFunc("/admin/info", handler.Info)
+	http.HandleFunc("/admin/me", handler.AuthCheck)
 	http.HandleFunc("/admin/register", handler.Register)
 	http.HandleFunc("/admin/login", handler.Login)
 	http.HandleFunc("/admin/users", handler.SearchUsers)
-	http.HandleFunc("/admin/users/delete", handler.UserDelete)
+	http.HandleFunc("/admin/users/{id}", handler.UserDelete)
 	http.HandleFunc("/admin/articles", handler.GetArticles)
 	http.HandleFunc("/admin/articles/{id}", handler.DeleteArticles)
 	http.HandleFunc("/admin/comments", handler.CommentsByArticle)
-	http.HandleFunc("/admin/comments/delete", handler.CommentsDelete)
+	http.HandleFunc("/admin/comments/{id}", handler.CommentsDelete)
 
 	http.ListenAndServe(":8001", nil)
 }

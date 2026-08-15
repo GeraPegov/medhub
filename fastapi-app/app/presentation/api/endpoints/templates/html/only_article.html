@@ -1,39 +1,18 @@
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }}</title>
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="/static/css/only_article.css">
+{% endblock %}
+
+{% block head_scripts %}
     <script src="/static/js/menu.js" defer></script>
     <script src="/static/js/reaction.js" defer></script>
-</head>
-<body>
-    <button class="menu-icon">
-        <i class="fa-solid fa-align-justify"></i>
-    </button>
-    <div class='menu-items'> 
-        {% if not auth %}
-            <a href="/auth" class="item-menu">
-                Войти
-            </a>
-        {% endif %}  
-        <a href="/" class="item-menu">
-            Домой
-        </a> 
-        <a href="/article/submit" class="item-menu">
-            Добавить статью
-        </a>
-        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
-            Профиль
-        </a>
-        {% if auth %}
-        <a href="/exit"  class="item-menu">
-            Выход
-        </a>
-        {% endif %}
-    </div>
+{% endblock %}
+
+{% block body %}
+    {% include "_menu.html" %}
     
     <div class="container">
         <div class="article-card">
@@ -123,5 +102,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

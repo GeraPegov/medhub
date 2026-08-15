@@ -1,34 +1,18 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Результаты поиска</title>
+{% extends "base.html" %}
+
+{% block title %}Результаты поиска{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="/static/css/search.css">
+{% endblock %}
+
+{% block head_scripts %}
     <script src="/static/js/menu.js" defer></script>
-</head>
-<body>
-    <button class="menu-icon">
-        <i class="fa-solid fa-align-justify"></i>
-    </button>
-    <div class='menu-items'>  
-        {% if not auth %}
-        <a href="/auth" class="item-menu">
-            Войти
-        </a>
-        {% endif %}  
-        <a href="/article/submit" class="item-menu">
-            Добавить статью
-        </a>
-        {% if auth %}
-        <a href="/exit"  class="item-menu">
-            Выход
-        </a>
-        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
-            Профиль
-        </a>
-        {% endif %}
-    </div>
+{% endblock %}
+
+{% block body %}
+    {% include "_menu.html" %}
+
     <div class="container">
         <div class="category-menu">
             <a href="/articles/search/category/Питание" class="category-link">Питание</a>
@@ -66,5 +50,5 @@
         </div>
     {% endfor %}
 {% endif %}
-</body>
-</html>
+    </div>
+{% endblock %}

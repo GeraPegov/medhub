@@ -1,0 +1,15 @@
+<button class="menu-icon" type="button" aria-label="Открыть меню"></button>
+<div class="menu-items">
+    <a href="/" class="item-menu">Домой</a>
+
+    {% if auth %}
+        <a href="/article/submit" class="item-menu">Добавить статью</a>
+        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">Профиль</a>
+        <a href="/articles/search" class="item-menu">Поиск</a>
+        <a href="/exit" class="item-menu">Выход</a>
+    {% else %}
+        <a href="/auth" class="item-menu">Войти</a>
+        <a href="/register" class="item-menu">Регистрация</a>
+        <a href="/articles/search" class="item-menu">Поиск</a>
+    {% endif %}
+</div>

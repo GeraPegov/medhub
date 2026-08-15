@@ -1,37 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/profile.css">
-    <script src="/static/js/menu.js" defer></script>
-    <title>Профиль</title>
-</head>
-<body>
-    <button class="menu-icon">
-    </button>
-    <div class='menu-items'>  
-        {% if not auth %}
-            <a href="/login" class="item-menu">
-                Войти
-            </a>
-        {% endif %}  
-        <a href="/" class="item-menu">
-            Домой
-        </a>
-        {% if auth.user_id != user.user_id %}
-        <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">
-            Профиль
-        </a>
-        {% endif %}
-        <a href="/article/submit" class="item-menu">
-            Добавить статью
-        </a>
-        <a href="/exit"  class="item-menu">
-            Выход
-        </a>
+{% extends "base.html" %}
 
-    </div>
+{% block title %}Профиль{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/profile.css">
+{% endblock %}
+
+{% block head_scripts %}
+    <script src="/static/js/menu.js" defer></script>
+{% endblock %}
+
+{% block body %}
+    {% include "_menu.html" %}
+
 {% if user %}  
     <div class="container">
             <div class="card-group">
@@ -42,7 +23,7 @@
                     <div class="only-name">
                         {{ user.nickname }}
                         <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
-                        {% if auth.user_id != user.user_id %}
+                        {% if auth and auth.user_id != user.user_id %}
                             {% if user.unique_username not in auth.subscriptions %}
                                 <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
                                     <button type="submit" class="subscribe-user-btn" id="followButton">
@@ -64,7 +45,7 @@
             </div> 
         <div class="action">
             <a href="/user/profile/{{ user.unique_username }}/articles" class="action-btn">Статьи</a>
-            {% if auth.unique_username == user.unique_username %}
+            {% if auth and auth.unique_username == user.unique_username %}
             <a href="/user/profile/{{ user.unique_username }}/comments" class="action-btn">Комментарии</a>
             <a href="/user/profile/{{ user.unique_username }}/subscriptions" class="action-btn">Подписки</a>
             <a href="/user/profile/{{ user.unique_username }}/liked" class="action-btn">Вам понравилось</a>
@@ -87,7 +68,7 @@
                                 <span class="category">{{ article.category }}</span>
                             </div>
                         </div>
-                        {% if article.unique_username == auth.unique_username %}
+                        {% if auth and article.unique_username == auth.unique_username %}
                             <div class="action-in-card">
                                 <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
                                     <button type="submit" class="delete-article-btn">
@@ -121,7 +102,7 @@
                         {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </span>
                 </div>
-            {% if auth.user_id == user.user_id %}
+            {% if auth and auth.user_id == user.user_id %}
                 <div class="action-in-card">
                     <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
                         <button type="submit" class="delete-comment-btn">
@@ -152,5 +133,4 @@
             <a href="/register" class="link-login">Зарегестрироваться</a>
         </div>
 {% endif %}
-</body>
-</html>
+{% endblock %}

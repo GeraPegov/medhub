@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"new_prog/internal/domain"
 	"new_prog/internal/service"
+	"strings"
 )
 
 // func Info(w http.ResponseWriter, r *http.Request) {
@@ -34,6 +35,22 @@ import (
 // 	w.Header().Set("Content-Type", "application/json")
 // 	json.NewEncoder(w).Encode(manyInfo)
 // }
+
+func AuthCheck(w http.ResponseWriter, r *http.Request) {
+	authHeader := r.Header.Get("Authorization")
+
+	parts := strings.SplitN(authHeader, " ", 2)
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		http.Error(w, "invalid Authorization header", http.StatusUnauthorized)
+		return
+	}
+	_, err := service.ValidateToken(parts[1])
+	if err != nil {
+		http.Error(w, "invalid or expired token", http.StatusUnauthorized)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

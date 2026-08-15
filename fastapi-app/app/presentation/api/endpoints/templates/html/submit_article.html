@@ -1,27 +1,18 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Добавить статью</title>
+{% extends "base.html" %}
+
+{% block title %}Добавить статью{% endblock %}
+
+{% block styles %}
     <link rel="stylesheet" href="/static/css/submit_article.css">
+{% endblock %}
+
+{% block head_scripts %}
     <script src="/static/js/menu.js" defer></script>
-</head>
-<body>
-    <button class="menu-icon">
-        <i class="fa-solid fa-align-justify"></i>
-    </button>
-    <div class='menu-items'> 
-        <a href="/" class="item-menu">
-            Домой
-        </a> 
-        <a href="/user/profile/{{auth.unique_username}}" class="item-menu">
-            Профиль
-        </a>
-        <a href="/exit"  class="item-menu">
-            Выход
-        </a>
-    </div>
+{% endblock %}
+
+{% block body %}
+    {% include "_menu.html" %}
+
     <div class="container">
         <div class="header">
             <h1>Новая статья</h1>
@@ -82,6 +73,9 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block scripts %}
     <script>
         function updateCounter(inputId, counterId, maxLength) {
             const input = document.getElementById(inputId);
@@ -116,5 +110,4 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}

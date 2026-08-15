@@ -23,13 +23,14 @@ from app.infrastructure.config import settings
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.infrastructure.database.connection import Base
-from app.infrastructure.database.models import Article, Comment, Reaction, User
+from app.infrastructure.database.models import Article, Comment, Reaction, User, Admin
 
 target_metadata = Base.metadata
 Article.metadata.bind = target_metadata
 User.metadata.bind = target_metadata
 Comment.metadata.bind = target_metadata
 Reaction.metadata.bind = target_metadata
+Admin.metadata.bind = target_metadata
 
 
 # other values from the config, defined by the needs of env.py,
