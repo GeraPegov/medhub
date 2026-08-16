@@ -8,3 +8,8 @@ type User struct {
 	UniqueUsername   string
 	RegistrationDate time.Time
 }
+
+type StatUsers struct {
+	Value int
+	Err   string
+}

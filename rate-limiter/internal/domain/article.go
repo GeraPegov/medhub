@@ -8,3 +8,8 @@ type Article struct {
 	User_id    int
 	Created_at time.Time
 }
+
+type StatArticles struct {
+	Value int
+	Err   string
+}

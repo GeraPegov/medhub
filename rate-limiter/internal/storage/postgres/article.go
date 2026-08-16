@@ -3,8 +3,16 @@ package postgres
 import (
 	"context"
 	"new_prog/internal/domain"
-	"time"
 )
+
+func QuantityArticles(ctx context.Context) (int, error) {
+	var quantityArticles int
+	err := Pool.QueryRow(ctx, "SELECT COUNT(id) FROM articles").Scan(&quantityArticles)
+	if err != nil {
+		return 0, domain.ErrDatabase
+	}
+	return quantityArticles, nil
+}
 
 func GetArticles(ctx context.Context) ([]domain.Article, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, title, user_id, created_at from articles")
@@ -25,7 +33,7 @@ func DeleteArticles(ctx context.Context, articleId string) error {
 	return err
 }
 
-func ArticlesByDate(ctx context.Context, date time.Time) ([]domain.Article, error) {
+func ArticlesByDate(ctx context.Context, date string) ([]domain.Article, error) {
 
 	rows, err := Pool.Query(ctx, "SELECT id, title, user_id, created_at FROM articles WHERE created_at::date = $1", date)
 

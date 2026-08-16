@@ -9,13 +9,42 @@
 {% block body %}
     <div class="admin-layout">
         <div class="sidebar">
-            <h1 class="logo">MedHub</h1>
+            <h1 class="sidebar-logo">Med<span>Hub</span></h1>
             <nav class="sidebar-nav">
                 <a href="/admin">Dashboard</a>
                 <a href="/admin/users">Users</a>
                 <a href="/admin/articles">Articles</a>
                 <a href="/admin/comments">Comments</a>
             </nav>
+        </div>
+        <div class="content">
+            <h1 class="content-logo">Statistics</h1>
+            <div class="content-stats">
+                <div class="stat-item">
+                    <p class="stat-label">Общее количество пользователей</p>
+                    {% if users_today %}
+                    <p class="stat-value">{{users_today}}</p>
+                    {% endif %}
+                </div>
+                <div class="stat-item">
+                    <p class="stat-label">Общее количество статей</p>
+                    {% if users_today %}
+                    <p class="stat-value">{{articles_today}}</p>
+                    {% endif %}
+                </div>
+                <div class="stat-item">
+                    <p class="stat-label">Зарегестрированные пользователи сегодня</p>
+                    {% if quantity_users is not none %}
+                        <p class="stat-value">{{ quantity_users }}</p>
+                    {% endif %}
+                </div>
+                <div class="stat-item">
+                    <p class="stat-label">Опубликованные статьи сегодня</p>
+                    {% if quantity_articles is not none %}
+                        <p class="stat-value">{{ quantity_articles }}</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

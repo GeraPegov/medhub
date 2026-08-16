@@ -15,21 +15,31 @@ body{
     flex-direction: column;
 }
 
-.sidebar h1{
+.sidebar-logo{
     padding: 0px 20px;
+    color: white;
+    margin-left: 10px;
+}
+
+.sidebar-logo span{
+    color: #60a5fa;
 }
 
 .sidebar-nav{
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: 0px 10px;
 }
 
 .sidebar-nav a{
     color: aliceblue;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 15px;
     padding: 12px 20px;
+    /* width: 180px; */
+    margin-left: 10px;
+    opacity: 0.8;
 }
 
 .sidebar-nav a:hover{

@@ -18,6 +18,7 @@ func main() {
 	http.HandleFunc("/admin/articles/{id}", handler.DeleteArticles)
 	http.HandleFunc("/admin/comments", handler.CommentsByArticle)
 	http.HandleFunc("/admin/comments/{id}", handler.CommentsDelete)
+	http.HandleFunc("/admin/statistics", handler.Statistics)
 
 	http.ListenAndServe(":8001", nil)
 }

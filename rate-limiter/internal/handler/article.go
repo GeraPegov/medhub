@@ -32,7 +32,8 @@ func DeleteArticles(w http.ResponseWriter, r *http.Request) {
 
 func ArticlesRegDate(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	date, err := time.Parse("2006-01-02", r.URL.Query().Get("date"))
+	date := r.URL.Query().Get("date")
+	_, err := time.Parse("2006-01-02", date)
 	if err != nil {
 		http.Error(w, "неправильный формат даты", http.StatusBadRequest)
 	}

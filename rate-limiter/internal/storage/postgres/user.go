@@ -3,8 +3,16 @@ package postgres
 import (
 	"context"
 	"new_prog/internal/domain"
-	"time"
 )
+
+func QuantityUsers(ctx context.Context) (int, error) {
+	var quantityUsers int
+	err := Pool.QueryRow(ctx, "SELECT COUNT(id) FROM users").Scan(&quantityUsers)
+	if err != nil {
+		return 0, domain.ErrDatabase
+	}
+	return quantityUsers, nil
+}
 
 func DeleteUser(ctx context.Context, user_id string) error {
 	_, err := Pool.Exec(ctx, "UPDATE users SET is_deleted = true WHERE id = $1", user_id)
@@ -70,7 +78,7 @@ func SearchUserEmail(ctx context.Context, email string) (*domain.User, error) {
 	return &u, nil
 }
 
-func UsersByDate(ctx context.Context, date time.Time) ([]domain.User, error) {
+func UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE registration_date::date = $1", date)
 	if err != nil {
 		return nil, err

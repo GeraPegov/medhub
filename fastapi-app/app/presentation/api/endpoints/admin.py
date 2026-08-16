@@ -2,10 +2,34 @@ from fastapi import APIRouter, Request, Form, Response
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 import aiohttp
+from functools import wraps
 
 router = APIRouter()
 
 templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
+
+def check_token(func):
+    @wraps(func)
+    async def wrapper(request: Request, *args, **kwargs):
+        token = request.cookies.get("admin_access_token")
+        if not token:
+            return RedirectResponse("/admin/login", status_code=303)
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(
+                "http://127.0.0.1:8001/admin/me",
+                headers={
+                    "Authorization": f"Bearer {token}"
+                }
+            )
+        if response.status == 401:
+            return RedirectResponse('/admin/login', status_code=303)
+        if response.status != 204:
+            return Response(
+                'internal server error',
+                status_code=500
+            )
+        return await func(request, *args, **kwargs)
+    return wrapper
 
 @router.get("/admin/login")
 async def admin_register_form(request: Request):
@@ -49,24 +73,19 @@ async def admin_register_check(
     )
     return response
 
+
 @router.get("/admin")
+@check_token
 async def admin_users(request: Request):
-    token = request.cookies["admin_access_token"]
     async with aiohttp.ClientSession() as session:
-        response = await session.get(
-            "http://127.0.0.1:8001/admin/me",
-            headers={
-                "Authorization": f"Bearer {token}"
-            }
-        )
-    if response.status == 401:
-        return RedirectResponse('/admin/login', status_code=303)
-    if response.status != 204:
-        return Response(
-            'internam server error',
-            status_code=500
-        )
+        response = await session.get("http://127.0.0.1:8001/admin/statistics")
+    statistics = await response.json()
+    print(statistics['quantity_articles']['Value'])
     return templates.TemplateResponse("admin.html", context={
-        'request': request
+        'request': request,
+        'articles_today': statistics['articles_today'],
+        'users_today': statistics['users_today'],
+        'quantity_users': statistics['quantity_users']['Value'] if statistics['quantity_users']['Err'].strip() == "" else statistics['quantity_users']['Err'],
+        'quantity_articles': statistics['quantity_articles']['Value'] if statistics['quantity_articles']['Err'].strip() == "" else statistics['quantity_articles']['Err']
     })
             
