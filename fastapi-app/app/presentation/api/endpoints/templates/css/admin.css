@@ -10,7 +10,7 @@ body{
 .sidebar{
     display: flex;
     background-color: #111827;
-    width: 240px;
+    width: 220px;
     min-height: 100vh;
     flex-direction: column;
 }
@@ -45,4 +45,68 @@ body{
 .sidebar-nav a:hover{
     background-color: #2b3445;
     border-radius: 20px;
+}
+
+.content{
+    padding-top: 30px;
+    background-color: #f6f7fb;
+    display: flex;
+    flex-direction: column;
+    padding-left: 20px;
+    gap: 20px;
+    flex: 1;
+}
+
+.content-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+    justify-items: center;
+    align-items: start;
+}
+
+.stat-item-first{
+    display: flex;
+    width: 360px;
+    height: 60px;
+    flex-direction: column;
+    border-radius: 30px;
+    padding: 10px;
+    background-color: #2b3445;
+    overflow-y: auto;
+    align-items: center;
+}
+
+.stat-item-second{
+    display: flex;
+    width: 360px;
+    height: 300px;
+    flex-direction: column;
+    border-radius: 18px;
+    padding: 10px;
+    background-color:#2b3445;
+    overflow-y: auto;
+    gap: 3px;
+}
+
+.stat-item-second .stat-value{
+    color: #f6f7fb;
+    margin: 0;
+}
+
+.stat-item-second .stat-title {
+    color:#60a5fa;
+    font-size: 20px;
+}
+
+.stat-item-first .stat-value{
+    color: #f6f7fb;
+
+}
+
+.stat-item-first .stat-title {
+    color:#60a5fa;
+    font-size: 20px;
+    margin: 0;
 }

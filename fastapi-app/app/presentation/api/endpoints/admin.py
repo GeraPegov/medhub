@@ -80,7 +80,7 @@ async def admin_users(request: Request):
     async with aiohttp.ClientSession() as session:
         response = await session.get("http://127.0.0.1:8001/admin/statistics")
     statistics = await response.json()
-    print(statistics['quantity_articles']['Value'])
+    print(statistics)
     return templates.TemplateResponse("admin.html", context={
         'request': request,
         'articles_today': statistics['articles_today'],

@@ -99,6 +99,7 @@ async def like(
     auth: UserEntity = Depends(get_auth),
     cache_service: CachedServiceArticle = Depends(get_cache_article)
 ):
+    #
     check_reaction = await cache_service.check_reaction(auth.user_id, article_id)
     if not check_reaction:
         return {'warning': None}

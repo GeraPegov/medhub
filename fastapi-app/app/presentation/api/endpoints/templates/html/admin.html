@@ -11,39 +11,53 @@
         <div class="sidebar">
             <h1 class="sidebar-logo">Med<span>Hub</span></h1>
             <nav class="sidebar-nav">
-                <a href="/admin">Dashboard</a>
-                <a href="/admin/users">Users</a>
-                <a href="/admin/articles">Articles</a>
-                <a href="/admin/comments">Comments</a>
+                <a href="/admin">Статистика</a>
+                <a href="/admin/users">Пользователи</a>
+                <a href="/admin/articles">Статьи</a>
+                <a href="/admin/comments">Комментарии</a>
             </nav>
         </div>
         <div class="content">
-            <h1 class="content-logo">Statistics</h1>
+            <!-- <h1 class="content-logo">Статистика</h1> -->
             <div class="content-stats">
-                <div class="stat-item">
-                    <p class="stat-label">Общее количество пользователей</p>
-                    {% if users_today %}
-                    <p class="stat-value">{{users_today}}</p>
-                    {% endif %}
-                </div>
-                <div class="stat-item">
-                    <p class="stat-label">Общее количество статей</p>
-                    {% if users_today %}
-                    <p class="stat-value">{{articles_today}}</p>
-                    {% endif %}
-                </div>
-                <div class="stat-item">
-                    <p class="stat-label">Зарегестрированные пользователи сегодня</p>
+                <div class="stat-item-first">
+                    <h3 class="stat-title">Общее количество пользователей</h3>
                     {% if quantity_users is not none %}
                         <p class="stat-value">{{ quantity_users }}</p>
                     {% endif %}
                 </div>
-                <div class="stat-item">
-                    <p class="stat-label">Опубликованные статьи сегодня</p>
+                <div class="stat-item-first">
+                    <h3 class="stat-title">Общее количество статей</h3>
                     {% if quantity_articles is not none %}
                         <p class="stat-value">{{ quantity_articles }}</p>
                     {% endif %}
                 </div>
+
+                <div class="stat-item-second">
+                    {% if users_today %}
+                    {% for user in users_today %}
+                    <h3 class="stat-title">Новый пользователь</h3>
+                        <p class="stat-value">Id: {{user['Id']}}</p>
+                        <p class="stat-value">Email: {{user['Email']}}</p>
+                        <p class="stat-value">Username: {{user['UniqueUsername']}}</p>
+                        <p class="stat-value">Дата регистрации: {{user['RegistrationDate'][:19]}}</p>
+                        {% endfor %}
+                        {% endif %}
+                </div>
+
+                СДЕЛАТЬ ПЕРИОД СТАТИСТИКИ
+                <div class="stat-item-second">
+                    {% if articles_today %}
+                    {% for article in articles_today %}
+                    <h3 class="stat-title">Новая статья</h3>
+                            <p class="stat-value">Id: {{article['Id']}}</p>
+                            <p class="stat-value">Заголовок: {{article['Title']}}</p>
+                            <p class="stat-value">Id пользователя чья публикация: {{article['User_id']}}</p>
+                            <p class="stat-value">Дата публикации: {{article['Created_at'][:19]}}</p>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
             </div>
         </div>
     </div>
