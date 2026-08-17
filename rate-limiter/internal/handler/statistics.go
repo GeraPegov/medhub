@@ -6,11 +6,10 @@ import (
 	"new_prog/internal/domain"
 	"new_prog/internal/storage/postgres"
 	"sync"
-	"time"
 )
 
 func Statistics(w http.ResponseWriter, r *http.Request) {
-	date := time.Now().Format("2006-01-02")
+	date := r.URL.Query().Get("date")
 	ctx := r.Context()
 
 	var usersToday []domain.User

@@ -18,7 +18,13 @@
             </nav>
         </div>
         <div class="content">
-            <!-- <h1 class="content-logo">Статистика</h1> -->
+            <div class="period-stat">
+
+                <form class="form-period-stat" action="/admin" method="get">
+                    <input type="date" name="date" class="input-period-stat">
+                    <button type="submit" class="btn-period-stat">Показать</button>
+                </form>
+            </div>
             <div class="content-stats">
                 <div class="stat-item-first">
                     <h3 class="stat-title">Общее количество пользователей</h3>
@@ -44,15 +50,13 @@
                         {% endfor %}
                         {% endif %}
                 </div>
-
-                СДЕЛАТЬ ПЕРИОД СТАТИСТИКИ
                 <div class="stat-item-second">
                     {% if articles_today %}
                     {% for article in articles_today %}
                     <h3 class="stat-title">Новая статья</h3>
                             <p class="stat-value">Id: {{article['Id']}}</p>
                             <p class="stat-value">Заголовок: {{article['Title']}}</p>
-                            <p class="stat-value">Id пользователя чья публикация: {{article['User_id']}}</p>
+                            <p class="stat-value">Id автора: {{article['User_id']}}</p>
                             <p class="stat-value">Дата публикации: {{article['Created_at'][:19]}}</p>
                     {% endfor %}
                     {% endif %}

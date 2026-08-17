@@ -3,6 +3,8 @@ body{
     margin: 0;
 }
 
+
+
 .admin-layout{
     display: flex;
 }
@@ -55,6 +57,45 @@ body{
     padding-left: 20px;
     gap: 20px;
     flex: 1;
+    align-items: center;
+}
+
+.period-stat {
+    gap: 15px;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 16px 20px;
+    width: 300px;   
+}
+
+
+.input-period-stat {
+    padding: 9px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+
+    font-size: 14px;
+    background-color: #f9fafb;
+}
+
+.btn-period-stat {
+    padding: 10px 16px;
+
+    border: none;
+    border-radius: 10px;
+
+    background-color: #60a5fa;
+    color: white;
+
+    cursor: pointer;
+}
+
+.btn-period-stat:hover {
+    background-color: #3b82f6;
 }
 
 .content-stats {

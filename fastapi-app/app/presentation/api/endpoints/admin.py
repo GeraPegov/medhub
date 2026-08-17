@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Request, Form, Response
+from fastapi import APIRouter, Request, Form, Response, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 import aiohttp
 from functools import wraps
+from datetime import datetime
 
 router = APIRouter()
 
@@ -77,11 +78,12 @@ async def admin_register_check(
 
 @router.get("/admin")
 @check_token
-async def admin_users(request: Request):
+async def admin_users(request: Request, date: str | None = Query(None)):
+    if date == "" or date is None:
+        date = datetime.now().date().isoformat()
     async with aiohttp.ClientSession() as session:
-        response = await session.get("http://127.0.0.1:8001/admin/statistics")
+        response = await session.get("http://127.0.0.1:8001/admin/statistics", params={"date": date})
     statistics = await response.json()
-    print(statistics)
     return templates.TemplateResponse("admin.html", context={
         'request': request,
         'articles_today': statistics['articles_today'],
@@ -89,4 +91,3 @@ async def admin_users(request: Request):
         'quantity_users': statistics['quantity_users']['Value'] if statistics['quantity_users']['Err'].strip() == "" else statistics['quantity_users']['Err'],
         'quantity_articles': statistics['quantity_articles']['Value'] if statistics['quantity_articles']['Err'].strip() == "" else statistics['quantity_articles']['Err']
     })
-            
