@@ -39,6 +39,7 @@ async def admin_register_form(request: Request):
             "request": request
         })
 
+
 @router.post('/admin/login')
 async def admin_register_check(
     login: str = Form(...),
