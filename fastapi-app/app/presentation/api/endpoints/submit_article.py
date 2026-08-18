@@ -25,9 +25,9 @@ async def add(
             status_code=303
         )
     return templates.TemplateResponse(
+        request=request,
         name="submit_article.html",
         context={
-            "request": request,
             'auth': auth
             })
 

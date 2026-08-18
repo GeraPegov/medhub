@@ -15,8 +15,8 @@ templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
 @router.get('/auth')
 def page_of_login(request: Request):
     return templates.TemplateResponse(
-        'login.html',
-        {'request': request}
+        request=request,
+        name='login.html'
     )
 
 @router.post('/auth/login')
@@ -32,9 +32,9 @@ async def login(
     )
     if not token:
         return templates.TemplateResponse(
-        'login.html',
-        {
-        'request': request,
+        request=request,
+        name='login.html',
+        context={
         'error': 'Неправильный логин или пароль'
         }
     )

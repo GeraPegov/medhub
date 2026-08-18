@@ -115,7 +115,7 @@ body{
     border-radius: 30px;
     padding: 10px;
     background-color: #2b3445;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     align-items: center;
 }
 

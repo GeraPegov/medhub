@@ -32,9 +32,9 @@ async def show_article(
     comments = await comment_service.show_by_article(article_id)
 
     return templates.TemplateResponse(
-        'only_article.html',
-        {
-        'request': request,
+        request=request,
+        name='only_article.html',
+        context={
         'article': article,
         'comments': comments,
         'auth': auth
@@ -64,9 +64,9 @@ async def preliminary_change(
     articles = await articles_service.get_by_id(article_id)
 
     return templates.TemplateResponse(
-        'change_article.html',
-        {
-        'request': request,
+        request=request,
+        name='change_article.html',
+        context={
         'article': articles
         }
     )
@@ -83,10 +83,10 @@ async def final_change(
     article = await article_service.change_article(dto, article_id)
 
     return templates.TemplateResponse(
-        'only_article.html',
-        {
+        request=request,
+        name='only_article.html',
+        context={
         'auth': auth,
-        'request': request,
         'article': article
         }
     )

@@ -1,5 +1,6 @@
 import httpx
 
+
 class RateLimiterClient:
     def __init__(self, base_url: str):
         self.base_url = base_url
@@ -27,9 +28,9 @@ class RateLimiterClient:
                     "limit": limit
                 }
             )
-            
+
             data = response.json()
-            
+
             if response.status_code == 200:
                 return True, None
             elif response.status_code == 429:
@@ -37,11 +38,11 @@ class RateLimiterClient:
             else:
                 # Если Go сервис недоступен — пропускаем проверку (graceful degradation)
                 return True, None
-                
+
         except Exception as e:
             # Логируем ошибку, но не блокируем пользователя
             print(f"Rate limiter error: {e}")
             return True, None
-    
+
     async def close(self):
         await self.client.aclose()

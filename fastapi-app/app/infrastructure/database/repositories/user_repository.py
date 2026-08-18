@@ -15,7 +15,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.id==user_id)
-            .where(User.is_deleted == False)
+            .where(User.is_deleted.is_(False))
         )
         user = user_db.scalar_one_or_none()
 
@@ -36,7 +36,7 @@ class UserRepository(IUserRepository):
         user_db = await self.session.execute(
             select(User)
             .where(User.unique_username==unique_username)
-            .where(User.is_deleted==False)
+            .where(User.is_deleted.is_(False))
         )
         user = user_db.scalar_one_or_none()
         return await self._to_entity(user) if user else None

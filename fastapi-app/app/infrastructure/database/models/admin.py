@@ -1,6 +1,8 @@
-from app.infrastructure.database.connection import Base
 from sqlalchemy import Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+
+from app.infrastructure.database.connection import Base
+
 
 class Admin(Base):
     __tablename__ = "admins"

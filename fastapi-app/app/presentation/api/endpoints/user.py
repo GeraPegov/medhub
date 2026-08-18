@@ -27,9 +27,9 @@ async def profile(
 ):
     entity_user = await cache_service.get_user(unique_username)
     return templates.TemplateResponse(
-        'profile.html',
-        {
-        'request': request,
+        request=request,
+        name='profile.html',
+        context={
         'user': entity_user,
         'auth': auth
         }
@@ -46,10 +46,10 @@ async def articles(
     user = await cache_service.get_user(unique_username)
     entity_articles = await article_service.list_user_articles(user.user_id)
     return templates.TemplateResponse(
-        'profile.html',
-        {
+        request=request,
+        name='profile.html',
+        context={
         'auth': auth,
-        'request': request,
         'user': user,
         'articles': entity_articles
         }
@@ -67,10 +67,10 @@ async def comments(
     comments = await comment_service.show_by_author(user.user_id)
 
     return templates.TemplateResponse(
-        'profile.html',
-        {
+        request=request,
+        name='profile.html',
+        context={
         'auth': auth,
-        'request': request,
         'user': user,
         'comments': comments,
         'article': None
@@ -119,10 +119,10 @@ async def subscriptions(
     user = await cache_service.get_user(unique_username)
 
     return templates.TemplateResponse(
-        'profile.html',
-        {
+        request=request,
+        name='profile.html',
+        context={
         'auth': auth,
-        'request': request,
         'user': user,
         'article': None,
         'subscriptions': user.subscriptions
@@ -138,10 +138,10 @@ async def liked(
 ):
     articles = await article_service.liked_articles_by_user(auth.user_id)
     return templates.TemplateResponse(
-        'profile.html',
-        {
+        request=request,
+        name='profile.html',
+        context={
         'auth': auth,
-        'request': request,
         'user': auth,
         'articles': articles
         }

@@ -62,18 +62,43 @@
 
 ### 2 Установка зависимостей
 
+macOS:
+
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 pip install -e ".[dev]"
 ```
+
+Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
+
+Windows Git Bash:
+
+```bash
+py -m venv .venv
+source .venv/Scripts/activate
+python -m pip install --upgrade pip
+pip install -e ".[dev]"
+```
+
+Окружение `.venv` создаётся отдельно на каждом устройстве и не переносится
+между Windows и macOS. Версии прямых зависимостей закреплены в `pyproject.toml`,
+а полный воспроизводимый список находится в `requirements.txt`.
 
 ### 3 Переменные окружения
 
 Скопируйте пример и заполните значения:
 
 ```bash
-cp env.example .env
+cp .env.example .env
 ```
 
 ### 4 Создание БД и миграции

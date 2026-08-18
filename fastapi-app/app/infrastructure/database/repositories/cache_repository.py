@@ -37,7 +37,7 @@ class CachedRepository:
 
     async def views_counter(self, article_id: int):
         return await self.connection.incr(f"article_counter:{article_id}")
-    
+
     async def update_views_counter(self):
         async for key in self.connection.scan_iter("article_counter:*"):
             print(key)

@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from app.presentation.api.endpoints.admin import router as admin_router
 from app.presentation.api.endpoints.comments import router as comments_router
 from app.presentation.api.endpoints.exit import router as exit_router
 from app.presentation.api.endpoints.home import router as home_router
@@ -13,7 +14,6 @@ from app.presentation.api.endpoints.submit_article import (
     router as submit_article_router,
 )
 from app.presentation.api.endpoints.user import router as user_router
-from app.presentation.api.endpoints.admin import router as admin_router
 
 api_router = APIRouter()
 

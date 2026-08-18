@@ -1,17 +1,18 @@
 
+from contextlib import asynccontextmanager
+
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from contextlib import asynccontextmanager
 from redis.asyncio.connection import ConnectionPool
 
+import app.presentation.dependencies.cache as state
+from app.infrastructure.config import settings
 from app.presentation.api.router import api_router
 from app.presentation.dependencies.scheduler import scheduler_service_context
-from app.infrastructure.config import settings
-import app.presentation.dependencies.cache as state
 
-scheduler = AsyncIOScheduler() 
+scheduler = AsyncIOScheduler()
 
 async def update_views_counter():
     async with scheduler_service_context() as service:
@@ -32,7 +33,7 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(
         update_views_counter,
         trigger="interval",
-        hours=12  
+        hours=12
     )
     scheduler.start()
     yield

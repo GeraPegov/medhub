@@ -16,8 +16,8 @@ async def page_of_register(
     request: Request
 ):
     return templates.TemplateResponse(
-        'register.html',
-        {'request': request}
+        request=request,
+        name='register.html'
     )
 
 @router.post('/auth/register')
@@ -29,12 +29,12 @@ async def register(
     user = await registration_service.execute(user_data)
     if not user:
         return templates.TemplateResponse(
-        'register.html',
-        {
-        'request': request,
-        'error': 'User с таким Email уже существует. Хотите восстановить аккаунт?'
-        }
-    )
+            request=request,
+            name='register.html',
+            context={
+                'error': 'User с таким Email уже существует. Хотите восстановить аккаунт?'
+            }
+        )
     response = RedirectResponse(
         url='/auth',
         status_code=303

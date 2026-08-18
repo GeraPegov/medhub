@@ -1,10 +1,13 @@
-from app.infrastructure.database.repositories.cache_repository import CachedRepository
-from app.presentation.dependencies.cache import get_redis
-from app.infrastructure.database.repositories.article_repository import ArticleRepository
-from app.infrastructure.database.connection import get_db
-from app.infrastructure.database.repositories.logic_repository import LogicRepository
-from app.application.services.cache_service import CachedServiceArticle
 from contextlib import asynccontextmanager
+
+from app.application.services.cache_service import CachedServiceArticle
+from app.infrastructure.database.connection import get_db
+from app.infrastructure.database.repositories.article_repository import (
+    ArticleRepository,
+)
+from app.infrastructure.database.repositories.cache_repository import CachedRepository
+from app.infrastructure.database.repositories.logic_repository import LogicRepository
+from app.presentation.dependencies.cache import get_redis
 
 
 @asynccontextmanager

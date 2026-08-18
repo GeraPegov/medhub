@@ -1,6 +1,6 @@
 from collections.abc import Sequence
 from datetime import datetime
-from dataclasses import dataclass
+from typing import TypedDict
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,10 +12,10 @@ from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User
 
-@dataclass
-class Response_reaction:
-    reaction: Article
-    date_of_rection: datetime
+
+class ResponseReaction(TypedDict):
+    reaction: ArticleEntity
+    date_of_reaction: datetime
 
 class ArticleRepository(IArticleRepository):
     def __init__(self, session: AsyncSession):
@@ -148,7 +148,7 @@ class ArticleRepository(IArticleRepository):
             article_id: int,
             user_id: int,
             reaction: str
-    ) -> Response_reaction:
+    ) -> ResponseReaction:
         field_name = {
             "like": Article.like,
             "dislike": Article.dislike

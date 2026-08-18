@@ -144,10 +144,10 @@ class CachedServiceArticle(BaseCachedService):
                 prefix='article'
             )
         return True
-    
+
     async def views_counter(self, article_id: int):
         return await self.cache.views_counter(article_id)
-    
+
     async def update_views_counter(self):
         await self.cache.update_views_counter()
 
@@ -163,7 +163,7 @@ class CachedServiceArticle(BaseCachedService):
         if check_reaction:
             return None
         return True
-        
+
 
     async def add_reaction(
             self,

@@ -7,7 +7,6 @@ from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_auth
 
-
 router = APIRouter()
 
 @router.post('/comments/{article_id}/create')

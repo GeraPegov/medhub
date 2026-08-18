@@ -18,10 +18,10 @@ async def search(
     auth: UserEntity = Depends(get_auth)
 ):
     return templates.TemplateResponse(
-        'search.html',
-        {
-        'auth': auth,
-        'request': request
+        request=request,
+        name='search.html',
+        context={
+        'auth': auth
         }
     )
 
@@ -34,9 +34,9 @@ async def get_title(
     articles = await service.search_by_title(query)
 
     return templates.TemplateResponse(
+        request=request,
         name="search.html",
         context={
-            "request": request,
             "articles": articles,
             "title": query,
             "auth": None
@@ -53,9 +53,9 @@ async def get_category(
     articles = await service.search_by_category(category)
 
     return templates.TemplateResponse(
+        request=request,
         name="search.html",
         context={
-            "request": request,
             "articles": articles,
             "auth": auth
             }

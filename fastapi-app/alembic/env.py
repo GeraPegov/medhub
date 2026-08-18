@@ -23,7 +23,7 @@ from app.infrastructure.config import settings
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from app.infrastructure.database.connection import Base
-from app.infrastructure.database.models import Article, Comment, Reaction, User, Admin
+from app.infrastructure.database.models import Admin, Article, Comment, Reaction, User
 
 target_metadata = Base.metadata
 Article.metadata.bind = target_metadata

@@ -20,8 +20,9 @@ async def home(
     articles = await article_service.show_all_articles()
 
     return templates.TemplateResponse(
-        name='home.html', context={
+        request=request,
+        name='home.html',
+        context={
             'auth': auth,
-            'request': request,
             'articles': articles
             })

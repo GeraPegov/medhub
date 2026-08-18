@@ -1,9 +1,10 @@
-from fastapi import APIRouter, Request, Form, Response, Query
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import RedirectResponse
-import aiohttp
-from functools import wraps
 from datetime import datetime
+from functools import wraps
+
+import aiohttp
+from fastapi import APIRouter, Form, Query, Request, Response
+from fastapi.responses import RedirectResponse
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
 
@@ -34,11 +35,9 @@ def check_token(func):
 
 @router.get("/admin/login")
 async def admin_register_form(request: Request):
-    return templates.TemplateResponse( 
-        'login_admin.html',
-        context={
-            "request": request
-        })
+    return templates.TemplateResponse(
+        request=request,
+        name='login_admin.html')
 
 
 @router.post('/admin/login')
@@ -84,8 +83,10 @@ async def admin_users(request: Request, date: str | None = Query(None)):
     async with aiohttp.ClientSession() as session:
         response = await session.get("http://127.0.0.1:8001/admin/statistics", params={"date": date})
     statistics = await response.json()
-    return templates.TemplateResponse("admin.html", context={
-        'request': request,
+    return templates.TemplateResponse(
+        request=request,
+        name="admin.html",
+        context={
         'articles_today': statistics['articles_today'],
         'users_today': statistics['users_today'],
         'quantity_users': statistics['quantity_users']['Value'] if statistics['quantity_users']['Err'].strip() == "" else statistics['quantity_users']['Err'],
