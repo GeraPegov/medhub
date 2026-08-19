@@ -120,7 +120,8 @@ async def users_menu(
     if username is not None:
         params["username"] = username
     async with aiohttp.ClientSession() as session:
-        await session.get("http://127.0.0.1:8001/admin/users", params=params)
+        response = await session.get("http://127.0.0.1:8001/admin/users", params=params)
+        
     return templates.TemplateResponse(
         request=request,
         name="admin_users.html",
