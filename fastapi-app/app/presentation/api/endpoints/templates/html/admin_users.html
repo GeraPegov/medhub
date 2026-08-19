@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Админка{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
+
+{% block body %}
+
+    <div class="admin-layout">
+        {% include "_admin_sidebar.html" %}
+        <div class="content">
+            <div class="block-search">
+                <form class="form-id" action="/admin/users">
+                    <h3 class="title-id">Поиск по ID</h3>
+                    <input type="search" name="id" class="input-id">
+                    <button class="button-search" type="submit">
+                        Искать
+                    </button>
+                    <h3 class="title-email">Поиск по Email</h3>
+                    <input type="search" name="email" class="input-email">
+                    <button class="button-search" type="submit">
+                        Искать
+                    </button>
+                    <h3 class="title-username">Поиск по Username</h3>
+                    <input type="search" name="username" class="input-username">
+                    <button class="button-search" type="submit">
+                        Искать
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

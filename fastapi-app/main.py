@@ -38,7 +38,9 @@ async def lifespan(app: FastAPI):
     scheduler.start()
     yield
     scheduler.shutdown()
-    await redis_pool.aclose()
+    if state.redis_pool is not None:
+        await state.redis_pool.aclose()
+        state.redis_pool = None
 
 app = FastAPI(lifespan=lifespan)
 templates = Jinja2Templates('app/presentation/api/endpoints/templates')

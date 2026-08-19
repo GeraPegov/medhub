@@ -77,7 +77,7 @@ async def admin_register_check(
 
 @router.get("/admin")
 @check_token
-async def admin_users(request: Request, date: str | None = Query(None)):
+async def admin(request: Request, date: str | None = Query(None)):
     if date == "" or date is None:
         date = datetime.now().date().isoformat()
     async with aiohttp.ClientSession() as session:
@@ -92,3 +92,37 @@ async def admin_users(request: Request, date: str | None = Query(None)):
         'quantity_users': statistics['quantity_users']['Value'] if statistics['quantity_users']['Err'].strip() == "" else statistics['quantity_users']['Err'],
         'quantity_articles': statistics['quantity_articles']['Value'] if statistics['quantity_articles']['Err'].strip() == "" else statistics['quantity_articles']['Err']
     })
+
+@router.get("/admin/users")
+@check_token
+async def users_menu(
+    request: Request
+):
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_users.html",
+        context={}
+    )
+
+@router.get("/admin/users")
+@check_token
+async def users_menu(
+    request: Request,
+    id: int | None = Query(None),
+    email: str | None = Query(None),
+    username: str | None = Query(None)
+):
+    params = {}
+    if id is not None:
+        params["id"] = id
+    if email is not None:
+        params["email"] = email
+    if username is not None:
+        params["username"] = username
+    async with aiohttp.ClientSession() as session:
+        await session.get("http://127.0.0.1:8001/admin/users", params=params)
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_users.html",
+        context={}
+    )
