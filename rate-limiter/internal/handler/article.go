@@ -10,6 +10,9 @@ import (
 
 func GetArticles(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
+	// uniqueUsername := r.URL.Query().Get("username")
+	// id := r.URL.Query().Get("id")
+	// title := r.URL.Query().Get("title")
 	articles, err := postgres.GetArticles(ctx)
 	if err != nil {
 		fmt.Println("Плохие новости при выдаче всех статей")

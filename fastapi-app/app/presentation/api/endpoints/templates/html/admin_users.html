@@ -11,25 +11,42 @@
     <div class="admin-layout">
         {% include "_admin_sidebar.html" %}
         <div class="content">
-            <div class="block-search">
-                <form class="form-id" action="/admin/users">
-                    <h3 class="title-id">Поиск по ID</h3>
-                    <input type="search" name="id" class="input-id">
-                    <button class="button-search" type="submit">
-                        Искать
-                    </button>
-                    <h3 class="title-email">Поиск по Email</h3>
-                    <input type="search" name="email" class="input-email">
-                    <button class="button-search" type="submit">
-                        Искать
-                    </button>
-                    <h3 class="title-username">Поиск по Username</h3>
-                    <input type="search" name="username" class="input-username">
-                    <button class="button-search" type="submit">
-                        Искать
-                    </button>
+                <form class="form-search" action="/admin/users">
+                    <div class="form-search-item">
+                        <h3 class="title-id">Поиск по ID</h3>
+                        <input type="search" name="id" class="form-search-input">
+                        <button class="button-search" type="submit">
+                            Искать
+                        </button>
+                    </div>
+                    <div class="form-search-item">
+                        <h3 class="title-email">Поиск по Email</h3>
+                        <input type="search" name="email" class="form-search-input">
+                        <button class="button-search" type="submit">
+                            Искать
+                        </button>
+                    </div>
+                    <div class="form-search-item">
+                        <h3 class="title-username">Поиск по Username</h3>
+                        <input type="search" name="username" class="form-search-input">
+                        <button class="button-search" type="submit">
+                            Искать
+                        </button>
+                    </div>
+
                 </form>
-            </div>
+                <!-- <h1>Найденные пользователи</h1> -->
+            {% if users %}
+                {% for user in users %}
+
+                    <div class="block-user">
+                        <p class="stat-value">Id: {{user['id']}}</p>
+                        <p class="stat-value">Email: {{user['email']}}</p>
+                        <p class="stat-value">Username: {{user['username']}}</p>
+                        <p class="stat-value">Дата регистрации: {{user['registration_date'][:19]}}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

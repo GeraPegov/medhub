@@ -93,16 +93,16 @@ async def admin(request: Request, date: str | None = Query(None)):
         'quantity_articles': statistics['quantity_articles']['Value'] if statistics['quantity_articles']['Err'].strip() == "" else statistics['quantity_articles']['Err']
     })
 
-@router.get("/admin/users")
-@check_token
-async def users_menu(
-    request: Request
-):
-    return templates.TemplateResponse(
-        request=request,
-        name="admin_users.html",
-        context={}
-    )
+# @router.get("/admin/users")
+# @check_token
+# async def users_menu(
+#     request: Request
+# ):
+#     return templates.TemplateResponse(
+#         request=request,
+#         name="admin_users.html",
+#         context={}
+#     )
 
 @router.get("/admin/users")
 @check_token
@@ -119,11 +119,43 @@ async def users_menu(
         params["email"] = email
     if username is not None:
         params["username"] = username
+    print(id, email, username)
     async with aiohttp.ClientSession() as session:
         response = await session.get("http://127.0.0.1:8001/admin/users", params=params)
-        
+    users = await response.json()
+    print(await response.json())
     return templates.TemplateResponse(
         request=request,
         name="admin_users.html",
-        context={}
+        context={
+            "users": users
+        }
+    )
+
+@router.get("/admin/articles")
+@check_token
+async def users_menu(
+    request: Request,
+    id: int | None = Query(None),
+    title: str | None = Query(None),
+    username: str | None = Query(None)
+):
+    params = {}
+    if id is not None:
+        params["id"] = id
+    if title is not None:
+        params["email"] = title
+    if username is not None:
+        params["username"] = username
+    print(id, title, username)
+    async with aiohttp.ClientSession() as session:
+        response = await session.get("http://127.0.0.1:8001/admin/articles", params=params)
+    articles = await response.json()
+    print(await response.json())
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_articles.html",
+        context={
+            "articles": articles
+        }
     )

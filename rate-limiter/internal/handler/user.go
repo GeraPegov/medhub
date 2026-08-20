@@ -2,28 +2,14 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"new_prog/internal/service"
 	"new_prog/internal/storage/postgres"
-	"strings"
 )
 
 func SearchUsers(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		http.Error(w, "not token", http.StatusBadRequest)
-		return
-	}
-	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-	_, err := service.ValidateToken(tokenStr)
-	if err != nil {
-		fmt.Printf("not validate token: %s", err)
-		http.Error(w, "not valide token", http.StatusUnauthorized)
-		return
-	}
 	ctx := r.Context()
-	uniqueUsername := r.URL.Query().Get("uniqueUsername")
+	uniqueUsername := r.URL.Query().Get("username")
 	id := r.URL.Query().Get("id")
 	email := r.URL.Query().Get("email")
 	if uniqueUsername == "" && id == "" && email == "" {

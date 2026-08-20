@@ -72,7 +72,7 @@ body{
 }
 
 
-.input-period-stat {
+.input-period-stat, .form-search-input {
     padding: 9px 12px;
 
     border: 1px solid #d1d5db;
@@ -82,7 +82,7 @@ body{
     background-color: #f9fafb;
 }
 
-.btn-period-stat {
+.btn-period-stat, .button-search {
     padding: 10px 16px;
 
     border: none;
@@ -150,4 +150,26 @@ body{
     color:#60a5fa;
     font-size: 20px;
     margin: 0;
+}
+
+.block-user{
+    display: flex;
+    /* flex-direction: column;  */
+    align-self: flex-start;
+    border-top: solid 2px black;
+    width: 80%;
+    margin-left: 100px;
+    padding-left: 20px;
+    gap: 50px;
+}
+
+.form-search{
+    display: flex;
+    gap: 50px;
+    margin-bottom: 100px;
+}
+
+.form-search-item{
+    /* display: flex;
+    flex-direction: column; */
 }
