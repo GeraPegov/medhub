@@ -38,12 +38,11 @@
                 <!-- <h1>Найденные пользователи</h1> -->
             {% if users %}
                 {% for user in users %}
-
-                    <div class="block-user">
-                        <p class="stat-value">Id: {{user['id']}}</p>
-                        <p class="stat-value">Email: {{user['email']}}</p>
-                        <p class="stat-value">Username: {{user['username']}}</p>
-                        <p class="stat-value">Дата регистрации: {{user['registration_date'][:19]}}</p>
+                    <div class="user-card">
+                        <p class="user-card_field">Id: {{user['id']}}</p>
+                        <p class="user-card_field">Email: {{user['email']}}</p>
+                        <p class="user-card_field">Username: {{user['username']}}</p>
+                        <p class="user-card_field">Дата регистрации: {{user['registration_date'][:19]}}</p>
                     </div>
                 {% endfor %}
             {% endif %}

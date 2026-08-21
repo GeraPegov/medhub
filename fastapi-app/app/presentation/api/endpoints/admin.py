@@ -34,14 +34,14 @@ def check_token(func):
     return wrapper
 
 @router.get("/admin/login")
-async def admin_register_form(request: Request):
+async def register_form(request: Request):
     return templates.TemplateResponse(
         request=request,
         name='login_admin.html')
 
 
 @router.post('/admin/login')
-async def admin_register_check(
+async def register_check(
     login: str = Form(...),
     password: str = Form(...)
 ):
@@ -93,17 +93,6 @@ async def admin(request: Request, date: str | None = Query(None)):
         'quantity_articles': statistics['quantity_articles']['Value'] if statistics['quantity_articles']['Err'].strip() == "" else statistics['quantity_articles']['Err']
     })
 
-# @router.get("/admin/users")
-# @check_token
-# async def users_menu(
-#     request: Request
-# ):
-#     return templates.TemplateResponse(
-#         request=request,
-#         name="admin_users.html",
-#         context={}
-#     )
-
 @router.get("/admin/users")
 @check_token
 async def users_menu(
@@ -134,20 +123,20 @@ async def users_menu(
 
 @router.get("/admin/articles")
 @check_token
-async def users_menu(
+async def articles_menu(
     request: Request,
-    id: int | None = Query(None),
+    user_id: str | None = Query(None),
     title: str | None = Query(None),
-    username: str | None = Query(None)
+    article_id: str | None = Query(None)
 ):
     params = {}
-    if id is not None:
-        params["id"] = id
+    if article_id is not None:
+        params["article_id"] = article_id
     if title is not None:
-        params["email"] = title
-    if username is not None:
-        params["username"] = username
-    print(id, title, username)
+        params["title"] = title
+    if user_id is not None:
+        params["user_id"] = user_id
+    print(user_id, title, article_id)
     async with aiohttp.ClientSession() as session:
         response = await session.get("http://127.0.0.1:8001/admin/articles", params=params)
     articles = await response.json()
