@@ -1,0 +1,22 @@
+{% extends "admin/base.html" %}
+{% from "admin/_admin_macros.html" import search_form %}
+
+{% block admin_content %}
+    <div class="form-search">
+        {{ search_form("/admin/users", "Поиск по ID", "id") }}
+        {{ search_form("/admin/users", "Поиск по Email", "email", "email") }}
+        {{ search_form("/admin/users", "Поиск по Username", "username") }}
+    </div>
+    {% for user in users %}
+        <div class="user-card">
+            <p class="user-card_field">Id: {{ user['user_id'] }}</p>
+            <p class="user-card_field">Email: {{ user['email'] }}</p>
+            <p class="user-card_field">Username: {{ user['username'] }}</p>
+            <p class="user-card_field">Дата регистрации: {{ user['registration_date'][:19] }}</p>
+            <form action="/admin/users/{{ user['user_id'] }}" method="post">
+                <button type="submit" class="button-delete">Удалить</button>
+            </form>
+        </div>
+
+    {% endfor %}
+{% endblock %}

@@ -19,7 +19,7 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(self, user_data: dict) -> UserEntity:
+    async def create(self, user_data: dict) -> None:
         pass
 
     @abstractmethod
@@ -36,4 +36,8 @@ class IUserRepository(ABC):
 
     @abstractmethod
     async def delete_profile(self, user_id):
+        pass
+
+    @abstractmethod
+    async def restore_deleted_by_email(self, email: str) -> bool:
         pass

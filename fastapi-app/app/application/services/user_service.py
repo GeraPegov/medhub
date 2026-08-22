@@ -1,5 +1,3 @@
-
-
 from app.domain.entities.user import UserEntity
 from app.domain.interfaces.user_repository import IUserRepository
 
@@ -14,14 +12,20 @@ class UserService:
     async def get_by_email(self, email: str) -> UserEntity | None:
         return await self.repository.get_by_email(email)
 
-    async def create(self, email: str, password_hash: str, username: str, nickname: str) -> UserEntity:
+    async def create(
+        self,
+        email: str,
+        password_hash: str,
+        username: str,
+        nickname: str,
+    ) -> None:
         mapping = {
-            'password_hash': password_hash,
-            'username': username,
-            'email': email,
-            'nickname': nickname
+            "password_hash": password_hash,
+            "unique_username": username,
+            "email": email,
+            "nickname": nickname,
         }
-        return await self.repository.create(mapping)
+        await self.repository.create(mapping)
 
     async def get_by_username(self, username: str) -> UserEntity | None:
         return await self.repository.get_by_username(username)

@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% from "admin/_admin_macros.html" import search_form %}
+
+{% block admin_content %}
+    <div class="form-search">
+        {{ search_form("/admin/articles", "Поиск по ID статьи", "article_id") }}
+        {{ search_form("/admin/articles", "Поиск по заголовку", "title") }}
+        {{ search_form("/admin/articles", "Поиск по ID пользователя", "user_id") }}
+    </div>
+    {% for article in articles %}
+        <div class="article-card">
+            <p class="article-card_field">Id статьи: {{ article['article_id'] }}</p>
+            <p class="article-card_field">Id автора: {{ article['user_id'] }}</p>
+            <p class="article-card_field">Заголовок статьи: {{ article['title'] }}</p>
+            <p class="article-card_field">Дата публикации: {{ article['created_at'][:19] }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}

@@ -30,8 +30,8 @@ class CommentRepository(ICommentRepository):
             content=mapping['content'],
             user_id=mapping['user_id'],
             article_id=mapping['article_id'],
-            user=user_orm,
-            article=article_orm,
+            users=user_orm,
+            articles=article_orm,
         )
 
         self.session.add(comment)

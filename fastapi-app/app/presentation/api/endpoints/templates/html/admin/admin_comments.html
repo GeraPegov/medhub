@@ -1,0 +1,17 @@
+{% extends "admin/base.html" %}
+{% from "admin/_admin_macros.html" import search_form %}
+
+{% block admin_content %}
+    <div class="form-search">
+        {{ search_form("/admin/comments", "Поиск по ID статьи", "article_id") }}
+        {{ search_form("/admin/comments", "Поиск по дате", "public_date", "date") }}
+        {{ search_form("/admin/comments", "Поиск по ID пользователя", "user_id") }}
+    </div>
+    {% for comment in comments %}
+        <div class="comment-card">
+            <p class="comment-card_field">Id комментария: {{ comment['comment_id'] }}</p>
+            <p class="comment-card_field">Контент: {{ comment['content'] }}</p>
+            <p class="comment-card_field">Дата публикации: {{ comment['created_at'][:19] }}</p>
+        </div>
+    {% endfor %}
+{% endblock %}

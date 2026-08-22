@@ -1,0 +1,12 @@
+{% macro search_form(action, label, name, input_type="search") %}
+    <form class="form-search-item" action="{{ action }}" method="get">
+        <h3 class="form-title">{{ label }}</h3>
+        <input
+            type="{{ input_type }}"
+            name="{{ name }}"
+            class="form-search-input"
+            required
+        >
+        <button class="button-search" type="submit">Искать</button>
+    </form>
+{% endmacro %}

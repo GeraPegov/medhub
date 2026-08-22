@@ -9,18 +9,19 @@ from app.infrastructure.database.repositories.user_repository import UserReposit
 async def test_create(db_session: AsyncSession):
     repo = UserRepository(db_session)
     user_data = {
-        'email': 'asd@mail.ru',
-        'unique_username': 'asd',
-        'nickname': 'testuser',
-        'password_hash': 'testpasswordasdf'
+        "email": "asd@mail.ru",
+        "unique_username": "asd",
+        "nickname": "testuser",
+        "password_hash": "testpasswordasdf",
     }
 
-    user = await repo.create(user_data)
+    await repo.create(user_data)
+    user = await repo.get_by_email(user_data["email"])
 
     assert user.user_id is not None
-    assert user.email == 'asd@mail.ru'
-    assert user.nickname == 'testuser'
-    assert user.password_hash == 'testpasswordasdf'
+    assert user.email == "asd@mail.ru"
+    assert user.nickname == "testuser"
+    assert user.password_hash == "testpasswordasdf"
 
 
 @pytest.mark.asyncio
@@ -48,19 +49,19 @@ async def test_get_by_username(db_session: AsyncSession, test_user1: User):
 
 
 @pytest.mark.asyncio
-async def test_subscribe_and_unsubscribe(db_session: AsyncSession, test_user1: User, test_user2: User):
+async def test_subscribe_and_unsubscribe(
+    db_session: AsyncSession, test_user1: User, test_user2: User
+):
     repo = UserRepository(db_session)
     user = await repo.subscribe(
-        subscribe_id=test_user1.id,
-        unique_username=test_user2.unique_username
-        )
+        subscribe_id=test_user1.id, unique_username=test_user2.unique_username
+    )
 
     assert test_user2.unique_username in user.subscriptions
 
     user = await repo.unsubscribe(
-        subscribe_id=test_user1.id,
-        unique_username=test_user2.unique_username
-        )
+        subscribe_id=test_user1.id, unique_username=test_user2.unique_username
+    )
 
     assert test_user2.unique_username not in user.subscriptions
 

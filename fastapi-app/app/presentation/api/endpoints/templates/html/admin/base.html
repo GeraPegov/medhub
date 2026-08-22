@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Админка{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/admin.css">
+{% endblock %}
+
+{% block body %}
+    <div class="admin-layout">
+        {% include "admin/_admin_sidebar.html" %}
+        <main class="content">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}
