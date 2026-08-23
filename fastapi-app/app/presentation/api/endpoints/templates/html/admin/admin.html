@@ -1,69 +1,50 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}MedHub{% endblock %}</title>
-    {% block styles %}{% endblock %}
-    {% block head_scripts %}{% endblock %}
-</head>
+{% extends "admin/base.html" %}
 
-{% block title %}Админка{% endblock %}
+{% block admin_content %}
+    <div class="period-stat">
+        <form class="form-period-stat" action="/admin" method="get">
+            <input type="date" name="date" class="input-period-stat">
+            <button type="submit" class="btn-period-stat">Показать</button>
+        </form>
+    </div>
 
-{% block styles %}
-    <link rel="stylesheet" href="/static/css/admin.css">
-{% endblock %}
+    <div class="content-stats">
+        <div class="stat-item-first">
+            <h3 class="stat-title">Общее количество пользователей</h3>
+            {% if quantity_users is not none %}
+                <p class="stat-value">{{ quantity_users }}</p>
+            {% endif %}
+        </div>
 
-{% block body %}
-    <div class="admin-layout">
-        {% include "_admin_sidebar.html" %}
+        <div class="stat-item-first">
+            <h3 class="stat-title">Общее количество статей</h3>
+            {% if quantity_articles is not none %}
+                <p class="stat-value">{{ quantity_articles }}</p>
+            {% endif %}
+        </div>
 
-        <div class="content">
-            <div class="period-stat">
-
-                <form class="form-period-stat" action="/admin" method="get">
-                    <input type="date" name="date" class="input-period-stat">
-                    <button type="submit" class="btn-period-stat">Показать</button>
-                </form>
-            </div>
-            <div class="content-stats">
-                <div class="stat-item-first">
-                    <h3 class="stat-title">Общее количество пользователей</h3>
-                    {% if quantity_users is not none %}
-                        <p class="stat-value">{{ quantity_users }}</p>
-                    {% endif %}
-                </div>
-                <div class="stat-item-first">
-                    <h3 class="stat-title">Общее количество статей</h3>
-                    {% if quantity_articles is not none %}
-                        <p class="stat-value">{{ quantity_articles }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="stat-item-second">
-                    {% if users_today %}
-                    {% for user in users_today %}
+        <div class="stat-item-second">
+            {% if users_today %}
+                {% for user in users_today %}
                     <h3 class="stat-title">Новый пользователь</h3>
-                        <p class="stat-value">Id: {{user['Id']}}</p>
-                        <p class="stat-value">Email: {{user['Email']}}</p>
-                        <p class="stat-value">Username: {{user['UniqueUsername']}}</p>
-                        <p class="stat-value">Дата регистрации: {{user['RegistrationDate'][:19]}}</p>
-                        {% endfor %}
-                        {% endif %}
-                </div>
-                <div class="stat-item-second">
-                    {% if articles_today %}
-                    {% for article in articles_today %}
-                    <h3 class="stat-title">Новая статья</h3>
-                            <p class="stat-value">Id: {{article['Id']}}</p>
-                            <p class="stat-value">Заголовок: {{article['Title']}}</p>
-                            <p class="stat-value">Id автора: {{article['User_id']}}</p>
-                            <p class="stat-value">Дата публикации: {{article['Created_at'][:19]}}</p>
-                    {% endfor %}
-                    {% endif %}
-                </div>
+                    <p class="stat-value">Id: {{ user['Id'] }}</p>
+                    <p class="stat-value">Email: {{ user['Email'] }}</p>
+                    <p class="stat-value">Username: {{ user['UniqueUsername'] }}</p>
+                    <p class="stat-value">Дата регистрации: {{ user['RegistrationDate'][:19] }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
 
-            </div>
+        <div class="stat-item-second">
+            {% if articles_today %}
+                {% for article in articles_today %}
+                    <h3 class="stat-title">Новая статья</h3>
+                    <p class="stat-value">Id: {{ article['Id'] }}</p>
+                    <p class="stat-value">Заголовок: {{ article['Title'] }}</p>
+                    <p class="stat-value">Id автора: {{ article['User_id'] }}</p>
+                    <p class="stat-value">Дата публикации: {{ article['Created_at'][:19] }}</p>
+                {% endfor %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

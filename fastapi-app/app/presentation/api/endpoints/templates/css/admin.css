@@ -151,15 +151,39 @@ body{
     margin: 0;
 }
 
-.user-card, .article-card, .comment-card{
-    display: flex;
-    /* flex-direction: column;  */
-    align-self: flex-start;
-    border-top: solid 2px black;
+.article-card {
+    display: grid;
+    grid-template-columns: 100px 100px 300px 300px 50px;
+    align-items: start;
+    gap: 30px;
     width: 80%;
-    margin-left: 100px;
-    padding-left: 20px;
-    gap: 50px;
+    border-top: #111827 solid 2px;
+}
+
+.user-card{
+    display: grid;
+    grid-template-columns: 50px minmax(300px, 400px) 200px 300px 100px;
+    align-items: start;
+    gap: 30px;
+    width: 80%;
+    border-top: #111827 solid 2px;
+}
+
+.user-card .button-delete{
+    margin-left: 170px;
+}
+
+.comment-card{
+    display: grid;
+    grid-template-columns: 100px minmax(0, 1fr) 300px 150px;
+    align-items: start;
+    gap: 30px;
+    width: 80%;
+    border-top: #111827 solid 2px;
+}
+
+.comment-card .button-delete{
+    margin-left: 30px;
 }
 
 .form-search{
@@ -183,7 +207,6 @@ body{
 .button-delete{
     border-radius: 5px;
     padding: 10px;
-    margin-left: 400px;
     margin-top: 10px;
     border: none;
     cursor: pointer;

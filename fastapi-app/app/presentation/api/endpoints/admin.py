@@ -40,6 +40,7 @@ async def request_admin_api(
 
 async def get_admin_data(method: str, path: str, params: dict[str, Any]) -> Any:
     status, data = await request_admin_api(method, path, params=params)
+    print(status, data)
     if status != 200:
         raise HTTPException(status_code=502, detail="admin API request failed")
     return data
@@ -181,6 +182,15 @@ async def articles_menu(
         context={"articles": articles},
     )
 
+@router.post("/admin/articles/{article_id}")
+@check_token
+async def article_delete(
+    request: Request,
+    article_id: str
+):
+    await request_admin_api("DELETE", f"/admin/articles/{article_id}")
+
+    return RedirectResponse("/admin/articles", status_code=303)
 
 @router.get("/admin/comments")
 @check_token
@@ -205,5 +215,15 @@ async def comments_menu(
         name="admin/admin_comments.html",
         context={"comments": comments},
     )
+
+@router.post("/admin/comments/{comment_id}")
+@check_token
+async def comment_delete(
+    request: Request,
+    comment_id: str
+):
+    await request_admin_api("DELETE", f"/admin/comments/{comment_id}")
+
+    return RedirectResponse("/admin/comments", status_code=303)
 
 

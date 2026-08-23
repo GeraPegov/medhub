@@ -13,6 +13,9 @@
             <p class="article-card_field">Id автора: {{ article['user_id'] }}</p>
             <p class="article-card_field">Заголовок статьи: {{ article['title'] }}</p>
             <p class="article-card_field">Дата публикации: {{ article['created_at'][:19] }}</p>
+            <form action="/admin/articles/{{ article['article_id'] }}" method="post">
+                <button type="submit" class="button-delete">Удалить</button>
+            </form>
         </div>
     {% endfor %}
 {% endblock %}
