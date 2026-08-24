@@ -8,13 +8,12 @@ from app.presentation.dependencies.cache import get_cache_user
 
 
 async def get_auth(
-        token = Cookie(None, alias='access_token'),
-        auth_service: AuthService = Depends(get_auth_service),
-        user_service: CachedServiceUser = Depends(get_cache_user)
+    token=Cookie(None, alias="access_token"),
+    auth_service: AuthService = Depends(get_auth_service),
+    user_service: CachedServiceUser = Depends(get_cache_user),
 ) -> UserEntity | None:
     if not token:
         return None
     user_id = auth_service.verify_token(token)
     user = await user_service.get_user(user_id)
     return user
-

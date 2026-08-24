@@ -1,0 +1,39 @@
+# Operating systems
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+
+# Local configuration and environments
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Logs and local runtime data
+*.log
+*.sqlite3
+*.db
+dump.rdb
+
+# Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Build output
+build/
+dist/

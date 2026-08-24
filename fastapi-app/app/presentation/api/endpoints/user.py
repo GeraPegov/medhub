@@ -13,84 +13,73 @@ from app.presentation.dependencies.cache import get_cache_user
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_auth
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
+templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 router = APIRouter()
 
 
-@router.get('/user/profile/{unique_username}')
+@router.get("/user/profile/{unique_username}")
 async def profile(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
     entity_user = await cache_service.get_user(unique_username)
     return templates.TemplateResponse(
         request=request,
-        name='profile.html',
-        context={
-        'user': entity_user,
-        'auth': auth
-        }
+        name="profile.html",
+        context={"user": entity_user, "auth": auth},
     )
 
-@router.get('/user/profile/{unique_username}/articles')
+
+@router.get("/user/profile/{unique_username}/articles")
 async def articles(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
     article_service: ArticleService = Depends(get_article_service),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
     user = await cache_service.get_user(unique_username)
     entity_articles = await article_service.list_user_articles(user.user_id)
     return templates.TemplateResponse(
         request=request,
-        name='profile.html',
-        context={
-        'auth': auth,
-        'user': user,
-        'articles': entity_articles
-        }
+        name="profile.html",
+        context={"auth": auth, "user": user, "articles": entity_articles},
     )
 
-@router.get('/user/profile/{unique_username}/comments')
+
+@router.get("/user/profile/{unique_username}/comments")
 async def comments(
     request: Request,
     unique_username: str,
     cache_service: CachedServiceUser = Depends(get_cache_user),
     comment_service: CommentService = Depends(get_comment_service),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
     user = await cache_service.get_user(unique_username)
     comments = await comment_service.show_by_author(user.user_id)
 
     return templates.TemplateResponse(
         request=request,
-        name='profile.html',
-        context={
-        'auth': auth,
-        'user': user,
-        'comments': comments,
-        'article': None
-        }
+        name="profile.html",
+        context={"auth": auth, "user": user, "comments": comments, "article": None},
     )
 
-@router.post('/user/profile/{unique_username}/subscribe')
+
+@router.post("/user/profile/{unique_username}/subscribe")
 async def subscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_auth),
-    cache_service: CachedServiceUser = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user),
 ):
     user = await user_service.subscribe(
-        subscriber_id=auth.user_id,
-        author_unique_username=unique_username)
+        subscriber_id=auth.user_id, author_unique_username=unique_username
+    )
     await cache_service.update_user(user)
-    return RedirectResponse(
-        url=f'/user/profile/{unique_username}',
-        status_code=303)
+    return RedirectResponse(url=f"/user/profile/{unique_username}", status_code=303)
 
 
 @router.post("/user/profile/{unique_username}/unsubscribe")
@@ -98,63 +87,55 @@ async def unsubscribe(
     unique_username: str,
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_auth),
-    cache_service: CachedServiceUser = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user),
 ):
     user = await user_service.unsubscribe(
-        subscriber_id=auth.user_id,
-        author_unique_username=unique_username)
+        subscriber_id=auth.user_id, author_unique_username=unique_username
+    )
     await cache_service.update_user(user)
-    return RedirectResponse(
-        url=f'/user/profile/{unique_username}',
-        status_code=303)
+    return RedirectResponse(url=f"/user/profile/{unique_username}", status_code=303)
 
 
-@router.get('/user/profile/{unique_username}/subscriptions')
+@router.get("/user/profile/{unique_username}/subscriptions")
 async def subscriptions(
     request: Request,
     unique_username: str,
     auth: UserEntity = Depends(get_auth),
-    cache_service: CachedServiceUser = Depends(get_cache_user)
+    cache_service: CachedServiceUser = Depends(get_cache_user),
 ):
     user = await cache_service.get_user(unique_username)
 
     return templates.TemplateResponse(
         request=request,
-        name='profile.html',
+        name="profile.html",
         context={
-        'auth': auth,
-        'user': user,
-        'article': None,
-        'subscriptions': user.subscriptions
-        }
+            "auth": auth,
+            "user": user,
+            "article": None,
+            "subscriptions": user.subscriptions,
+        },
     )
 
 
-@router.get('/user/profile/{unique_username}/liked')
+@router.get("/user/profile/{unique_username}/liked")
 async def liked(
     request: Request,
     auth: UserEntity = Depends(get_auth),
-    article_service: ArticleService = Depends(get_article_service)
+    article_service: ArticleService = Depends(get_article_service),
 ):
     articles = await article_service.liked_articles_by_user(auth.user_id)
     return templates.TemplateResponse(
         request=request,
-        name='profile.html',
-        context={
-        'auth': auth,
-        'user': auth,
-        'articles': articles
-        }
+        name="profile.html",
+        context={"auth": auth, "user": auth, "articles": articles},
     )
 
-@router.get('/user/profile/{unique_username}/delete')
+
+@router.get("/user/profile/{unique_username}/delete")
 async def delete_profile(
     auth: UserEntity = Depends(get_auth),
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
 ):
     await user_service.delete_profile(auth.user_id)
 
-    return RedirectResponse(
-        url='/',
-        status_code=303
-    )
+    return RedirectResponse(url="/", status_code=303)

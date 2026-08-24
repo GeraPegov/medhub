@@ -14,19 +14,25 @@ if TYPE_CHECKING:
 
 
 class Article(Base, AsyncAttrs):
-    __tablename__ = 'articles'
+    __tablename__ = "articles"
     __table_args__ = None
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
-    user_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id', ondelete='SET NULL'))
+    user_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id", ondelete="SET NULL")
+    )
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     category: Mapped[str] = mapped_column(String(64))
     like: Mapped[int] = mapped_column(Integer, default=0)
     dislike: Mapped[int] = mapped_column(Integer, default=0)
     views_counter: Mapped[int] = mapped_column(Integer, default=0)
 
-    reactions: Mapped[list['Reaction']] = relationship('Reaction', back_populates='articles')
-    users: Mapped['User'] = relationship('User', back_populates='articles')
-    comments: Mapped[list['Comment']] = relationship('Comment', back_populates='articles')
+    reactions: Mapped[list["Reaction"]] = relationship(
+        "Reaction", back_populates="articles"
+    )
+    users: Mapped["User"] = relationship("User", back_populates="articles")
+    comments: Mapped[list["Comment"]] = relationship(
+        "Comment", back_populates="articles"
+    )

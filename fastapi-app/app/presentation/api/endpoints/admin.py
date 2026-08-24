@@ -6,12 +6,27 @@ import aiohttp
 from fastapi import APIRouter, Form, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy import values
 
 router = APIRouter()
 
 ADMIN_API_URL = "http://127.0.0.1:8001"
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
+
+
+async def delete_admin_api(path: str) -> None:
+    status, _ = await request_admin_api("DELETE", path)
+    if status == 204:
+        return
+    if status == 404:
+        raise HTTPException(
+            status_code=404,
+            detail="Not found",
+        )
+
+    raise HTTPException(
+        status_code=502,
+        detail=f"Admin API returned status {status}",
+    )
 
 
 async def request_admin_api(
@@ -40,7 +55,6 @@ async def request_admin_api(
 
 async def get_admin_data(method: str, path: str, params: dict[str, Any]) -> Any:
     status, data = await request_admin_api(method, path, params=params)
-    print(status, data)
     if status != 200:
         raise HTTPException(status_code=502, detail="admin API request failed")
     return data
@@ -106,7 +120,7 @@ async def admin(
     selected_date: dt.date | None = Query(None, alias="date"),
 ):
     date = (selected_date or dt.datetime.now().date()).isoformat()
-    statistics = await get_admin_data("GET" ,"/admin/statistics", {"date": date})
+    statistics = await get_admin_data("GET", "/admin/statistics", {"date": date})
     return templates.TemplateResponse(
         request=request,
         name="admin/admin.html",
@@ -141,22 +155,22 @@ async def users_menu(
         if value not in (None, "")
     }
     users = await get_admin_data("GET", "/admin/users", params)
-    print(users)
     return templates.TemplateResponse(
         request=request,
         name="admin/admin_users.html",
         context={"users": users},
     )
 
+
 @router.post("/admin/users/{user_id}")
 @check_token
 async def user_delete(
     request: Request,
-    user_id: str
+    user_id: int,
 ):
-    await request_admin_api("DELETE", f"/admin/users/{user_id}")
-
+    await delete_admin_api(f"/admin/users/{user_id}")
     return RedirectResponse("/admin/users", status_code=303)
+
 
 @router.get("/admin/articles")
 @check_token
@@ -182,15 +196,16 @@ async def articles_menu(
         context={"articles": articles},
     )
 
+
 @router.post("/admin/articles/{article_id}")
 @check_token
 async def article_delete(
     request: Request,
-    article_id: str
+    article_id: int,
 ):
-    await request_admin_api("DELETE", f"/admin/articles/{article_id}")
-
+    await delete_admin_api(f"/admin/articles/{article_id}")
     return RedirectResponse("/admin/articles", status_code=303)
+
 
 @router.get("/admin/comments")
 @check_token
@@ -216,14 +231,12 @@ async def comments_menu(
         context={"comments": comments},
     )
 
+
 @router.post("/admin/comments/{comment_id}")
 @check_token
 async def comment_delete(
     request: Request,
-    comment_id: str
+    comment_id: int,
 ):
-    await request_admin_api("DELETE", f"/admin/comments/{comment_id}")
-
+    await delete_admin_api(f"/admin/comments/{comment_id}")
     return RedirectResponse("/admin/comments", status_code=303)
-
-

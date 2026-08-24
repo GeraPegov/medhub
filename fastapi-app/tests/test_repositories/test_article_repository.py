@@ -12,21 +12,19 @@ from app.infrastructure.database.repositories.article_repository import (
 async def test_save(db_session: AsyncSession, test_user1: User):
     repo = ArticleRepository(db_session)
     mapping = {
-        'title': 'testtitle',
-        'content': 'testcontent',
-        'user_id': test_user1.id,
-        'category': 'testcategory'
+        "title": "testtitle",
+        "content": "testcontent",
+        "user_id": test_user1.id,
+        "category": "testcategory",
     }
 
-    article = await repo.save(
-        mapping=mapping,
-        user_id=test_user1.id
-    )
+    article = await repo.save(mapping=mapping, user_id=test_user1.id)
 
-    assert article.title == 'testtitle'
-    assert article.content == 'testcontent'
+    assert article.title == "testtitle"
+    assert article.content == "testcontent"
     assert article.user_id == test_user1.id
-    assert article.category == 'testcategory'
+    assert article.category == "testcategory"
+
 
 @pytest.mark.asyncio
 async def test_get_by_id(db_session: AsyncSession, test_article: Article):
@@ -71,19 +69,16 @@ async def test_search_by_title(db_session: AsyncSession, test_article: Article):
 async def test_get_user_articles(db_session: AsyncSession, test_user1: User):
     repo = ArticleRepository(db_session)
     mapping = {
-        'title': 'testtitle',
-        'content': 'testcontent',
-        'user_id': test_user1.id,
-        'category': 'testcategory'
+        "title": "testtitle",
+        "content": "testcontent",
+        "user_id": test_user1.id,
+        "category": "testcategory",
     }
-    await repo.save(
-        mapping=mapping,
-        user_id=test_user1.id
-    )
+    await repo.save(mapping=mapping, user_id=test_user1.id)
 
     articles = await repo.get_user_articles(test_user1.id)
 
-    assert articles[0].title == 'testtitle'
+    assert articles[0].title == "testtitle"
     assert articles[0].unique_username == test_user1.unique_username
 
 
@@ -103,31 +98,27 @@ async def test_change(db_session: AsyncSession, test_article: Article):
     old_article = await repo.get_by_id(test_article.id)
 
     assert old_article.article_id == test_article.id
-    assert old_article.title == 'testtitle for you'
-    assert old_article.content == 'testcontent'
-    assert old_article.category == 'testcategory'
+    assert old_article.title == "testtitle for you"
+    assert old_article.content == "testcontent"
+    assert old_article.category == "testcategory"
 
     mapping = {
-        'title': 'testchangetitle',
-        'content': 'testchangecontent',
-        'category': 'testchangecategory'
+        "title": "testchangetitle",
+        "content": "testchangecontent",
+        "category": "testchangecategory",
     }
-    new_article = await repo.change(
-        article_id=test_article.id,
-        mapping=mapping
-    )
+    new_article = await repo.change(article_id=test_article.id, mapping=mapping)
 
     assert new_article.article_id == test_article.id
-    assert new_article.title == 'testchangetitle'
-    assert new_article.content == 'testchangecontent'
-    assert new_article.category == 'testchangecategory'
+    assert new_article.title == "testchangetitle"
+    assert new_article.content == "testchangecontent"
+    assert new_article.category == "testchangecategory"
+
 
 @pytest.mark.asyncio
 async def test_to_entity(
-    db_session: AsyncSession,
-    test_article: Article,
-    test_user1: User
-    ):
+    db_session: AsyncSession, test_article: Article, test_user1: User
+):
     repo = ArticleRepository(db_session)
 
     article = await repo._to_entity([test_article])

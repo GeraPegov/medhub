@@ -1,6 +1,6 @@
 from fastapi import Form
 
-from app.application.dto.articleAuth_dto import UserDTO
+from app.application.dto.article_auth_dto import UserDTO
 
 
 async def parse_auth_form(

@@ -12,13 +12,13 @@ from app.presentation.dependencies.auth import get_user_repository
 
 
 def get_comment_repository(
-        session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> ICommentRepository:
     return CommentRepository(session)
 
 
 def get_comment_service(
-        comment_repository: ICommentRepository = Depends(get_comment_repository),
-        user_repository: IUserRepository = Depends(get_user_repository)
+    comment_repository: ICommentRepository = Depends(get_comment_repository),
+    user_repository: IUserRepository = Depends(get_user_repository),
 ) -> CommentService:
     return CommentService(comment_repository, user_repository)

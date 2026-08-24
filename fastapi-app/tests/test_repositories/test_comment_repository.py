@@ -2,7 +2,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.infrastructure.database.models.article import Article
-from app.infrastructure.database.models.comment import Comments
+from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.comment_repository import (
     CommentRepository,
@@ -10,25 +10,29 @@ from app.infrastructure.database.repositories.comment_repository import (
 
 
 @pytest.mark.asyncio
-async def test_create(db_session: AsyncSession, test_user1: User, test_article: Article):
+async def test_create(
+    db_session: AsyncSession, test_user1: User, test_article: Article
+):
     repo = CommentRepository(db_session)
 
     mapping = {
-        'content': 'testcontent',
-        'user_id': test_user1.id,
-        'article_id': test_article.id
+        "content": "testcontent",
+        "user_id": test_user1.id,
+        "article_id": test_article.id,
     }
     comment = await repo.create(mapping)
 
     assert comment.article_id == test_article.id
     assert comment.user_id == test_user1.id
-    assert comment.content == 'testcontent'
+    assert comment.content == "testcontent"
     assert comment.unique_username == test_user1.unique_username
     assert comment.title_of_article == test_article.title
 
 
 @pytest.mark.asyncio
-async def test_show_by_article(db_session: AsyncSession, test_article: Article, test_comment: Comments):
+async def test_show_by_article(
+    db_session: AsyncSession, test_article: Article, test_comment: Comment
+):
     repo = CommentRepository(db_session)
 
     comment = await repo.show_by_article(test_article.id)
@@ -37,7 +41,9 @@ async def test_show_by_article(db_session: AsyncSession, test_article: Article, 
 
 
 @pytest.mark.asyncio
-async def test_show_by_author(db_session: AsyncSession, test_user1: User, test_comment: Comments):
+async def test_show_by_author(
+    db_session: AsyncSession, test_user1: User, test_comment: Comment
+):
     repo = CommentRepository(db_session)
 
     comment = await repo.show_by_author(test_user1.id)
@@ -46,12 +52,14 @@ async def test_show_by_author(db_session: AsyncSession, test_user1: User, test_c
 
 
 @pytest.mark.asyncio
-async def test_delete(db_session: AsyncSession, test_comment: Comments, test_article: Article):
+async def test_delete(
+    db_session: AsyncSession, test_comment: Comment, test_article: Article
+):
     repo = CommentRepository(db_session)
 
     comment = await repo.delete(test_comment.id)
 
-    assert comment == test_comment.id
+    assert comment == test_article.id
 
     comment = await repo.show_by_article(test_article.id)
 
@@ -61,10 +69,10 @@ async def test_delete(db_session: AsyncSession, test_comment: Comments, test_art
 @pytest.mark.asyncio
 async def test_to_entity(
     db_session: AsyncSession,
-    test_comment: Comments,
+    test_comment: Comment,
     test_user1: User,
-    test_article: Article
-    ):
+    test_article: Article,
+):
     repo = CommentRepository(db_session)
 
     comment = await repo._to_entity([test_comment])

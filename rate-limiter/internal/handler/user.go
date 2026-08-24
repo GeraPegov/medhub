@@ -1,51 +1,38 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
-	"new_prog/internal/service"
-	"new_prog/internal/storage/postgres"
+	"new_prog/internal/domain"
 )
 
-func SearchUsers(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	uniqueUsername := r.URL.Query().Get("username")
-	id := r.URL.Query().Get("id")
-	email := r.URL.Query().Get("email")
-	if uniqueUsername == "" && id == "" && email == "" {
-		users, err := postgres.AllUsers(ctx)
-		if err != nil {
-			http.Error(w, "warning for search all users", http.StatusInternalServerError)
-			return
-		}
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(users)
-		return
-	}
-	user, err := service.GetUser(ctx, uniqueUsername, id, email)
+func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	id, err := optionalInt(r, "user_id")
 	if err != nil {
-		http.Error(w, "warning for search user", http.StatusInternalServerError)
+		http.Error(w, "invalid user id", http.StatusBadRequest)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+
+	users, err := h.service.GetUsers(r.Context(), domain.UserFilter{
+		ID:       id,
+		Email:    r.URL.Query().Get("email"),
+		Username: r.URL.Query().Get("username"),
+	})
+	if err != nil {
+		http.Error(w, "failed to get users", http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, http.StatusOK, users)
 }
 
-func UserDelete(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	userId := r.URL.Query().Get("id")
-	err := postgres.DeleteUser(ctx, userId)
+func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	id, err := pathID(r)
 	if err != nil {
-		http.Error(w, "warning for delete user", http.StatusInternalServerError)
-	}
-}
-
-func DeletedUsers(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	users, err := postgres.DeletedUsers(ctx)
-	if err != nil {
-		http.Error(w, "warning for search deleted users", http.StatusInternalServerError)
+		http.Error(w, "invalid user id", http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(users)
+	if err := h.service.DeleteUser(r.Context(), id); err != nil {
+		http.Error(w, "failed to delete user", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

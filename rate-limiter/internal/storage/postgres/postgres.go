@@ -10,6 +10,14 @@ import (
 
 var Pool *pgxpool.Pool
 
+type Repository struct {
+	pool *pgxpool.Pool
+}
+
+func NewRepository(pool *pgxpool.Pool) *Repository {
+	return &Repository{pool: pool}
+}
+
 func StartPostgres() {
 	var err error
 	Pool, err = pgxpool.New(context.Background(), config.MedhubDB)

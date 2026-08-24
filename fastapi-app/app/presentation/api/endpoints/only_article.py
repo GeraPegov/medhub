@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
-from app.application.dto.articleCreate_dto import ArticleCreateDTO
+from app.application.dto.article_create_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
 from app.application.services.cache_service import CachedServiceArticle
 from app.application.services.comment_service import CommentService
@@ -13,35 +13,32 @@ from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_auth
 from app.presentation.dependencies.parse_article import parse_article_form
 
-templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
+templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 router = APIRouter()
 
-@router.get('/article/{article_id}')
+
+@router.get("/article/{article_id}")
 async def show_article(
     request: Request,
     article_id: int,
     article_cache_service: CachedServiceArticle = Depends(get_cache_article),
     comment_service: CommentService = Depends(get_comment_service),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
-    views_counter = await article_cache_service.views_counter(article_id)
-    print(views_counter)
+    await article_cache_service.views_counter(article_id)
     article = await article_cache_service.get_article(article_id)
 
     comments = await comment_service.show_by_article(article_id)
 
     return templates.TemplateResponse(
         request=request,
-        name='only_article.html',
-        context={
-        'article': article,
-        'comments': comments,
-        'auth': auth
-    })
+        name="only_article.html",
+        context={"article": article, "comments": comments, "auth": auth},
+    )
 
 
-@router.post('/article/delete/{article_id}')
+@router.post("/article/delete/{article_id}")
 async def delete_article(
     article_id: int,
     auth: UserEntity = Depends(get_auth),
@@ -50,12 +47,11 @@ async def delete_article(
     await article_service.delete_article(article_id)
 
     return RedirectResponse(
-        status_code=303,
-        url=f'/user/profile/{auth.unique_username}'
+        status_code=303, url=f"/user/profile/{auth.unique_username}"
     )
 
-#почему здесь нет auth
-@router.get('/article/change/{article_id}')
+
+@router.get("/article/change/{article_id}")
 async def preliminary_change(
     request: Request,
     article_id: int,
@@ -64,51 +60,41 @@ async def preliminary_change(
     articles = await articles_service.get_by_id(article_id)
 
     return templates.TemplateResponse(
-        request=request,
-        name='change_article.html',
-        context={
-        'article': articles
-        }
+        request=request, name="change_article.html", context={"article": articles}
     )
 
 
-@router.post('/article/change/{article_id}/access')
+@router.post("/article/change/{article_id}/access")
 async def final_change(
     request: Request,
     article_id: int,
     dto: ArticleCreateDTO = Depends(parse_article_form),
     article_service: ArticleService = Depends(get_article_service),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
     article = await article_service.change_article(dto, article_id)
 
     return templates.TemplateResponse(
         request=request,
-        name='only_article.html',
-        context={
-        'auth': auth,
-        'article': article
-        }
+        name="only_article.html",
+        context={"auth": auth, "article": article},
     )
 
-#проверить как можно отправить что-то вместо лайка или дизлайка
-@router.post('/article/{reaction}/{article_id}')
+
+@router.post("/article/{reaction}/{article_id}")
 async def like(
     article_id: int,
     reaction: str,
     auth: UserEntity = Depends(get_auth),
-    cache_service: CachedServiceArticle = Depends(get_cache_article)
+    cache_service: CachedServiceArticle = Depends(get_cache_article),
 ):
-    #
     check_reaction = await cache_service.check_reaction(auth.user_id, article_id)
     if not check_reaction:
-        return {'warning': None}
+        return {"warning": None}
     like = await cache_service.add_reaction(
-        article_id=article_id,
-        user_id=auth.user_id,
-        reaction=reaction
+        article_id=article_id, user_id=auth.user_id, reaction=reaction
     )
 
     if not like:
-        return {'warning': None}
+        return {"warning": None}
     return like

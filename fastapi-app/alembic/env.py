@@ -6,6 +6,9 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
+from app.infrastructure.config import settings
+from app.infrastructure.database.connection import Base
+from app.infrastructure.database.models import Admin, Article, Comment, Reaction, User
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -16,15 +19,10 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-from app.infrastructure.config import settings
-
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from app.infrastructure.database.connection import Base
-from app.infrastructure.database.models import Admin, Article, Comment, Reaction, User
-
 target_metadata = Base.metadata
 Article.metadata.bind = target_metadata
 User.metadata.bind = target_metadata
@@ -37,7 +35,8 @@ Admin.metadata.bind = target_metadata
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
-config.set_main_option('sqlalchemy.url', settings.PROD_DB_URL)
+config.set_main_option("sqlalchemy.url", settings.PROD_DB_URL)
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -57,7 +56,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        connect_args={"server_settings": {"client_encoding": "utf8"}}
+        connect_args={"server_settings": {"client_encoding": "utf8"}},
     )
 
     with context.begin_transaction():

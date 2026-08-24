@@ -1,27 +1,48 @@
 package handler
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
-	"new_prog/internal/storage/postgres"
+	"new_prog/internal/domain"
 )
 
-func CommentsByArticle(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	articleId := r.URL.Query().Get("id")
-	comments, err := postgres.CommentsByArticle(ctx, articleId)
+func (h *AdminHandler) GetComments(w http.ResponseWriter, r *http.Request) {
+	articleID, err := optionalInt(r, "article_id")
 	if err != nil {
-		fmt.Println("Плохие новости в комментариях ")
+		http.Error(w, "invalid article id", http.StatusBadRequest)
+		return
 	}
-	json.NewEncoder(w).Encode(comments)
+	userID, err := optionalInt(r, "user_id")
+	if err != nil {
+		http.Error(w, "invalid user id", http.StatusBadRequest)
+		return
+	}
+	date, err := optionalDate(r, "public_date")
+	if err != nil {
+		http.Error(w, "invalid public date", http.StatusBadRequest)
+		return
+	}
+
+	comments, err := h.service.GetComments(r.Context(), domain.CommentFilter{
+		ArticleID: articleID,
+		UserID:    userID,
+		Date:      date,
+	})
+	if err != nil {
+		http.Error(w, "failed to get comments", http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, http.StatusOK, comments)
 }
 
-func CommentsDelete(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-	commentId := r.URL.Query().Get("id")
-	err := postgres.CommentsDelete(ctx, commentId)
+func (h *AdminHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
+	id, err := pathID(r)
 	if err != nil {
-		fmt.Println("плохие новости при удалении коментария")
+		http.Error(w, "invalid comment id", http.StatusBadRequest)
+		return
 	}
+	if err := h.service.DeleteComment(r.Context(), id); err != nil {
+		http.Error(w, "failed to delete comment", http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -11,18 +11,14 @@ router = APIRouter()
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 
-@router.get('/')
+@router.get("/")
 async def home(
     request: Request,
     auth: UserEntity = Depends(get_auth),
-    article_service: ArticleService = Depends(get_article_service)
+    article_service: ArticleService = Depends(get_article_service),
 ) -> Response:
     articles = await article_service.show_all_articles()
 
     return templates.TemplateResponse(
-        request=request,
-        name='home.html',
-        context={
-            'auth': auth,
-            'articles': articles
-            })
+        request=request, name="home.html", context={"auth": auth, "articles": articles}
+    )

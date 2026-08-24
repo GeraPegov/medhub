@@ -4,4 +4,4 @@ from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User
 
-__all__ = ['User', 'Article', 'Comment', 'Reaction', 'Admin']
+__all__ = ["User", "Article", "Comment", "Reaction", "Admin"]

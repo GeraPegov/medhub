@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 
 class IAuthService(ABC):
-
     @abstractmethod
     def create_access_token(self, user_id: int) -> str:
         pass
@@ -18,4 +17,3 @@ class IAuthService(ABC):
     @abstractmethod
     async def verify_password(self, plain_password: str, hashed: str) -> bool:
         pass
-

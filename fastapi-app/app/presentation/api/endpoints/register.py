@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.exc import SQLAlchemyError
 
-from app.application.dto.articleAuth_dto import UserDTO
+from app.application.dto.article_auth_dto import UserDTO
 from app.application.services.register_user import UserRegistrationService
 from app.domain.exceptions import UserAlreadyExistsError, UsernameAlreadyExistsError
 from app.presentation.dependencies.auth import get_auth_registration

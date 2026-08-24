@@ -2,7 +2,9 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 	"new_prog/internal/domain"
+	"strings"
 )
 
 func QuantityUsers(ctx context.Context) (int, error) {
@@ -14,68 +16,69 @@ func QuantityUsers(ctx context.Context) (int, error) {
 	return quantityUsers, nil
 }
 
-func DeleteUser(ctx context.Context, user_id string) error {
-	_, err := Pool.Exec(ctx, "UPDATE users SET is_deleted = true WHERE id = $1", user_id)
-	return err
-}
-
 func DeletedUsers(ctx context.Context) ([]domain.User, error) {
 	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE is_deleted = true")
 	if err != nil {
 		return nil, err
 	}
-	var Users []domain.User
+	defer rows.Close()
+
+	users := make([]domain.User, 0)
 	for rows.Next() {
 		var u domain.User
-		rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-		Users = append(Users, u)
+		if err := rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
 	}
-	return Users, nil
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return users, nil
 }
 
-func AllUsers(ctx context.Context) ([]domain.User, error) {
-	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE is_deleted = false")
+func (r *Repository) SearchUsers(ctx context.Context, filter domain.UserFilter) ([]domain.User, error) {
+	query := "SELECT id, email, unique_username, registration_date FROM users"
+	conditions := []string{"is_deleted = false"}
+	args := make([]any, 0, 3)
+
+	if filter.ID != nil {
+		args = append(args, *filter.ID)
+		conditions = append(conditions, fmt.Sprintf("id = $%d", len(args)))
+	}
+	if filter.Email != "" {
+		args = append(args, filter.Email)
+		conditions = append(conditions, fmt.Sprintf("email = $%d", len(args)))
+	}
+	if filter.Username != "" {
+		args = append(args, filter.Username)
+		conditions = append(conditions, fmt.Sprintf("unique_username = $%d", len(args)))
+	}
+
+	query += " WHERE " + strings.Join(conditions, " AND ")
+	rows, err := r.pool.Query(ctx, query, args...)
 	if err != nil {
 		return nil, err
 	}
-	var Users []domain.User
+	defer rows.Close()
 
+	users := make([]domain.User, 0)
 	for rows.Next() {
 		var u domain.User
-		rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-		Users = append(Users, u)
+		if err := rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
 	}
-	return Users, nil
-}
-
-func SearchUserUsername(ctx context.Context, uniqueUsername string) (*domain.User, error) {
-	var u domain.User
-	row := Pool.QueryRow(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE unique_username = $1", uniqueUsername)
-	err := row.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-	if err != nil {
+	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return &u, nil
+	return users, nil
 }
 
-func SearchUserId(ctx context.Context, id string) (*domain.User, error) {
-	var u domain.User
-	row := Pool.QueryRow(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE id = $1", id)
-	err := row.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-	if err != nil {
-		return nil, err
-	}
-	return &u, nil
-}
-
-func SearchUserEmail(ctx context.Context, email string) (*domain.User, error) {
-	var u domain.User
-	row := Pool.QueryRow(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE email = $1", email)
-	err := row.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-	if err != nil {
-		return nil, err
-	}
-	return &u, nil
+func (r *Repository) DeleteUser(ctx context.Context, id int) error {
+	_, err := r.pool.Exec(ctx, "UPDATE users SET is_deleted = true WHERE id = $1", id)
+	return err
 }
 
 func UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
@@ -83,11 +86,18 @@ func UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	var Users []domain.User
+	defer rows.Close()
+
+	users := make([]domain.User, 0)
 	for rows.Next() {
 		var u domain.User
-		rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate)
-		Users = append(Users, u)
+		if err := rows.Scan(&u.Id, &u.Email, &u.UniqueUsername, &u.RegistrationDate); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
 	}
-	return Users, nil
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return users, nil
 }

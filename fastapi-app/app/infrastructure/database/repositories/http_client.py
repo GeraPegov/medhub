@@ -1,5 +1,7 @@
 import httpx
 
+from app.domain.logging import logger
+
 
 class RateLimiterClient:
     def __init__(self, base_url: str):
@@ -7,10 +9,7 @@ class RateLimiterClient:
         self.client = httpx.AsyncClient(timeout=2.0)  # 2 секунды таймаут
 
     async def check_limit(
-        self,
-        user_id: int,
-        action: str,
-        limit: int
+        self, user_id: int, action: str, limit: int
     ) -> tuple[bool, int | None]:
         """
         Проверяет rate limit через Go сервис.
@@ -22,11 +21,7 @@ class RateLimiterClient:
         try:
             response = await self.client.post(
                 f"{self.base_url}/check-limit",
-                json={
-                    "user_id": user_id,
-                    "action": action,
-                    "limit": limit
-                }
+                json={"user_id": user_id, "action": action, "limit": limit},
             )
 
             data = response.json()
@@ -39,9 +34,8 @@ class RateLimiterClient:
                 # Если Go сервис недоступен — пропускаем проверку (graceful degradation)
                 return True, None
 
-        except Exception as e:
-            # Логируем ошибку, но не блокируем пользователя
-            print(f"Rate limiter error: {e}")
+        except httpx.HTTPError as error:
+            logger.warning("Rate limiter request failed: %s", error)
             return True, None
 
     async def close(self):

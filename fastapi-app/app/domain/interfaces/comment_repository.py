@@ -6,7 +6,6 @@ from app.domain.entities.comment import CommentEntity
 
 
 class ICommentRepository(ABC):
-
     @abstractmethod
     def __init__(self, session: AsyncSession):
         pass

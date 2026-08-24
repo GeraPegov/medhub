@@ -15,47 +15,29 @@ class BaseCachedService:
         self.cache = cache
 
     async def _set_cache(
-            self,
-            key: str | int,
-            mapping: dict,
-            prefix: str,
-            ttl: int = 3600
+        self, key: str | int, mapping: dict, prefix: str, ttl: int = 3600
     ):
         await self.cache.set_cache(prefix, key, mapping, ttl)
 
 
-
 class CachedServiceUser(BaseCachedService):
-    def __init__(self,
-                cache: CachedRepository,
-                repo_user: UserRepository
-                ):
+    def __init__(self, cache: CachedRepository, repo_user: UserRepository):
         super().__init__(cache)
         self.repo_user = repo_user
 
-    async def update_user(
-            self,
-            user: UserEntity
-    ):
+    async def update_user(self, user: UserEntity):
         await self.cache.delete_user(user)
         mapping = {
-                'user_id': str(user.user_id),
-                'email': user.email,
-                'unique_username': user.unique_username,
-                'nickname': user.nickname,
-                'subscriptions': json.dumps(list(user.subscriptions))
-            }
-        await self._set_cache(
-            user.unique_username,
-            mapping=mapping,
-            prefix='user'
-        )
+            "user_id": str(user.user_id),
+            "email": user.email,
+            "unique_username": user.unique_username,
+            "nickname": user.nickname,
+            "subscriptions": json.dumps(list(user.subscriptions)),
+        }
+        await self._set_cache(user.unique_username, mapping=mapping, prefix="user")
         return True
 
-    async def get_user(
-            self,
-            key: int | str
-    ) -> UserEntity | None:
+    async def get_user(self, key: int | str) -> UserEntity | None:
         result = await self.cache.get_cache_user(key)
         if result:
             return result
@@ -69,80 +51,64 @@ class CachedServiceUser(BaseCachedService):
 
         if result and cache_key:
             mapping = {
-                'user_id': result.user_id,
-                'email': result.email,
-                'unique_username': result.unique_username,
-                'nickname': result.nickname,
-                'subscriptions': json.dumps(list(result.subscriptions))
+                "user_id": result.user_id,
+                "email": result.email,
+                "unique_username": result.unique_username,
+                "nickname": result.nickname,
+                "subscriptions": json.dumps(list(result.subscriptions)),
             }
-            await self._set_cache(
-                cache_key,
-                mapping=mapping,
-                prefix='user'
-            )
+            await self._set_cache(cache_key, mapping=mapping, prefix="user")
         return result
 
 
 class CachedServiceArticle(BaseCachedService):
-    def __init__(self,
-                cache: CachedRepository,
-                repo_article: ArticleRepository,
-                repo_logic: LogicRepository
-                ):
+    def __init__(
+        self,
+        cache: CachedRepository,
+        repo_article: ArticleRepository,
+        repo_logic: LogicRepository,
+    ):
         super().__init__(cache)
         self.repo_article = repo_article
         self.repo_logic = repo_logic
-    async def get_article(
-            self,
-            key: int
-    ) -> ArticleEntity | None:
+
+    async def get_article(self, key: int) -> ArticleEntity | None:
         result = await self.cache.get_cache_article(key)
         if result:
             return result
         result = await self.repo_article.get_by_id(key)
         if result:
             mapping = {
-                'unique_username': result.unique_username,
-                'title': result.title,
-                'content': result.content,
-                'user_id': result.user_id,
-                'nickname': result.nickname,
-                'created_at': result.created_at.timestamp(),
-                'category': result.category,
-                'article_id': result.article_id,
-                'likes': result.likes,
-                'dislikes': result.dislikes
+                "unique_username": result.unique_username,
+                "title": result.title,
+                "content": result.content,
+                "user_id": result.user_id,
+                "nickname": result.nickname,
+                "created_at": result.created_at.timestamp(),
+                "category": result.category,
+                "article_id": result.article_id,
+                "likes": result.likes,
+                "dislikes": result.dislikes,
             }
-            await self._set_cache(
-                key,
-                mapping=mapping,
-                prefix='article'
-            )
+            await self._set_cache(key, mapping=mapping, prefix="article")
 
         return result
 
-    async def update_article(
-            self,
-            article: ArticleEntity
-    ):
+    async def update_article(self, article: ArticleEntity):
         await self.cache.delete_article(article.article_id)
         mapping = {
-                'unique_username': article.unique_username,
-                'title': article.title,
-                'content': article.content,
-                'user_id': article.user_id,
-                'nickname': article.nickname,
-                'created_at': article.created_at.timestamp(),
-                'category': article.category,
-                'article_id': article.article_id,
-                'likes': article.likes,
-                'dislikes': article.dislikes
-            }
-        await self._set_cache(
-                article.article_id,
-                mapping=mapping,
-                prefix='article'
-            )
+            "unique_username": article.unique_username,
+            "title": article.title,
+            "content": article.content,
+            "user_id": article.user_id,
+            "nickname": article.nickname,
+            "created_at": article.created_at.timestamp(),
+            "category": article.category,
+            "article_id": article.article_id,
+            "likes": article.likes,
+            "dislikes": article.dislikes,
+        }
+        await self._set_cache(article.article_id, mapping=mapping, prefix="article")
         return True
 
     async def views_counter(self, article_id: int):
@@ -151,11 +117,7 @@ class CachedServiceArticle(BaseCachedService):
     async def update_views_counter(self):
         await self.cache.update_views_counter()
 
-    async def check_reaction(
-            self,
-            user_id: int,
-            article_id: int
-    ):
+    async def check_reaction(self, user_id: int, article_id: int):
         check_reaction_today = await self.cache.can_reaction_today(user_id, article_id)
         if not check_reaction_today:
             return None
@@ -164,28 +126,18 @@ class CachedServiceArticle(BaseCachedService):
             return None
         return True
 
-
-    async def add_reaction(
-            self,
-            user_id: int,
-            article_id: int,
-            reaction: str
-    ):
+    async def add_reaction(self, user_id: int, article_id: int, reaction: str):
         set_reaction = await self.repo_article.set_reaction(
-            article_id=article_id,
-            user_id=user_id,
-            reaction=reaction
+            article_id=article_id, user_id=user_id, reaction=reaction
         )
         if set_reaction:
-            mapping = {
-                'reaction_date': (set_reaction['date_of_reaction'].timestamp())
-            }
+            mapping = {"reaction_date": (set_reaction["date_of_reaction"].timestamp())}
 
             await self._set_cache(
-                prefix=f'user{user_id}',
-                key=f'article{article_id}',
-                mapping=mapping
+                prefix=f"user{user_id}", key=f"article{article_id}", mapping=mapping
             )
-        await self.update_article(set_reaction['reaction'])
-        return {'likes': set_reaction['reaction'].likes, 'dislikes': set_reaction['reaction'].dislikes}
-
+        await self.update_article(set_reaction["reaction"])
+        return {
+            "likes": set_reaction["reaction"].likes,
+            "dislikes": set_reaction["reaction"].dislikes,
+        }

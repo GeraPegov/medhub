@@ -1,84 +1,100 @@
-name: Basic Checks
+name: Checks
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
-  lint-and-format:
-    name: Lint and Format Check
+  python:
+    name: Python lint and tests
     runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Install Ruff
-      run: |
-        python -m pip install --upgrade pip
-        pip install ruff
-    
-    - name: Run Ruff linter
-      run: |
-        ruff check . --output-format=github || echo "Linting issues found"
-    
-    - name: Check code formatting
-      run: |
-        ruff format --check . || echo "Formatting issues found"
 
-  basic-tests:
-    name: Basic Tests (no DB)
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-asyncio
-        pip install -e .
-    
-    - name: Run basic import tests
-      run: |
-        python -c "import app; print('App imports successfully')"
-        python -c "from app.domain.entities.user import UserEntity; print('Domain entities OK')"
-    
-    - name: Test structure
-      run: |
-        python -c "import os; assert os.path.exists('app/domain'), 'Domain layer exists'"
-        python -c "import os; assert os.path.exists('app/application'), 'Application layer exists'"
-        python -c "import os; assert os.path.exists('app/infrastructure'), 'Infrastructure layer exists'"
-        python -c "import os; assert os.path.exists('app/presentation'), 'Presentation layer exists'"
-        echo "✓ Project structure is valid"
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testmedhub
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d testmedhub"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
 
-  syntax-check:
-    name: Python Syntax Check
-    runs-on: ubuntu-latest
-    
+      redis:
+        image: redis:8.6.1-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      SECRET_KEY: ci-only-secret-key
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: testmedhub
+      ADMIN_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+      PROD_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/testmedhub
+      TEST_DB_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/testmedhub
+      HOST_REDIS: localhost
+      PORT_REDIS: 6379
+
+    defaults:
+      run:
+        working-directory: fastapi-app
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
-    
-    - name: Check Python syntax
-      run: |
-        python -m py_compile $(find . -name "*.py" -not -path "./.venv/*" -not -path "./build/*")
-        echo "✓ All Python files have valid syntax"
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: fastapi-app/pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Ruff linter
+        run: ruff check . --output-format=github
+
+      - name: Check Ruff formatting
+        run: ruff format --check .
+
+      - name: Run tests
+        run: pytest
+
+  go:
+    name: Go tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: rate-limiter
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: rate-limiter/go.mod
+          cache-dependency-path: rate-limiter/go.sum
+
+      - name: Run tests
+        run: go test ./...

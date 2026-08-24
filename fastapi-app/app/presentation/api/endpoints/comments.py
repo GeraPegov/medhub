@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, Form
 from fastapi.responses import RedirectResponse
 
@@ -9,39 +8,30 @@ from app.presentation.dependencies.current_user import get_auth
 
 router = APIRouter()
 
-@router.post('/comments/{article_id}/create')
+
+@router.post("/comments/{article_id}/create")
 async def create(
     article_id: int,
     content: str = Form(...),
     comment_manager: CommentService = Depends(get_comment_service),
-    user: UserEntity = Depends(get_auth)
+    user: UserEntity = Depends(get_auth),
 ):
     await comment_manager.create(
-        article_id=article_id,
-        content=content,
-        user_id=user.user_id
+        article_id=article_id, content=content, user_id=user.user_id
     )
 
-    response = RedirectResponse(
-        url=f'/article/{article_id}',
-        status_code=303
-    )
+    response = RedirectResponse(url=f"/article/{article_id}", status_code=303)
 
     return response
 
-@router.post('/comments/{comment_id}/delete')
+
+@router.post("/comments/{comment_id}/delete")
 async def delete(
     comment_id: int,
     comment_manager: CommentService = Depends(get_comment_service),
     auth: UserEntity = Depends(get_auth),
 ):
-    result = await comment_manager.delete(
-        comment_id=comment_id,
-        user_id=auth.user_id
-    )
+    result = await comment_manager.delete(comment_id=comment_id, user_id=auth.user_id)
 
-    response = RedirectResponse(
-        url=f'/article/{result}',
-        status_code=303
-    )
+    response = RedirectResponse(url=f"/article/{result}", status_code=303)
     return response

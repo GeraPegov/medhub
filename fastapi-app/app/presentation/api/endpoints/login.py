@@ -9,17 +9,15 @@ from app.presentation.dependencies.auth import (
 )
 
 router = APIRouter()
-templates = Jinja2Templates('app/presentation/api/endpoints/templates/html')
+templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 
-@router.get('/auth')
+@router.get("/auth")
 def page_of_login(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name='login.html'
-    )
+    return templates.TemplateResponse(request=request, name="login.html")
 
-@router.post('/auth/login')
+
+@router.post("/auth/login")
 async def login(
     request: Request,
     response: Response,
@@ -27,28 +25,17 @@ async def login(
     auth_service: UserAuthenticationService = Depends(get_auth_login),
 ):
     token = await auth_service.execute(
-        email=form_data.username,
-        password=form_data.password
+        email=form_data.username, password=form_data.password
     )
     if not token:
         return templates.TemplateResponse(
-        request=request,
-        name='login.html',
-        context={
-        'error': 'Неправильный логин или пароль'
-        }
-    )
+            request=request,
+            name="login.html",
+            context={"error": "Неправильный логин или пароль"},
+        )
 
-    response = RedirectResponse(
-        url='/',
-        status_code=303
-    )
+    response = RedirectResponse(url="/", status_code=303)
 
-    response.set_cookie(
-        key='access_token',
-        value=token,
-        httponly=True,
-        samesite='lax'
-    )
+    response.set_cookie(key="access_token", value=token, httponly=True, samesite="lax")
 
     return response

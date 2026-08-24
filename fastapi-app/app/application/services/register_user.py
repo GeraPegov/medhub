@@ -1,4 +1,4 @@
-from app.application.dto.articleAuth_dto import UserDTO
+from app.application.dto.article_auth_dto import UserDTO
 from app.domain.exceptions import UserAlreadyExistsError, UsernameAlreadyExistsError
 from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository

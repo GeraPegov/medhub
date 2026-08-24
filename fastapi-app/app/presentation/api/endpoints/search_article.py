@@ -12,51 +12,40 @@ router = APIRouter()
 
 templates = Jinja2Templates(directory="app/presentation/api/endpoints/templates/html")
 
-@router.get('/articles/search')
-async def search(
-    request: Request,
-    auth: UserEntity = Depends(get_auth)
-):
+
+@router.get("/articles/search")
+async def search(request: Request, auth: UserEntity = Depends(get_auth)):
     return templates.TemplateResponse(
-        request=request,
-        name='search.html',
-        context={
-        'auth': auth
-        }
+        request=request, name="search.html", context={"auth": auth}
     )
 
-@router.get('/articles/search/title', response_class=HTMLResponse)
+
+@router.get("/articles/search/title", response_class=HTMLResponse)
 async def get_title(
     request: Request,
     query: str = Query(..., min_length=2),
-    service: ArticleService = Depends(get_article_service)
+    service: ArticleService = Depends(get_article_service),
 ):
     articles = await service.search_by_title(query)
 
     return templates.TemplateResponse(
         request=request,
         name="search.html",
-        context={
-            "articles": articles,
-            "title": query,
-            "auth": None
-            }
+        context={"articles": articles, "title": query, "auth": None},
     )
 
-@router.get('/articles/search/category/{category}', response_class=HTMLResponse)
+
+@router.get("/articles/search/category/{category}", response_class=HTMLResponse)
 async def get_category(
     request: Request,
     category: str,
     service: ArticleService = Depends(get_article_service),
-    auth: UserEntity = Depends(get_auth)
+    auth: UserEntity = Depends(get_auth),
 ):
     articles = await service.search_by_category(category)
 
     return templates.TemplateResponse(
         request=request,
         name="search.html",
-        context={
-            "articles": articles,
-            "auth": auth
-            }
+        context={"articles": articles, "auth": auth},
     )

@@ -14,10 +14,10 @@ async def test_check_limited(db_session: AsyncSession, test_user1: User):
     repo_article = ArticleRepository(db_session)
 
     mapping = {
-        'title': 'testtitle',
-        'content': 'testcontent',
-        'user_id': test_user1.id,
-        'category': 'testcategory'
+        "title": "testtitle",
+        "content": "testcontent",
+        "user_id": test_user1.id,
+        "category": "testcategory",
     }
 
     for _ in range(2):
@@ -29,4 +29,3 @@ async def test_check_limited(db_session: AsyncSession, test_user1: User):
     await repo_article.save(mapping, test_user1.id)
     result = await repo_logic.can_publish_today(test_user1.id)
     assert result is False
-

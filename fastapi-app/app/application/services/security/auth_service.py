@@ -4,7 +4,6 @@ from app.domain.interfaces.auth_service import IAuthService
 
 
 class AuthService(IAuthService):
-
     def __init__(self):
         self.jwt_handler = JWTHandler()
         self.password_hasher = PasswordHasher()
@@ -20,4 +19,3 @@ class AuthService(IAuthService):
 
     def verify_password(self, plain_password: str, hashed: str) -> bool:
         return self.password_hasher.verify(plain_password, hashed)
-

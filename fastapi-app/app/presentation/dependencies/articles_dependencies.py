@@ -23,20 +23,21 @@ from app.infrastructure.database.repositories.logic_repository import LogicRepos
 #         )
 #     return _rate_limiter_client
 
+
 async def get_article_repository(
-        session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> IArticleRepository:
     return ArticleRepository(session)
 
 
 async def get_logic_repository(
-        session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> ILogicRepository:
     return LogicRepository(session)
 
 
 async def get_article_service(
-        base_repository: IArticleRepository = Depends(get_article_repository),
-        logic_repository: ILogicRepository = Depends(get_logic_repository)
+    base_repository: IArticleRepository = Depends(get_article_repository),
+    logic_repository: ILogicRepository = Depends(get_logic_repository),
 ) -> ArticleService:
     return ArticleService(base_repository, logic_repository)

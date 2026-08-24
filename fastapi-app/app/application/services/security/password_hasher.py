@@ -2,7 +2,6 @@ from passlib.context import CryptContext
 
 
 class PasswordHasher:
-
     def __init__(self):
         self.pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 

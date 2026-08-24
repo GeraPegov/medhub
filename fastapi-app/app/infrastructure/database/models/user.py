@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 class User(Base, AsyncAttrs):
-    __tablename__ = 'users'
+    __tablename__ = "users"
     __table_args__ = None
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -30,10 +30,18 @@ class User(Base, AsyncAttrs):
     nickname: Mapped[str] = mapped_column(String(64))
     unique_username: Mapped[str] = mapped_column(String(64), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
-    registration_date: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
-    subscriptions: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSONB), default=list)
-    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False, server_default='false')
+    registration_date: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now()
+    )
+    subscriptions: Mapped[list[str]] = mapped_column(
+        MutableList.as_mutable(JSONB), default=list
+    )
+    is_deleted: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="false"
+    )
 
-    reactions: Mapped[list['Reaction']] = relationship('Reaction', back_populates='users')
-    articles: Mapped[list['Article']] = relationship('Article', back_populates='users')
-    comments: Mapped[list['Comment']] = relationship('Comment', back_populates='users')
+    reactions: Mapped[list["Reaction"]] = relationship(
+        "Reaction", back_populates="users"
+    )
+    articles: Mapped[list["Article"]] = relationship("Article", back_populates="users")
+    comments: Mapped[list["Comment"]] = relationship("Comment", back_populates="users")
