@@ -7,9 +7,11 @@ from fastapi import APIRouter, Form, HTTPException, Query, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from app.infrastructure.config import settings
+
 router = APIRouter()
 
-ADMIN_API_URL = "http://127.0.0.1:8001"
+ADMIN_API_URL = settings.ADMIN_API_URL
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 

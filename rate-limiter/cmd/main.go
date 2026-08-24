@@ -1,19 +1,40 @@
 package main
 
 import (
+	"log/slog"
 	"net/http"
+	"new_prog/internal/config"
 	"new_prog/internal/handler"
 	"new_prog/internal/service"
 	"new_prog/internal/storage/postgres"
+	"os"
 )
 
 func main() {
-	postgres.StartPostgres()
+	logger := slog.New(
+		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelInfo,
+		}),
+	)
+	slog.SetDefault(logger)
+	cfg, err := config.Load()
+	if err != nil {
+		panic(err)
+	}
+	service.GenerateKey(cfg)
+	if err := postgres.StartPostgres(cfg); err != nil {
+		slog.Error(
+			"failed to start postgres",
+			"operation", "StartPostgres",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+	defer postgres.Pool.Close()
 	repository := postgres.NewRepository(postgres.Pool)
 	adminService := service.NewAdminService(repository)
 	adminHandler := handler.NewAdminHandler(adminService)
 
-	// http.HandleFunc("/admin/info", handler.Info)
 	http.HandleFunc("GET /admin/me", handler.AuthCheck)
 	http.HandleFunc("POST /admin/register", handler.Register)
 	http.HandleFunc("POST /admin/login", handler.Login)

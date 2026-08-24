@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"new_prog/internal/config"
 	"new_prog/internal/domain"
 	"new_prog/internal/storage/postgres"
 	"time"
@@ -42,7 +43,11 @@ func Login(ctx context.Context, admin domain.Admin) (string, error) {
 	return newToken, nil
 }
 
-var secretKey = []byte("6b33da986da8e74888c1efb080563b4cfc37a34a3ec4cccacc5512ddec47a070")
+var secretKey []byte
+
+func GenerateKey(key *config.MedhubDB) {
+	secretKey = []byte(key.SecretKey)
+}
 
 func GenerateToken(userID int) (string, error) {
 	claims := domain.Claims{

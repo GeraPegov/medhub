@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     HOST_REDIS: str
     PORT_REDIS: int
+    ADMIN_API_URL: str
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
 

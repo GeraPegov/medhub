@@ -17,6 +17,10 @@ type AuthResponse struct {
 	TokenType   string `json:"token_type"`
 }
 
+type AuthResonseErr struct {
+	Detail string `json:"detail_error"`
+}
+
 type Info struct {
 	Method      string `json:"method"`
 	Path        string `json:"path"`

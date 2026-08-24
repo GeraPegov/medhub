@@ -1,13 +1,24 @@
 package config
 
 import (
-	"new_prog/internal/domain"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
-var NewRedis domain.Redis = domain.Redis{
-	Addr:     "localhost:6379",
-	Password: "",
-	DB:       0,
+type MedhubDB struct {
+	DB_URL    string
+	SecretKey string
 }
 
-var MedhubDB string = "postgres://postgres:2710@localhost:5432/medhub"
+func Load() (*MedhubDB, error) {
+	err := godotenv.Load(".env")
+	if err != nil {
+		return nil, err
+	}
+	db := MedhubDB{
+		DB_URL:    os.Getenv("PROD_DB_URL"),
+		SecretKey: os.Getenv("SECRET_KEY"),
+	}
+	return &db, nil
+}

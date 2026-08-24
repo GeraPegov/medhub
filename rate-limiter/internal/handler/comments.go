@@ -8,17 +8,17 @@ import (
 func (h *AdminHandler) GetComments(w http.ResponseWriter, r *http.Request) {
 	articleID, err := optionalInt(r, "article_id")
 	if err != nil {
-		http.Error(w, "invalid article id", http.StatusBadRequest)
+		responseError(w, http.StatusBadRequest, "invalid article id")
 		return
 	}
 	userID, err := optionalInt(r, "user_id")
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		responseError(w, http.StatusBadRequest, "invalid user id")
 		return
 	}
 	date, err := optionalDate(r, "public_date")
 	if err != nil {
-		http.Error(w, "invalid public date", http.StatusBadRequest)
+		responseError(w, http.StatusBadRequest, "invalid date")
 		return
 	}
 

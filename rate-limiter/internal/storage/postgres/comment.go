@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"new_prog/internal/domain"
 	"strings"
 )
@@ -31,7 +32,16 @@ func (r *Repository) SearchComments(ctx context.Context, filter domain.CommentFi
 
 	rows, err := r.pool.Query(ctx, query, args...)
 	if err != nil {
-		return nil, err
+		slog.ErrorContext(
+			ctx,
+			"failed to search comments",
+			"operation", "SearchComments",
+			"article_id", filter.ArticleID,
+			"user_id", filter.UserID,
+			"date", filter.Date,
+			"error", err,
+		)
+		return nil, domain.ErrDatabase
 	}
 	defer rows.Close()
 
@@ -39,17 +49,48 @@ func (r *Repository) SearchComments(ctx context.Context, filter domain.CommentFi
 	for rows.Next() {
 		var comment domain.Comment
 		if err := rows.Scan(&comment.Id, &comment.Content, &comment.CreatedAt); err != nil {
-			return nil, err
+			slog.ErrorContext(
+				ctx,
+				"failed to scan comment",
+				"operation", "SearchComments",
+				"error", err,
+			)
+			return nil, domain.ErrDatabase
 		}
 		comments = append(comments, comment)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, err
+		slog.ErrorContext(
+			ctx,
+			"failed while iterating comments",
+			"operation", "SearchComments",
+			"error", err,
+		)
+		return nil, domain.ErrDatabase
 	}
 	return comments, nil
 }
 
 func (r *Repository) DeleteComment(ctx context.Context, id int) error {
-	_, err := r.pool.Exec(ctx, "DELETE FROM comments WHERE id = $1", id)
-	return err
+	result, err := r.pool.Exec(ctx, "DELETE FROM comments WHERE id = $1", id)
+	if err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to delete comment",
+			"operation", "DeleteComment",
+			"comment_id", id,
+			"error", err,
+		)
+		return domain.ErrDatabase
+	}
+	if result.RowsAffected() == 0 {
+		slog.WarnContext(
+			ctx,
+			"comment not found",
+			"operation", "DeleteComment",
+			"comment_id", id,
+		)
+		return domain.ErrRowsNotFound
+	}
+	return nil
 }
