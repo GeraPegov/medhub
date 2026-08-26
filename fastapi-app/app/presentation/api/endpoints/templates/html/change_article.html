@@ -7,11 +7,15 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="header">
-            <h1>Изменить статью</h1>
-        </div>
-        <div class="form-container">
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main page-main--center article-editor-page">
+            <section class="form-card article-form-card">
+                <header class="page-header">
+                    <span class="page-eyebrow">Редактирование</span>
+                    <h1 class="page-title">Изменить статью</h1>
+                    <p class="page-description">Обновите нужные поля и сохраните изменения.</p>
+                </header>
             <form action="/article/change/{{ article.article_id }}/access" method="POST">
                 <div class="form-group">
                     <label for="title">Название статьи:</label>
@@ -56,11 +60,12 @@
                 <button type="submit" class="submit-btn">
                     Изменить
                 </button>
-            </form>
-            <div class="form-footer">
-                <p>Ваша статья будет доступна всем читателям после публикации</p>
-            </div>
-        </div>
+                </form>
+                <footer class="form-footer">
+                    После сохранения обновлённая версия будет доступна читателям.
+                </footer>
+            </section>
+        </main>
     </div>
 {% endblock %}
 

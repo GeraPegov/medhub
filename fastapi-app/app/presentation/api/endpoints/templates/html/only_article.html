@@ -7,16 +7,16 @@
 {% endblock %}
 
 {% block head_scripts %}
-    <script src="/static/js/menu.js" defer></script>
     <script src="/static/js/reaction.js" defer></script>
 {% endblock %}
 
 {% block body %}
-    {% include "_menu.html" %}
-    
-    <div class="container">
-        <div class="article-card">
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main article-page">
+        <article class="article-card">
             <div class="article-header">
+                <span class="page-eyebrow">{{ article.category }}</span>
                 <h1 class="article-title">{{ article.title }}</h1>
                 <div class="article-meta">
                     <div class="meta-item">
@@ -36,29 +36,31 @@
         
             <div class="article-content">
                 <p>{{ article.content }}</p>
-        
             </div>
-        </div>
-        <div class="like-text">
-            Понравилась статья? Поставь лайк, поддержи автора! 
-        </div>
-        <div class="like-dislike">
-            <button onclick="setReaction('like', {{ article.article_id }})" class="like-btn">
-                <span id="quantityLike">{{article.likes}}</span> 
-            </button>
-            <button onclick="setReaction('dislike', {{ article.article_id }})" class="dislike-btn">
-                <span id="quantityDislike">{{article.dislikes}}</span>
-            </button>
+        </article>
 
-        </div>
+        <section class="reaction-panel">
+            <div class="like-text">Понравилась статья? Поддержите автора реакцией.</div>
+            <div class="like-dislike">
+                <button type="button" onclick="setReaction('like', {{ article.article_id }})" class="like-btn" aria-label="Нравится">
+                    <span id="quantityLike">{{ article.likes }}</span>
+                </button>
+                <button type="button" onclick="setReaction('dislike', {{ article.article_id }})" class="dislike-btn" aria-label="Не нравится">
+                    <span id="quantityDislike">{{ article.dislikes }}</span>
+                </button>
+            </div>
+        </section>
 
-        <h2>Комментарии</h2>
-        <div class="comment-section">
+        <section class="comments-block">
+            <h2>Комментарии</h2>
+            <div class="comment-section">
             {% if auth %}
             <form class="comment-form" method="POST" action="/comments/{{ article.article_id }}/create">
+                <label for="comment-field">Ваш комментарий</label>
                 <textarea 
                     name="content" 
                     id="comment-field"
+                    rows="5"
                     required
                     maxlength="1000"
                 ></textarea>
@@ -66,7 +68,7 @@
             </form>
             {% else %}
             <div class="login-message">
-                <a href="/login">Войдите</a>, чтобы оставить комментарий
+                <a href="/auth">Войдите</a>, чтобы оставить комментарий.
             </div>
             {% endif %}
             
@@ -100,6 +102,8 @@
                     Пока нет комментариев. Будьте первым!
                 </div>
             {% endif %}
+            </div>
+        </section>
+        </main>
         </div>
-    </div>
 {% endblock %}

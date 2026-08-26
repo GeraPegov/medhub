@@ -1,286 +1,270 @@
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
-}
-
-body {
-    font-family: cursive;
-    background: linear-gradient(135deg, #1A1A1D 0%, #C5C6C7 100%);
-    min-height: 100vh;
-    padding: 40px 20px;
-}
-
-.menu-icon {
-    background-image: url('/static/images/menu.png');
-    background-repeat: no-repeat;
-    background-color: #A4B3B6;
-    background-position: 10px 6px;
-    background-size: 25px;
-    position: fixed;
+.profile-page {
     display: flex;
-    border: 2px solid #090a0c80;
-    border-radius: 10px;
-    height: 40px;
-    cursor: pointer;
-    min-width: 50px;
-    max-width: 150px;
-}
-
-
-button:hover {
-    background-color: rgba(255, 192, 203, 0);
-    cursor: pointer;
-}
-
-.menu-icon:hover {
-    background-color:#C5C6C7 ;
-}
-
-.menu-items {
-    position: fixed;
-    margin-top: 50px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    gap:10px;
-    width: fit-content;
-    transition: opacity 0.3s ease, visibility 0.3s;
-}
-
-.menu-items.active {
-    /* position: initial; */
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    
-}
-
-.item-menu{
-    background-color: #DEF2F1;
-    color: black;
-    border: 2px solid black;
-    border-radius: 20px;
-    text-decoration: none;
-    padding: 5px;
-    padding-left: 10px;
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.item-menu:hover {
-    background-color: #1A1A1D;
-    color: white
-}
-
-.container {
-    background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
-    text-align: center;
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    width: 600px; 
-    margin: 0 auto;
     justify-content: center;
-    gap:20px;
-    border-radius: 20px;
-    padding-bottom: 30px;
 }
 
-
+.profile-page .container {
+    box-sizing: border-box;
+    width: min(100%, 900px);
+}
 
 .card-group {
-    display: flex;
-    padding: 20px;
-    width: 100%;
-    justify-content: space-between;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+}
+
+.image-profile {
+    display: grid;
+    flex: 0 0 74px;
+    width: 74px;
+    height: 74px;
+    place-items: center;
+    border-radius: 50%;
+    background-color: #dbeafe;
+    color: var(--color-primary);
+    font-weight: 700;
+    overflow: hidden;
 }
 
 .group-header {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
     flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-width: 0;
+}
+
+.only-name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.only-name > a {
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.subscribe-user,
+.unsubscribe-user {
+    margin: 0;
+}
+
+.subscribe-user-btn,
+.unsubscribe-user-btn,
+.change-article-btn {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 9px;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    cursor: pointer;
+}
+
+.unsubscribe-user-btn {
+    background-color: #475569;
 }
 
 .delete-profile {
+    color: var(--color-danger);
+    font-size: 14px;
     text-decoration: none;
+}
+
+.action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 28px;
 }
 
 .action-btn {
-    border-radius: 10px;
-    min-width: 100px;
-    max-width: 200px;
-    margin: 0 auto;
-    padding: 10px;
-    background: rgba(255, 192, 203, 0.199);
-    font-size: 15px;
-    font-family: cursive;
-    color: black;
+    padding: 9px 13px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-white);
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
 }
 
-.follow-user-btn {
-    border-radius: 10px;
-    min-width: 50px;
-    max-width: 200px;
-    margin: 0 auto;
-    padding: 10px;
-    background: rgba(255, 192, 203, 0.199);
-    font-size: 12px;
-    font-family: cursive;
+.action-btn:hover {
+    border-color: #93c5fd;
+    background-color: #eff6ff;
+    color: var(--color-primary);
 }
 
-.container-card {
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    flex-direction: column;
-    margin: 0 100px;
-    gap: 30px;
-}
-
-
-.article-card {
-    background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
+.profile-page .article-card,
+.profile-page .comment,
+.subscriptions {
+    box-sizing: border-box;
     width: 100%;
-    display: flex;
-    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 28px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+}
+
+.profile-page .article-title {
+    margin: 0 0 16px;
+    color: var(--color-sidebar);
+    font-size: 24px;
+    overflow-wrap: anywhere;
 }
 
 .action-and-meta {
     display: flex;
-    flex-direction: row-reverse;
-    margin: auto;
-    gap: 350px;
-    border: solid;
-    border-width: 1px;
-    border-left: none;
-    border-right: none;
-    padding: 5px;
-    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
 }
 
-.article-content {
-    padding: 20px;
-    text-align: left;
-}
-
-.article-meta {
+.profile-page .article-meta {
     display: flex;
-    align-items: end;
-    flex-direction: column;
-    gap: 2px;
-    padding-right: 20px;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    color: var(--color-muted);
+    font-size: 14px;
 }
 
 .action-in-card {
     display: flex;
-    flex-direction: column;
-    gap: 5px;
-    text-align: left;
+    flex: 0 0 auto;
+    gap: 8px;
 }
 
-.comment {
-    display: flex;
-    flex-direction: column;
-    background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
-    /* max-width: 90%; */
-    min-width: 100%;
-    margin: 0 auto;
-    text-align: left;
-    gap: 10px;
-    padding: 5px;
-    box-sizing: border-box;
+.action-in-card form {
+    margin: 0;
 }
 
-.comment-header {
-    border-width: 1px;
-    border-style: solid;
-    border-top: black;
-    border-left: none;
-    border-right: none;
-}
-
-button {
-    border-radius: 10px;
-    min-width: 50px;
-    max-width: 150px;
-    padding: 10px;
-    background: rgba(255, 192, 203, 0.199);
-    font-size: 13px;
-    font-family: cursive;
-    /* align-self: flex-end; */
-}
-
-/* .change-btn,
-.delete-btn {
-    border: none;
-    width: 100%;
-} */
-
+.delete-article-btn,
 .delete-comment-btn {
-
+    padding: 8px 12px;
+    border: 1px solid #fecaca;
+    border-radius: 9px;
+    background-color: #fef2f2;
+    color: var(--color-danger);
+    cursor: pointer;
 }
 
-.else-not-user {
-    display: flex;
-    flex-direction: column;
-    margin-left: 200px;
-    margin-right: 200px;
-    gap: 2px;
-    text-align: center;
-
+.profile-page .article-content {
+    margin-top: 20px;
+    color: #334155;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
 }
 
-.link-login,
-.link-register {
-    text-decoration: none;
-    border: solid;
-    border-radius: 5px;
-    border-width: 1px;
-    border-color: #1A1A1D;
-    color: black;
-    font-size: 20px;
-    min-width: 50px;
-    max-width: 300px;
-    margin: 0 auto;
-    padding: 5px;
-}
-
-.link-login:hover,
-.link-register:hover {
-    box-shadow: #1A1A1D;
-    font-size: 21px;
+.profile-page .article-content p {
+    margin: 0;
 }
 
 .read-more {
+    color: var(--color-primary);
     text-decoration: none;
+    white-space: nowrap;
+}
+
+.profile-page .comment-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--color-muted);
+    font-size: 14px;
+}
+
+.profile-page .comment-content {
+    color: #334155;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 .subscriptions {
     display: flex;
     flex-direction: column;
-    gap: 3px;
-    width: 100%;
-    
+    gap: 10px;
 }
 
 .link-subscribtion {
+    padding: 12px 14px;
+    border-radius: var(--radius-control);
+    background-color: var(--color-white);
+    color: var(--color-primary);
     text-decoration: none;
-    border: solid;
-    border-width: 1px;
-    border-color: #1A1A1D;
-    border-left: none;
-    border-right: none;
-    color: black;
-    font-size: 20px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 5px;
-    box-sizing: border-box;
 }
 
+.else-not-user {
+    box-sizing: border-box;
+    width: min(100%, 620px);
+    margin: auto;
+    padding: 36px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    text-align: center;
+}
+
+.else-not-user h2 {
+    margin-top: 0;
+}
+
+.else-not-user p {
+    color: var(--color-muted);
+}
+
+.guest-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.link-login,
+.link-register {
+    padding: 10px 16px;
+    border-radius: var(--radius-control);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.link-register {
+    border: 1px solid var(--color-border);
+    background-color: var(--color-white);
+    color: var(--color-primary);
+}
+
+@media (max-width: 640px) {
+    .card-group,
+    .group-header,
+    .action-and-meta {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .profile-page .article-card,
+    .profile-page .comment,
+    .card-group {
+        padding: 22px;
+    }
+
+    .guest-actions {
+        flex-direction: column;
+    }
+}

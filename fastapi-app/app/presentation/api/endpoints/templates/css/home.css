@@ -1,182 +1,65 @@
-* {
-margin: 0;
-padding: 0;
-box-sizing: border-box;
+body{
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0;
+    background-color: #F8FAFC;
 }
 
-
-body {
-    font-family: cursive;
-    background: linear-gradient(135deg, #1A1A1D 0%, #C5C6C7 100%);
-    min-height: 100vh;
-    padding: 40px 20px;
-}
-
-.menu-icon {
-    background-image: url('/static/images/menu.png');
-    background-repeat: no-repeat;
-    background-color: #A4B3B6;
-    background-position: 10px 6px;
-    background-size: 25px;
-    position: fixed;
+.content{
     display: flex;
-    border: 2px solid #15192280;
-    border-radius: 10px;
-    height: 40px;
-    cursor: pointer;
 }
 
-button {
-    border-radius: 10px;
-    min-width: 50px;
-    max-width: 150px;
-    padding: 10px;
-    background: rgba(255, 192, 203, 0.199);
-    font-size: 15px;
-    font-family: cursive;
-    /* align-self: flex-end; */
-}
-
-button:hover {
-    background-color: rgba(255, 192, 203, 0);
-    cursor: pointer;
-}
-
-.menu-icon:hover {
-    background-color:#C5C6C7 ;
-}
-
-.menu-items {
-    position: fixed;
-    margin-top: 50px;
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+.menu-items{
     display: flex;
+    background-color: #111827;
     flex-direction: column;
-    gap:10px;
-    width: fit-content;
-    transition: opacity 0.3s ease, visibility 0.3s;
-}
-
-.menu-items.active {
-    /* position: initial; */
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    
+    min-height: 100vh;
+    width: 220px;
 }
 
 .item-menu{
-    background-color: #DEF2F1;
-    color: black;
-    border: 2px solid black;
-    border-radius: 20px;
+    color: aliceblue;
     text-decoration: none;
-    padding: 5px;
-    padding-left: 10px;
-    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 15px;
+    padding: 12px 20px;
+    /* width: 180px; */
+    margin-left: 10px;
+    opacity: 0.8;
 }
 
-.item-menu:hover {
-    background-color: #1A1A1D;
-    color: white
-}
-
-#searchWrapper {
-    gap: 3px;
-    display: flex;
-    position: fixed;
-    justify-content: flex-end;
-    right: 20px;
-}
-
-
-.search-icon-btn {
-    border: 2px solid #042c8380;;
-    border-radius: 10px;
-    padding: 4px;
-    font-size: 20px;
-    background-color: #dae9e9;
-    cursor: pointer;
-}
-
-.search-icon-btn:hover {
-    background-color: white;
-}
-
-.search-input {
-    /* transform: translateY(-4px); */
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    border: 2px solid black;
-    border-radius: 5px;
-    font-size: 12px;
-    padding: 9px;
-    transition: opacity 0.3s ease, visibility 0.3s;
-}
-
-
-.search-input.active {
+.item-menu:hover{
     opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
 }
 
+.sidebar-logo{
+    padding: 0px 20px;
+    color: white;
+    margin-left: 10px;
+}
 
+.sidebar-logo span{
+    color: #60a5fa;
+}
 
-.article-card {
-    background: linear-gradient(135deg, #A4B3B6 0%, rgba(255, 192, 203, 0.575) 100%);
+.article-card{
+
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
-    text-align: center;
-    gap: 10px;
-    margin: 0 auto 20px auto;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+
+}
+
+.article-card-item{
+    background-color: #F1F5F9;
+    width: 360px;
+    padding: 30px;
+    border:#CBD5E1 solid 1px;
     border-radius: 20px;
-    max-width: 700px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.article-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-}
-
-.article-title {
-    font-family: cursive;
-}
-
-.article-meta {
-    display: flex;
-    flex-direction:column;
-    text-align: left;
-    margin-left: 30px;
-    margin-bottom: 20px;
-    font-family: cursive;
-}
-
-.article-header {
-    padding: 10px;
-    border-radius: 20px;
-    background: rgba(124, 70, 79, 0.356)
-}
-.article-content {
-    margin-left: 50px;
-    margin-right: 50px;
-    font-family: serif;
-    font-size: large;
-}
-
-.read-more {
-    text-decoration: none;
-}
-
-.read-more:hover {
-    color: rgb(124, 70, 79)
-}
-
-.author {
+.article-content .read-more{
+    color: #2563EB;
     text-decoration: none;
 }

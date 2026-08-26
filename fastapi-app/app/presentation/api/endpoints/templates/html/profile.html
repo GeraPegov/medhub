@@ -6,14 +6,11 @@
     <link rel="stylesheet" href="/static/css/profile.css">
 {% endblock %}
 
-{% block head_scripts %}
-    <script src="/static/js/menu.js" defer></script>
-{% endblock %}
-
 {% block body %}
-    {% include "_menu.html" %}
-
-{% if user %}  
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main profile-page">
+{% if user %}
     <div class="container">
             <div class="card-group">
                 <div class="image-profile">
@@ -128,9 +125,14 @@
     </div>
 {% else %}
         <div class="else-not-user">
-            <h2>Ooups.. Войдите или зарегестрируйтесь, чтобы увидеть профиль</h2>
-            <a href="/login" class="link-login">Войти</a>
-            <a href="/register" class="link-login">Зарегестрироваться</a>
+            <h2>Профиль недоступен</h2>
+            <p>Войдите или зарегистрируйтесь, чтобы увидеть профиль.</p>
+            <div class="guest-actions">
+                <a href="/auth" class="link-login">Войти</a>
+                <a href="/register" class="link-register">Зарегистрироваться</a>
+            </div>
         </div>
 {% endif %}
+        </main>
+    </div>
 {% endblock %}

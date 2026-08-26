@@ -6,49 +6,55 @@
     <link rel="stylesheet" href="/static/css/search.css">
 {% endblock %}
 
-{% block head_scripts %}
-    <script src="/static/js/menu.js" defer></script>
-{% endblock %}
-
 {% block body %}
-    {% include "_menu.html" %}
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main search-page">
+            <header class="search-header">
+                <span class="page-eyebrow">Навигация</span>
+                <h1 class="page-title">Поиск статей</h1>
+                <p class="page-description">Выберите интересующую категорию.</p>
+            </header>
 
-    <div class="container">
-        <div class="category-menu">
-            <a href="/articles/search/category/Питание" class="category-link">Питание</a>
-            <a href="/articles/search/category/Биомеханика" class="category-link">Биомеханика</a>
-            <a href="/articles/search/category/Биохимия" class="category-link">Биохимия и метаболизм</a>
-            <a href="/articles/search/category/Физиология" class="category-link">Физиология</a>
-            <a href="/articles/search/category/Исследования" class="category-link">Анализ исследований</a>
-        </div>
-{% if articles %}
-        {% for article in articles %}
-        <div class="article-card">
-            <div class="article-header">
-                <h2 class="article-title">{{ article.title }}</h2>
-                <div class="article-meta">
-                    <div class="meta-item">
-                        <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+            <nav class="category-menu" aria-label="Категории статей">
+                <a href="/articles/search/category/Питание" class="category-link">Питание</a>
+                <a href="/articles/search/category/Биомеханика" class="category-link">Биомеханика</a>
+                <a href="/articles/search/category/Биохимия" class="category-link">Биохимия и метаболизм</a>
+                <a href="/articles/search/category/Физиология" class="category-link">Физиология</a>
+                <a href="/articles/search/category/Исследования" class="category-link">Анализ исследований</a>
+            </nav>
+
+            <section class="search-results">
+            {% if articles %}
+                {% for article in articles %}
+                <article class="article-card-item">
+                    <div class="article-header">
+                        <h2 class="article-title">{{ article.title }}</h2>
+                        <div class="article-meta">
+                            <div class="meta-item">
+                                <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                            </div>
+                            <div class="meta-item">
+                                <span class="author">{{ article.nickname }}</span>
+                                <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
+                            </div>
+                            <div class="meta-item">
+                                <span class="category">{{ article.category }}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="meta-item">
-                        <span class="author">{{ article.nickname }}</span>
-                        <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
+
+                    <div class="article-content">
+                        <p>{{ article.content[0:300] }}...
+                            <a href="/article/{{ article.article_id }}" class="read-more">Показать полностью</a>
+                        </p>
                     </div>
-                    <div class="meta-item">
-                        <span class="category">{{ article.category }}</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="article-content">
-                <p>{{ article.content[0:300] }}...
-                    <a href="/article/{{ article.article_id }}" class="read-more">
-                        Показать полностью
-                    </a>
-                </p>
-            </div>
-        </div>
-    {% endfor %}
-{% endif %}
+                </article>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">Выберите категорию, чтобы увидеть подходящие статьи.</div>
+            {% endif %}
+            </section>
+        </main>
     </div>
 {% endblock %}

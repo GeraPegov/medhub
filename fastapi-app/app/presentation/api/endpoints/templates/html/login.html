@@ -7,43 +7,48 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="header">
-            <h1>Авторизация</h1>
-        </div>
-        
-        <div class="form-container">
-            <form action="/auth/login" method="POST">
-                <div class="form-group">
-                    <label for="email"> Email:</label>
-                    <input 
-                        type="text" 
-                        id="email"
-                        name="username" 
-                        value="{{ username or '' }}"
-                        maxlength="100" 
-                        required
-                    >
-                </div>
-                <div class="form-group">
-                    <label for="password"> Пароль:</label>
-                    <input 
-                        type="text" 
-                        id="password" 
-                        name="password" 
-                        maxlength="100"
-                        required
-                    >
-                </div>
-                {% if error %}
-                {{ error }}
-                {% endif %}
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main page-main--center">
+            <section class="form-card auth-card">
+                <header class="page-header">
+                    <span class="page-eyebrow">Добро пожаловать</span>
+                    <h1 class="page-title">Авторизация</h1>
+                    <p class="page-description">Войдите, чтобы публиковать статьи и общаться с авторами.</p>
+                </header>
 
-                <button type="submit" class="submit-btn">
-                    Войти
-                </button>
-                <a href="/register" class="register-link">Регистрация</a>
-            </form>
-        </div>
+                <form action="/auth/login" method="POST">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="username"
+                            value="{{ username or '' }}"
+                            maxlength="100"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            maxlength="100"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                    {% if error %}
+                        <p class="form-error">{{ error }}</p>
+                    {% endif %}
+
+                    <button type="submit" class="submit-btn">Войти</button>
+                    <p class="form-switch">Нет аккаунта? <a href="/register">Зарегистрироваться</a></p>
+                </form>
+            </section>
+        </main>
     </div>
 {% endblock %}

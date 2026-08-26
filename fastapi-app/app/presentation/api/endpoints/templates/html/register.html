@@ -3,24 +3,29 @@
 {% block title %}Регистрация{% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="/static/css/registration.css">
+    <link rel="stylesheet" href="/static/css/registration.css?v=2">
 {% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="header">
-            <h1>Регистрация</h1>
-        </div>
-        
-        <div class="form-container">
-            <form action="/auth/register" method="POST">
+    <div class="content">
+        {% include "_menu.html" %}
+        <main class="page-main page-main--center register-page">
+            <section class="form-card auth-card register-card">
+                <header class="page-header">
+                    <span class="page-eyebrow">Новый аккаунт</span>
+                    <h1 class="page-title">Регистрация</h1>
+                    <p class="page-description">Создайте профиль автора в MedHub.</p>
+                </header>
+
+                <form action="/auth/register" method="POST">
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input
-                        type="text"
+                        type="email"
                         id="email"
-                        name="email" 
-                        maxlength="100" 
+                        name="email"
+                        maxlength="100"
+                        autocomplete="email"
                         required
                     >
                 </div>
@@ -32,6 +37,7 @@
                         id="password" 
                         name="password" 
                         maxlength="100"
+                        autocomplete="new-password"
                         required
                     >
                 </div>
@@ -43,27 +49,29 @@
                         id="nickname" 
                         name="nickname" 
                         maxlength="100"
-                        required                    >
+                        autocomplete="name"
+                        required
+                    >
                 </div>
 
                 <div class="form-group">
-                    <label for="unique_username"> Уникальное имя(для ссылки на профиль)</label>
+                    <label for="username">Уникальное имя для ссылки на профиль</label>
                     <input 
                         type="text"
                         id="username"
                         name="username"
                         placeholder="Уникальный юзер"
+                        autocomplete="username"
                         required
-                        >
+                    >
                 </div>
                 {% if error %}
-                {{error}}
+                    <p class="form-error">{{ error }}</p>
                 {% endif %}
-                <button type="submit" class="submit-btn">
-                     Зарегестрироваться
-                </button>
-            </form>
-            
-        </div>
+                    <button type="submit" class="submit-btn">Зарегистрироваться</button>
+                    <p class="form-switch">Уже есть аккаунт? <a href="/auth">Войти</a></p>
+                </form>
+            </section>
+        </main>
     </div>
 {% endblock %}

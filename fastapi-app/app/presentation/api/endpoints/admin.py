@@ -86,7 +86,7 @@ def check_token(func):
 async def register_form(request: Request):
     return templates.TemplateResponse(
         request=request,
-        name="login_admin.html",
+        name="admin/admin_login.html",
     )
 
 

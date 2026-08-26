@@ -1,7 +1,7 @@
-<button class="menu-icon" type="button" aria-label="Открыть меню"></button>
-<div class="menu-items">
-    <a href="/" class="item-menu">Домой</a>
 
+<div class="menu-items">
+    <h1 class="sidebar-logo">Med<span>Hub</span></h1>
+        <a href="/" class="item-menu">Домой</a>
     {% if auth %}
         <a href="/article/submit" class="item-menu">Добавить статью</a>
         <a href="/user/profile/{{ auth.unique_username }}" class="item-menu">Профиль</a>
