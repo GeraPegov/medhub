@@ -19,7 +19,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete(self, article_id: int) -> dict:
+    async def delete(self, article_id: int, user_id: int) -> bool:
         pass
 
     @abstractmethod
@@ -39,17 +39,20 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def change(self, mapping: dict, article_id: int) -> ArticleEntity:
+    async def change(
+        self,
+        mapping: dict,
+        article_id: int,
+        user_id: int,
+    ) -> ArticleEntity:
         pass
 
     @abstractmethod
-    async def set_reaction(self, user_id: int, article_id: int, reaction: str):
+    async def set_reaction(
+        self, article_id: int, user_id: int, reaction: str
+    ) -> ArticleEntity:
         pass
 
     @abstractmethod
     async def liked_articles_by_user(self, user_id: int):
-        pass
-
-    @abstractmethod
-    async def check_reaction(self, article_id, user_id):
         pass

@@ -36,11 +36,11 @@ async def test_create_cash(db_redis: Redis, test_user1: User):
 async def test_cache_user(db_redis: Redis, test_cache_user_example, test_user1: User):
     repo = CachedRepository(db_redis)
 
-    cache = await repo.get_cache_user(test_user1.id)
+    cache = await repo.get_cached_user(test_user1.id)
 
     assert cache.email == test_user1.email
 
-    cache = await repo.get_cache_user(test_user1.unique_username)
+    cache = await repo.get_cached_user(test_user1.unique_username)
 
     assert cache.email == test_user1.email
 
@@ -51,7 +51,7 @@ async def test_cache_article(
 ):
     repo = CachedRepository(db_redis)
 
-    cache = await repo.get_cache_article(test_article.id)
+    cache = await repo.get_cached_article(test_article.id)
 
     assert cache.content == test_article.content
 

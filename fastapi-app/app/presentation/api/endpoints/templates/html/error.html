@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка {{ status_code or 500 }}{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="/static/css/error.css">
+{% endblock %}
+
+{% block body %}
+    <main class="error-page">
+        <section class="error-card" role="alert">
+            <span class="error-code">Ошибка {{ status_code or 500 }}</span>
+            <h1 class="error-title">Что-то пошло не так</h1>
+            <p class="error-message">
+                {{ error or detail or "Не удалось выполнить запрос. Попробуйте ещё раз." }}
+            </p>
+
+            <div class="error-actions">
+                <button class="primary-btn" type="button" onclick="history.back()">
+                    Вернуться назад
+                </button>
+                <a class="error-home-link" href="/">На главную</a>
+            </div>
+        </section>
+    </main>
+{% endblock %}

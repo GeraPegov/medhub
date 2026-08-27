@@ -11,7 +11,7 @@ class LogicRepository(ILogicRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def can_publish_today(self, user_id: int):
+    async def can_publish_today(self, user_id: int) -> bool:
         today = datetime.now().date()
         publication_count = await self.session.execute(
             select(func.count(Article.id))
@@ -20,4 +20,4 @@ class LogicRepository(ILogicRepository):
         )
 
         result = publication_count.scalar_one()
-        return True if result < 3 else False
+        return result < 3

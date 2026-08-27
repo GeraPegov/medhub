@@ -30,12 +30,12 @@ async def test_create(
 
 
 @pytest.mark.asyncio
-async def test_show_by_article(
+async def test_list_by_article_id(
     db_session: AsyncSession, test_article: Article, test_comment: Comment
 ):
     repo = CommentRepository(db_session)
 
-    comment = await repo.show_by_article(test_article.id)
+    comment = await repo.list_by_article_id(test_article.id)
 
     assert comment[0].content == test_comment.content
 
@@ -61,7 +61,7 @@ async def test_delete(
 
     assert comment == test_article.id
 
-    comment = await repo.show_by_article(test_article.id)
+    comment = await repo.list_by_article_id(test_article.id)
 
     assert comment is None
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, func
+from sqlalchemy import DateTime, ForeignKey, Integer, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.infrastructure.database.connection import Base
@@ -13,6 +13,13 @@ if TYPE_CHECKING:
 
 class Reaction(Base):
     __tablename__ = "reactions"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "article_id",
+            name="uq_reactions_user_article",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     user_id: Mapped[int] = mapped_column(

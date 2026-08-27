@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.exceptions import ArticleNotFoundError, ReactionAlreadyExistsError
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.article_repository import (
@@ -48,10 +49,11 @@ async def test_get_by_all(db_session: AsyncSession, test_article: Article):
 async def test_delete(db_session: AsyncSession, test_article: Article):
     repo = ArticleRepository(db_session)
 
-    article = await repo.delete(test_article.id)
+    article = await repo.delete(test_article.id, test_article.user_id)
 
-    assert await repo.get_by_id(test_article.id) is None
     assert article is True
+    with pytest.raises(ArticleNotFoundError):
+        await repo.get_by_id(test_article.id)
 
 
 @pytest.mark.asyncio
@@ -107,12 +109,83 @@ async def test_change(db_session: AsyncSession, test_article: Article):
         "content": "testchangecontent",
         "category": "testchangecategory",
     }
-    new_article = await repo.change(article_id=test_article.id, mapping=mapping)
+    new_article = await repo.change(
+        article_id=test_article.id,
+        user_id=test_article.user_id,
+        mapping=mapping,
+    )
 
     assert new_article.article_id == test_article.id
     assert new_article.title == "testchangetitle"
     assert new_article.content == "testchangecontent"
     assert new_article.category == "testchangecategory"
+
+
+@pytest.mark.asyncio
+async def test_cannot_change_another_users_article(
+    db_session: AsyncSession,
+    test_article: Article,
+    test_user2: User,
+):
+    repo = ArticleRepository(db_session)
+    article_id = test_article.id
+    original_title = test_article.title
+    mapping = {
+        "title": "hacked title",
+        "content": "hacked content",
+        "category": "hacked category",
+    }
+
+    with pytest.raises(ArticleNotFoundError):
+        await repo.change(
+            article_id=article_id,
+            user_id=test_user2.id,
+            mapping=mapping,
+        )
+
+    article = await repo.get_by_id(article_id)
+    assert article.title == original_title
+
+
+@pytest.mark.asyncio
+async def test_cannot_delete_another_users_article(
+    db_session: AsyncSession,
+    test_article: Article,
+    test_user2: User,
+):
+    repo = ArticleRepository(db_session)
+    article_id = test_article.id
+
+    with pytest.raises(ArticleNotFoundError):
+        await repo.delete(article_id, test_user2.id)
+
+    article = await repo.get_by_id(article_id)
+    assert article.article_id == article_id
+
+
+@pytest.mark.asyncio
+async def test_set_reaction_once_per_article(
+    db_session: AsyncSession,
+    test_article: Article,
+    test_user1: User,
+):
+    repository = ArticleRepository(db_session)
+
+    article = await repository.set_reaction(
+        article_id=test_article.id,
+        user_id=test_user1.id,
+        reaction="like",
+    )
+
+    assert article.likes == 1
+    assert article.dislikes == 0
+
+    with pytest.raises(ReactionAlreadyExistsError):
+        await repository.set_reaction(
+            article_id=test_article.id,
+            user_id=test_user1.id,
+            reaction="dislike",
+        )
 
 
 @pytest.mark.asyncio

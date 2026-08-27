@@ -10,8 +10,8 @@ from app.infrastructure.database.repositories.logic_repository import LogicRepos
 
 @pytest.mark.asyncio
 async def test_check_limited(db_session: AsyncSession, test_user1: User):
-    repo_logic = LogicRepository(db_session)
-    repo_article = ArticleRepository(db_session)
+    logic_repository = LogicRepository(db_session)
+    article_repository = ArticleRepository(db_session)
 
     mapping = {
         "title": "testtitle",
@@ -21,11 +21,11 @@ async def test_check_limited(db_session: AsyncSession, test_user1: User):
     }
 
     for _ in range(2):
-        await repo_article.save(mapping, test_user1.id)
+        await article_repository.save(mapping, test_user1.id)
 
-    result = await repo_logic.can_publish_today(test_user1.id)
+    result = await logic_repository.can_publish_today(test_user1.id)
     assert result is True
 
-    await repo_article.save(mapping, test_user1.id)
-    result = await repo_logic.can_publish_today(test_user1.id)
+    await article_repository.save(mapping, test_user1.id)
+    result = await logic_repository.can_publish_today(test_user1.id)
     assert result is False

@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from app.application.services.cache_service import CachedServiceArticle
+from app.application.services.cache_service import CachedArticleService
 from app.infrastructure.database.connection import get_db
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
@@ -19,10 +19,10 @@ async def scheduler_service_context():
     db = await anext(db_gen)
 
     try:
-        yield CachedServiceArticle(
+        yield CachedArticleService(
             cache=CachedRepository(redis),
-            repo_article=ArticleRepository(db),
-            repo_logic=LogicRepository(db),
+            article_repository=ArticleRepository(db),
+            logic_repository=LogicRepository(db),
         )
     finally:
         await redis_gen.aclose()

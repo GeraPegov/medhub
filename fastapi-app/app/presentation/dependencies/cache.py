@@ -4,8 +4,8 @@ from fastapi import Depends
 from redis.asyncio import Redis
 
 from app.application.services.cache_service import (
-    CachedServiceArticle,
-    CachedServiceUser,
+    CachedArticleService,
+    CachedUserService,
 )
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
@@ -36,18 +36,20 @@ async def get_cache_repository(connect: Redis = Depends(get_redis)) -> CachedRep
     return CachedRepository(connect)
 
 
-async def get_cache_user(
+async def get_cached_user_service(
     cache: CachedRepository = Depends(get_cache_repository),
-    repo_user: UserRepository = Depends(get_user_repository),
-):
-    return CachedServiceUser(cache=cache, repo_user=repo_user)
+    user_repository: UserRepository = Depends(get_user_repository),
+) -> CachedUserService:
+    return CachedUserService(cache=cache, user_repository=user_repository)
 
 
-async def get_cache_article(
+async def get_cached_article_service(
     cache: CachedRepository = Depends(get_cache_repository),
-    repo_article: ArticleRepository = Depends(get_article_repository),
-    repo_logic: LogicRepository = Depends(get_logic_repository),
-):
-    return CachedServiceArticle(
-        cache=cache, repo_article=repo_article, repo_logic=repo_logic
+    article_repository: ArticleRepository = Depends(get_article_repository),
+    logic_repository: LogicRepository = Depends(get_logic_repository),
+) -> CachedArticleService:
+    return CachedArticleService(
+        cache=cache,
+        article_repository=article_repository,
+        logic_repository=logic_repository,
     )

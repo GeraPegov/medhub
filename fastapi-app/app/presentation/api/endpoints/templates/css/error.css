@@ -1,0 +1,62 @@
+.error-page {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+}
+
+.error-card {
+    box-sizing: border-box;
+    width: min(100%, 560px);
+    padding: 40px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+    text-align: center;
+}
+
+.error-code {
+    color: var(--color-danger);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.error-title {
+    margin: 12px 0 0;
+    color: var(--color-sidebar);
+    font-size: clamp(28px, 5vw, 40px);
+}
+
+.error-message {
+    margin: 16px 0 0;
+    color: var(--color-muted);
+    line-height: 1.6;
+}
+
+.error-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.error-home-link {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+@media (max-width: 480px) {
+    .error-card {
+        padding: 28px 20px;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+}

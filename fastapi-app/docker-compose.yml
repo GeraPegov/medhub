@@ -26,6 +26,19 @@ services:
       timeout: 5s
       retries: 5
 
+  admin:
+    build:
+      context: ../admin-services
+      dockerfile: Dockerfile
+    environment:
+      PROD_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/medhub?sslmode=disable
+      SECRET_KEY: ${SECRET_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+
   app:
     build: .
     env_file:
@@ -35,11 +48,14 @@ services:
       PROD_DB_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/medhub
       HOST_REDIS: redis
       PORT_REDIS: 6379
+      ADMIN_API_URL: http://admin:8001
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
+      admin:
+        condition: service_started
     ports:
       - "8000:8000"
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"

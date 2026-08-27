@@ -2,7 +2,7 @@ import json
 from collections.abc import Awaitable, Callable
 from datetime import datetime
 from functools import wraps
-from typing import Any, ParamSpec, TypeVar
+from typing import Any, ParamSpec, TypeVar, cast
 
 from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
@@ -35,9 +35,11 @@ class CachedRepository:
     def __init__(self, connection: Redis):
         self.connection = connection
 
-    async def views_counter(self, article_id: int):
+    @handle_redis_errors(default_return=None)
+    async def increment_view_counter(self, article_id: int):
         return await self.connection.incr(f"article_counter:{article_id}")
 
+    @handle_redis_errors(default_return=None)
     async def update_views_counter(self):
         async for key in self.connection.scan_iter("article_counter:*"):
             logger.debug("Found pending article view counter: %s", key)
@@ -52,8 +54,8 @@ class CachedRepository:
         return True
 
     @handle_redis_errors(default_return=None)
-    async def get_cache_user(self, key: int | str) -> UserEntity | None:
-        from_cache = await self.connection.hgetall(f"user:{key}")
+    async def get_cached_user(self, key: int | str) -> UserEntity | None:
+        from_cache = cast(dict[str, str], await self.connection.hgetall(f"user:{key}"))
         if not from_cache:
             return None
         return UserEntity(
@@ -65,8 +67,11 @@ class CachedRepository:
         )
 
     @handle_redis_errors(default_return=None)
-    async def get_cache_article(self, key: int) -> ArticleEntity | None:
-        from_cache = await self.connection.hgetall(f"article:{key}")
+    async def get_cached_article(self, article_id: int) -> ArticleEntity | None:
+        from_cache = cast(
+            dict[str, str],
+            await self.connection.hgetall(f"article:{article_id}"),
+        )
         if not from_cache:
             return None
 
@@ -79,8 +84,8 @@ class CachedRepository:
             category=from_cache["category"],
             created_at=datetime.fromtimestamp(float(from_cache["created_at"])),
             article_id=int(from_cache["article_id"]),
-            likes=from_cache["likes"],
-            dislikes=from_cache["dislikes"],
+            likes=int(from_cache["likes"]),
+            dislikes=int(from_cache["dislikes"]),
         )
 
     @handle_redis_errors(default_return=None)
@@ -97,16 +102,3 @@ class CachedRepository:
     async def delete_article(self, article_id: int) -> int | None:
         result = await self.connection.delete(f"article:{article_id}")
         return result
-
-    @handle_redis_errors(default_return=None)
-    async def can_reaction_today(self, user_id: int, article_id: int):
-        result = await self.connection.hgetall(f"user{user_id}:article{article_id}")
-
-        if not result:
-            return True
-        if (datetime.now()).date() == datetime.fromtimestamp(
-            float(result["reaction_date"])
-        ).date():
-            return None
-
-        return True

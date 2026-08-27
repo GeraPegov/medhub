@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 class Settings(BaseSettings):
     SECRET_KEY: str
+    SECRET_KEY_MIDDLEWARE: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     ADMIN_DB_URL: str

@@ -43,7 +43,7 @@ class CommentRepository(ICommentRepository):
         comments = await self._to_entity([comment])
         return comments[0]
 
-    async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
+    async def list_by_article_id(self, article_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comment)
             .options(selectinload(Comment.users))

@@ -15,8 +15,13 @@
                     <span class="page-eyebrow">Публикация</span>
                     <h1 class="page-title">Новая статья</h1>
                     <p class="page-description">Заполните заголовок, выберите категорию и добавьте текст.</p>
-                </header>
+            </header>
             <form action="/article/submit/add" method="POST">
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ request.session['csrf_token'] }}"
+                >
 
                 <div class="form-group">
                     <label for="title">Название статьи:</label>

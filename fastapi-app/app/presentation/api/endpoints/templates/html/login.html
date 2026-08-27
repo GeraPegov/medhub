@@ -17,9 +17,14 @@
                     <p class="page-description">Войдите, чтобы публиковать статьи и общаться с авторами.</p>
                 </header>
 
-                <form action="/auth/login" method="POST">
+                <form action="/auth/login" method="POST" >
                     <div class="form-group">
                         <label for="email">Email</label>
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ request.session['csrf_token'] }}"
+                        >
                         <input
                             type="email"
                             id="email"

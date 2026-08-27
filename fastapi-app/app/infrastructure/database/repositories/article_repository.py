@@ -1,21 +1,16 @@
 from collections.abc import Sequence
-from datetime import datetime
-from typing import TypedDict
 
 from sqlalchemy import delete, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.article import ArticleEntity
+from app.domain.exceptions import ArticleNotFoundError, ReactionAlreadyExistsError
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User
-
-
-class ResponseReaction(TypedDict):
-    reaction: ArticleEntity
-    date_of_reaction: datetime
 
 
 class ArticleRepository(IArticleRepository):
@@ -41,7 +36,7 @@ class ArticleRepository(IArticleRepository):
         entities = await self._to_entity([article])
         return entities[0]
 
-    async def get_by_id(self, article_id: int) -> ArticleEntity | None:
+    async def get_by_id(self, article_id: int) -> ArticleEntity:
         db_article = await self.session.execute(
             select(Article)
             .options(selectinload(Article.users))
@@ -49,7 +44,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = db_article.scalars().all()
         if not articles:
-            return None
+            raise ArticleNotFoundError
         entities = await self._to_entity(articles)
         return entities[0]
 
@@ -63,11 +58,19 @@ class ArticleRepository(IArticleRepository):
             return None
         return await self._to_entity(articles)
 
-    async def delete(self, article_id: int) -> bool:
-        orm_del = await self.session.execute(
-            delete(Article).where(Article.id == article_id).returning(Article.title)
-        )
-        orm_del.scalar_one()
+    async def delete(self, article_id: int, user_id: int) -> bool:
+        deleted_title = (
+            await self.session.execute(
+                delete(Article)
+                .where(Article.id == article_id, Article.user_id == user_id)
+                .returning(Article.title)
+            )
+        ).scalar_one_or_none()
+
+        if deleted_title is None:
+            await self.session.rollback()
+            raise ArticleNotFoundError()
+
         await self.session.commit()
         return True
 
@@ -103,10 +106,15 @@ class ArticleRepository(IArticleRepository):
             return None
         return await self._to_entity(articles)
 
-    async def change(self, mapping: dict, article_id: int) -> ArticleEntity | None:
+    async def change(
+        self,
+        mapping: dict,
+        article_id: int,
+        user_id: int,
+    ) -> ArticleEntity:
         db_articles = await self.session.execute(
             update(Article)
-            .where(Article.id == article_id)
+            .where(Article.id == article_id, Article.user_id == user_id)
             .options(selectinload(Article.users))
             .values(
                 title=mapping["title"],
@@ -115,46 +123,63 @@ class ArticleRepository(IArticleRepository):
             )
             .returning(Article)
         )
-        await self.session.commit()
-
         articles = db_articles.scalars().all()
         if not articles:
-            return None
+            await self.session.rollback()
+            raise ArticleNotFoundError()
+
+        await self.session.commit()
         entities = await self._to_entity(articles)
         return entities[0]
 
-    async def check_reaction(self, article_id: int, user_id: int) -> bool:
-        check = (
-            await self.session.execute(
-                select(Reaction.id).filter(
-                    (Reaction.article_id == article_id) & (Reaction.user_id == user_id)
-                )
-            )
-        ).scalar_one_or_none()
-
-        return True if check else False
-
     async def set_reaction(
         self, article_id: int, user_id: int, reaction: str
-    ) -> ResponseReaction:
-        field_name = {"like": Article.like, "dislike": Article.dislike}
+    ) -> ArticleEntity:
+        reaction_counters = {
+            "like": Article.like,
+            "dislike": Article.dislike,
+        }
+        counter = reaction_counters[reaction]
+
         new_reaction = Reaction(
-            user_id=user_id, article_id=article_id, reaction_type=reaction
+            user_id=user_id,
+            article_id=article_id,
+            reaction_type=reaction,
         )
-        new_record_with_reaction = (
+        updated_article = (
             await self.session.execute(
                 update(Article)
                 .options(selectinload(Article.users))
                 .where(Article.id == article_id)
-                .values(**{reaction: field_name[reaction] + 1})
+                .values(**{reaction: counter + 1})
                 .returning(Article)
             )
-        ).scalar_one()
+        ).scalar_one_or_none()
+
+        if updated_article is None:
+            await self.session.rollback()
+            raise ArticleNotFoundError()
 
         self.session.add(new_reaction)
-        await self.session.commit()
-        new_record = await self._to_entity([new_record_with_reaction])
-        return {"reaction": new_record[0], "date_of_reaction": new_reaction.created_at}
+        try:
+            await self.session.commit()
+        except IntegrityError as error:
+            await self.session.rollback()
+            constraint_name = getattr(
+                getattr(error.orig, "diag", None),
+                "constraint_name",
+                None,
+            ) or getattr(
+                getattr(error.orig, "__cause__", None),
+                "constraint_name",
+                None,
+            )
+            if constraint_name == "uq_reactions_user_article":
+                raise ReactionAlreadyExistsError() from error
+            raise
+
+        articles = await self._to_entity([updated_article])
+        return articles[0]
 
     async def liked_articles_by_user(self, user_id: int):
         reaction_orm = await self.session.execute(

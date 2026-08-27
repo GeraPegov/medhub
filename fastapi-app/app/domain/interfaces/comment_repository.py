@@ -11,7 +11,7 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
+    async def list_by_article_id(self, article_id: int) -> list[CommentEntity] | None:
         pass
 
     @abstractmethod

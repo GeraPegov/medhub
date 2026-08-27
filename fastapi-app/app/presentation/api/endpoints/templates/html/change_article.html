@@ -15,8 +15,13 @@
                     <span class="page-eyebrow">Редактирование</span>
                     <h1 class="page-title">Изменить статью</h1>
                     <p class="page-description">Обновите нужные поля и сохраните изменения.</p>
-                </header>
+            </header>
             <form action="/article/change/{{ article.article_id }}/access" method="POST">
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ request.session['csrf_token'] }}"
+                >
                 <div class="form-group">
                     <label for="title">Название статьи:</label>
                     <input 

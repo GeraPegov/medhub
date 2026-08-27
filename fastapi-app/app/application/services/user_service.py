@@ -30,7 +30,7 @@ class UserService:
     async def get_by_username(self, username: str) -> UserEntity | None:
         return await self.repository.get_by_username(username)
 
-    async def subscribe(self, subscriber_id, author_unique_username):
+    async def subscribe(self, subscriber_id, author_unique_username) -> bool:
         return await self.repository.subscribe(subscriber_id, author_unique_username)
 
     async def unsubscribe(self, subscriber_id, author_unique_username):

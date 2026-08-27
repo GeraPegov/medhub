@@ -1,5 +1,6 @@
 from contextlib import asynccontextmanager
 
+from starlette.middleware.sessions import SessionMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -49,6 +50,15 @@ app.mount(
     "/static",
     StaticFiles(directory="app/presentation/api/endpoints/templates"),
     name="static",
+)
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=settings.SECRET_KEY_MIDDLEWARE,
+    session_cookie="medhub_session",
+    same_site="lax",
+    https_only=False
+
 )
 
 app.include_router(api_router)

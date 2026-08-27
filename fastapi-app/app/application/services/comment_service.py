@@ -10,8 +10,8 @@ class CommentService:
         self.comment_repository = comment_repository
         self.user_repository = user_repository
 
-    async def show_by_article(self, article_id: int) -> list[CommentEntity] | None:
-        return await self.comment_repository.show_by_article(article_id)
+    async def list_by_article_id(self, article_id: int) -> list[CommentEntity] | None:
+        return await self.comment_repository.list_by_article_id(article_id)
 
     async def show_by_author(self, author_id: int) -> list[CommentEntity] | None:
         return await self.comment_repository.show_by_author(author_id)

@@ -33,8 +33,8 @@ class ArticleService:
         }
         return await self.base_repository.save(mapping, user_id)
 
-    async def delete_article(self, article_id: int) -> dict:
-        return await self.base_repository.delete(article_id)
+    async def delete_article(self, article_id: int, user_id: int) -> bool:
+        return await self.base_repository.delete(article_id, user_id)
 
     async def show_all_articles(self) -> list[ArticleEntity] | None:
         return await self.base_repository.all()
@@ -49,13 +49,13 @@ class ArticleService:
         return await self.base_repository.get_by_id(user_id)
 
     async def change_article(
-        self, dto: ArticleCreateDTO, article_id: int
+        self,
+        dto: ArticleCreateDTO,
+        article_id: int,
+        user_id: int,
     ) -> ArticleEntity:
         mapping = {"title": dto.title, "content": dto.content, "category": dto.category}
-        return await self.base_repository.change(mapping, article_id)
-
-    async def set_reaction(self, article_id: int, user_id: int, reaction: str):
-        return await self.base_repository.set_reaction(article_id, user_id, reaction)
+        return await self.base_repository.change(mapping, article_id, user_id)
 
     async def liked_articles_by_user(self, user_id: int):
         result = await self.base_repository.liked_articles_by_user(user_id)

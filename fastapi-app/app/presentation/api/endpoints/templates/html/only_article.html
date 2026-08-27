@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block head_scripts %}
+    <meta name="csrf-token" content="{{ request.session.get('csrf_token', '') }}">
     <script src="/static/js/reaction.js" defer></script>
 {% endblock %}
 
@@ -41,14 +42,20 @@
 
         <section class="reaction-panel">
             <div class="like-text">Понравилась статья? Поддержите автора реакцией.</div>
+            {% if auth %}
             <div class="like-dislike">
-                <button type="button" onclick="setReaction('like', {{ article.article_id }})" class="like-btn" aria-label="Нравится">
+                <button type="button" onclick="setReaction('like', '{{ article.article_id }}')" class="like-btn" aria-label="Нравится">
                     <span id="quantityLike">{{ article.likes }}</span>
                 </button>
-                <button type="button" onclick="setReaction('dislike', {{ article.article_id }})" class="dislike-btn" aria-label="Не нравится">
+                <button type="button" onclick="setReaction('dislike', '{{ article.article_id }}')" class="dislike-btn" aria-label="Не нравится">
                     <span id="quantityDislike">{{ article.dislikes }}</span>
                 </button>
             </div>
+            {% else %}
+            <div class="login-message">
+                <a href="/auth">Войдите</a>, чтобы поставить реакцию.
+            </div>
+            {% endif %}
         </section>
 
         <section class="comments-block">
@@ -86,7 +93,7 @@
                     <div class="comment-content">
                         {{ comment.content }}
                     </div>
-                    {% if auth and auth.user_id == comment.author_id %}
+                    {% if auth and auth.user_id == comment.user_id %}
                     <div class="comment-actions">
                         <form method="POST" action="/comments/{{ comment.id }}/delete" style="display: inline;">
                             <button type="submit" class="delete-btn" onclick="return confirm('Удалить комментарий?')">

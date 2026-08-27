@@ -68,6 +68,11 @@
                         {% if auth and article.unique_username == auth.unique_username %}
                             <div class="action-in-card">
                                 <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ request.session.get('csrf_token', '') }}"
+                                    >
                                     <button type="submit" class="delete-article-btn">
                                         Удалить
                                     </button>
