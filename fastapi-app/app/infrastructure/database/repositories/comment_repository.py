@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.comment import CommentEntity
+from app.domain.exceptions import NotFoundCommentError, NotValidCredentialsError
 from app.domain.interfaces.comment_repository import ICommentRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
@@ -20,13 +21,15 @@ class CommentRepository(ICommentRepository):
             await self.session.execute(
                 select(User).where(User.id == mapping["user_id"])
             )
-        ).scalar_one()
+        ).scalar_one_or_none()
 
         article_orm = (
             await self.session.execute(
                 select(Article).where(Article.id == mapping["article_id"])
             )
-        ).scalar_one()
+        ).scalar_one_or_none()
+        if not user_orm or not article_orm:
+            raise NotValidCredentialsError
 
         comment = Comment(
             content=mapping["content"],
@@ -67,16 +70,17 @@ class CommentRepository(ICommentRepository):
 
         return await self._to_entity(comments) if comments else None
 
-    async def delete(self, comment_id: int) -> int | None:
+    async def delete(self, comment_id: int, user_id: int) -> int:
         comments_del_orm = await self.session.execute(
             delete(Comment)
-            .where(Comment.id == comment_id)
+            .where(Comment.id == comment_id, Comment.user_id == user_id)
             .returning(Comment.article_id)
         )
-        article_id = comments_del_orm.scalar_one()
+        article_id = comments_del_orm.scalar_one_or_none()
+        if article_id is None:
+            raise NotFoundCommentError
         await self.session.commit()
-
-        return article_id if article_id else None
+        return article_id
 
     async def _to_entity(self, entity: Sequence[Comment]):
         return [

@@ -11,7 +11,7 @@ from app.application.services.cache_service import CachedArticleService
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
-    ArticleNotFoundError,
+    NotFoundArticleError,
     NotValidCsrfTokenError,
     ReactionAlreadyExistsError,
 )
@@ -53,7 +53,7 @@ async def show_article(
 
     try:
         article = await cached_article_service.get_article(article_id)
-    except ArticleNotFoundError:
+    except NotFoundArticleError:
         return error_page(request, "Статья не найдена", 404)
 
     await cached_article_service.increment_view_counter(article_id)
@@ -89,7 +89,7 @@ async def delete_article(
         return RedirectResponse(
             status_code=303, url=f"/user/profile/{current_user.unique_username}"
         )
-    except ArticleNotFoundError:
+    except NotFoundArticleError:
         return error_page(request, "Статья не найдена", 404)
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
@@ -116,7 +116,7 @@ async def preliminary_change(
             name="change_article.html",
             context={"article": article, "auth": current_user},
         )
-    except ArticleNotFoundError:
+    except NotFoundArticleError:
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -149,7 +149,7 @@ async def final_change(
 
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
-    except ArticleNotFoundError:
+    except NotFoundArticleError:
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -180,7 +180,7 @@ async def add_reaction(
             {"error": "Невалидный CSRF-токен"},
             status_code=403,
         )
-    except ArticleNotFoundError:
+    except NotFoundArticleError:
         return JSONResponse(
             {"error": "Статья не найдена"},
             status_code=404,

@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.exceptions import ArticleNotFoundError, ReactionAlreadyExistsError
+from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.article_repository import (
@@ -52,7 +52,7 @@ async def test_delete(db_session: AsyncSession, test_article: Article):
     article = await repo.delete(test_article.id, test_article.user_id)
 
     assert article is True
-    with pytest.raises(ArticleNotFoundError):
+    with pytest.raises(NotFoundArticleError):
         await repo.get_by_id(test_article.id)
 
 
@@ -136,7 +136,7 @@ async def test_cannot_change_another_users_article(
         "category": "hacked category",
     }
 
-    with pytest.raises(ArticleNotFoundError):
+    with pytest.raises(NotFoundArticleError):
         await repo.change(
             article_id=article_id,
             user_id=test_user2.id,
@@ -156,7 +156,7 @@ async def test_cannot_delete_another_users_article(
     repo = ArticleRepository(db_session)
     article_id = test_article.id
 
-    with pytest.raises(ArticleNotFoundError):
+    with pytest.raises(NotFoundArticleError):
         await repo.delete(article_id, test_user2.id)
 
     article = await repo.get_by_id(article_id)

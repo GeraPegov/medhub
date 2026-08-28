@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.article import ArticleEntity
-from app.domain.exceptions import ArticleNotFoundError, ReactionAlreadyExistsError
+from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
@@ -44,7 +44,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = db_article.scalars().all()
         if not articles:
-            raise ArticleNotFoundError
+            raise NotFoundArticleError
         entities = await self._to_entity(articles)
         return entities[0]
 
@@ -69,7 +69,7 @@ class ArticleRepository(IArticleRepository):
 
         if deleted_title is None:
             await self.session.rollback()
-            raise ArticleNotFoundError()
+            raise NotFoundArticleError()
 
         await self.session.commit()
         return True
@@ -126,7 +126,7 @@ class ArticleRepository(IArticleRepository):
         articles = db_articles.scalars().all()
         if not articles:
             await self.session.rollback()
-            raise ArticleNotFoundError()
+            raise NotFoundArticleError()
 
         await self.session.commit()
         entities = await self._to_entity(articles)
@@ -158,7 +158,7 @@ class ArticleRepository(IArticleRepository):
 
         if updated_article is None:
             await self.session.rollback()
-            raise ArticleNotFoundError()
+            raise NotFoundArticleError()
 
         self.session.add(new_reaction)
         try:

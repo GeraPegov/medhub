@@ -18,7 +18,7 @@ class NotValidPasswordError(Exception):
     pass
 
 
-class ArticleNotFoundError(Exception):
+class NotFoundArticleError(Exception):
     pass
 
 
@@ -27,4 +27,12 @@ class ReactionAlreadyExistsError(Exception):
 
 
 class CommentsNotFoundError(Exception):
+    pass
+
+
+class NotValidCredentialsError(Exception):
+    pass
+
+
+class NotFoundCommentError(Exception):
     pass

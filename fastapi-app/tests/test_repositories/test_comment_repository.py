@@ -1,6 +1,7 @@
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.exceptions import NotFoundCommentError
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.user import User
@@ -57,13 +58,30 @@ async def test_delete(
 ):
     repo = CommentRepository(db_session)
 
-    comment = await repo.delete(test_comment.id)
+    comment = await repo.delete(test_comment.id, test_comment.user_id)
 
     assert comment == test_article.id
 
     comment = await repo.list_by_article_id(test_article.id)
 
     assert comment is None
+
+
+@pytest.mark.asyncio
+async def test_delete_rejects_non_owner(
+    db_session: AsyncSession,
+    test_comment: Comment,
+    test_article: Article,
+    test_user2: User,
+):
+    repo = CommentRepository(db_session)
+
+    with pytest.raises(NotFoundCommentError):
+        await repo.delete(test_comment.id, test_user2.id)
+
+    comments = await repo.list_by_article_id(test_article.id)
+    assert comments is not None
+    assert comments[0].id == test_comment.id
 
 
 @pytest.mark.asyncio

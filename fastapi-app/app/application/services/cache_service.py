@@ -8,6 +8,7 @@ from app.infrastructure.database.repositories.article_repository import (
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
 from app.infrastructure.database.repositories.logic_repository import LogicRepository
 from app.infrastructure.database.repositories.user_repository import UserRepository
+from app.domain.exceptions import NotFoundUserError
 
 
 class BaseCachedService:
@@ -37,17 +38,21 @@ class CachedUserService(BaseCachedService):
         await self._set_cache(user.unique_username, mapping=mapping, prefix="user")
         return True
 
-    async def get_user(self, key: int | str) -> UserEntity | None:
+    async def get_user(self, key: int | str) -> UserEntity:
         result = await self.cache.get_cached_user(key)
         if result:
             return result
 
         if isinstance(key, str):
             result = await self.user_repository.get_by_username(key)
-            cache_key = result.unique_username if result else None
+            if result is None:
+                raise NotFoundUserError
+            cache_key = result.unique_username
         else:
             result = await self.user_repository.get_by_id(key)
-            cache_key = result.user_id if result else None
+            if result is None:
+                raise NotFoundUserError
+            cache_key = result.user_id
 
         if result and cache_key:
             mapping = {

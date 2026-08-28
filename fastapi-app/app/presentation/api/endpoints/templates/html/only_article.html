@@ -63,6 +63,11 @@
             <div class="comment-section">
             {% if auth %}
             <form class="comment-form" method="POST" action="/comments/{{ article.article_id }}/create">
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ request.session['csrf_token'] }}"
+                >
                 <label for="comment-field">Ваш комментарий</label>
                 <textarea 
                     name="content" 
@@ -96,6 +101,11 @@
                     {% if auth and auth.user_id == comment.user_id %}
                     <div class="comment-actions">
                         <form method="POST" action="/comments/{{ comment.id }}/delete" style="display: inline;">
+                            <input
+                                type="hidden"
+                                name="csrf_token"
+                                value="{{ request.session['csrf_token'] }}"
+                            >
                             <button type="submit" class="delete-btn" onclick="return confirm('Удалить комментарий?')">
                                 Удалить
                             </button>
