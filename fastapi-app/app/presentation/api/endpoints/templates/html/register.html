@@ -18,6 +18,11 @@
                 </header>
 
                 <form action="/auth/register" method="POST">
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ request.session['csrf_token'] }}"
+                >
                 <div class="form-group">
                     <label for="email">Email:</label>
                     <input

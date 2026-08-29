@@ -57,6 +57,5 @@ class ArticleService:
         mapping = {"title": dto.title, "content": dto.content, "category": dto.category}
         return await self.base_repository.change(mapping, article_id, user_id)
 
-    async def liked_articles_by_user(self, user_id: int):
-        result = await self.base_repository.liked_articles_by_user(user_id)
-        return result
+    async def liked_articles_by_user(self, user_id: int) -> list[ArticleEntity] | None:
+        return await self.base_repository.liked_articles_by_user(user_id)

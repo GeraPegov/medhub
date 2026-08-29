@@ -54,5 +54,5 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def liked_articles_by_user(self, user_id: int):
+    async def liked_articles_by_user(self, user_id: int) -> list[ArticleEntity] | None:
         pass

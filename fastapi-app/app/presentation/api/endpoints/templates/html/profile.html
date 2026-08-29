@@ -35,9 +35,13 @@
                                 </form>
                             {% endif %}
                         {% endif %}    
+
                     </div>
+                                        {% if auth.user_id == user.user_id %}
                     <a href="/user/profile/{{ user.unique_username }}/delete" class="delete-profile">Удалить профиль</a>
+                                    {% endif %}
                 </div>
+
                    
             </div> 
         <div class="action">

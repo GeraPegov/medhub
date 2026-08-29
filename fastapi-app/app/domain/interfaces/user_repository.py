@@ -27,15 +27,15 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def subscribe(self, subscriber_id, author_unique_username) -> bool:
+    async def subscribe(self, subscriber_id, author_unique_username) -> UserEntity | None:
         pass
 
     @abstractmethod
-    async def unsubscribe(self, subscriber_id, author_unique_username) -> bool:
+    async def unsubscribe(self, subscriber_id, author_unique_username) -> UserEntity | None:
         pass
 
     @abstractmethod
-    async def delete_profile(self, user_id):
+    async def delete_profile(self, user_id) -> str:
         pass
 
     @abstractmethod

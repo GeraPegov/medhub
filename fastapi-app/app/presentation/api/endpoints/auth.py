@@ -92,6 +92,7 @@ async def register(
     registration_service: UserRegistrationService = Depends(get_auth_registration),
 ):
     try:
+        print("hello")
         await check_csrf_token(request, csrf_token)
         await registration_service.execute(user_data)
         return RedirectResponse(url="/auth", status_code=303)
@@ -121,5 +122,12 @@ async def register(
             request=request,
             name="register.html",
             context={"error": "Не удалось завершить регистрацию. Попробуйте позже."},
+            status_code=500,
+        )
+    except ValueError:
+        return templates.TemplateResponse(
+            request=request,
+            name="register.html",
+            context={"error": "Некорректно введенные данные"},
             status_code=500,
         )

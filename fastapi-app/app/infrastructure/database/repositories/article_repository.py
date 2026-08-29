@@ -181,7 +181,7 @@ class ArticleRepository(IArticleRepository):
         articles = await self._to_entity([updated_article])
         return articles[0]
 
-    async def liked_articles_by_user(self, user_id: int):
+    async def liked_articles_by_user(self, user_id: int) -> list[ArticleEntity] | None:
         reaction_orm = await self.session.execute(
             select(Reaction)
             .options(selectinload(Reaction.articles).selectinload(Article.users))

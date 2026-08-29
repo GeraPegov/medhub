@@ -3,7 +3,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import UserEntity
-from app.domain.exceptions import UserAlreadyExistsError, UsernameAlreadyExistsError
+from app.domain.exceptions import NotFoundUserError, UserAlreadyExistsError, UsernameAlreadyExistsError
 from app.domain.interfaces.user_repository import IUserRepository
 from app.infrastructure.database.models.user import User
 
@@ -79,17 +79,16 @@ class UserRepository(IUserRepository):
             raise
 
     async def subscribe(
-        self, subscribe_id: int, unique_username: str
+        self, subscribe_id: int, username_to_follow: str
     ) -> UserEntity | None:
         result = await self.session.execute(select(User).where(User.id == subscribe_id))
 
         user = result.scalar_one_or_none()
-
         if not user:
-            return None
+            raise NotFoundUserError
 
-        if unique_username not in user.subscriptions:
-            user.subscriptions.append(unique_username)
+        if username_to_follow not in user.subscriptions:
+            user.subscriptions.append(username_to_follow)
             await self.session.commit()
             await self.session.refresh(user)
             return await self._to_entity(user)
@@ -103,7 +102,7 @@ class UserRepository(IUserRepository):
         user = result.scalar_one_or_none()
 
         if not user:
-            return None
+            raise NotFoundUserError
 
         if unique_username in user.subscriptions:
             user.subscriptions.remove(unique_username)
@@ -113,18 +112,18 @@ class UserRepository(IUserRepository):
 
         return None
 
-    async def delete_profile(self, user_id: int) -> bool:
+    async def delete_profile(self, user_id: int) -> str:
         user_orm = await self.session.execute(
             update(User)
             .where(User.id == user_id)
             .values(is_deleted=True)
-            .returning(User.id)
+            .returning(User.unique_username)
         )
-
-        await self.session.commit()
-
         user = user_orm.scalar_one_or_none()
-        return True if user else False
+        if user is None:
+            raise NotFoundUserError
+        await self.session.commit()
+        return user
 
     async def _to_entity(self, model: User) -> UserEntity:
 

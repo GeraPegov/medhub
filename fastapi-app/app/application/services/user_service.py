@@ -30,11 +30,11 @@ class UserService:
     async def get_by_username(self, username: str) -> UserEntity | None:
         return await self.repository.get_by_username(username)
 
-    async def subscribe(self, subscriber_id, author_unique_username) -> bool:
-        return await self.repository.subscribe(subscriber_id, author_unique_username)
+    async def subscribe(self, subscriber_id, username_to_follow) -> UserEntity | None:
+        return await self.repository.subscribe(subscriber_id, username_to_follow)
 
-    async def unsubscribe(self, subscriber_id, author_unique_username):
+    async def unsubscribe(self, subscriber_id, author_unique_username) -> UserEntity | None:
         return await self.repository.unsubscribe(subscriber_id, author_unique_username)
 
-    async def delete_profile(self, user_id):
+    async def delete_profile(self, user_id) -> str:
         return await self.repository.delete_profile(user_id)
