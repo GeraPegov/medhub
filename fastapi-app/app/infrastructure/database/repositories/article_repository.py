@@ -4,7 +4,7 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-
+from sqlalchemy.dialects.postgresql import insert
 from app.domain.entities.article import ArticleEntity
 from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
 from app.domain.interfaces.article_repository import IArticleRepository
@@ -141,11 +141,7 @@ class ArticleRepository(IArticleRepository):
         }
         counter = reaction_counters[reaction]
 
-        new_reaction = Reaction(
-            user_id=user_id,
-            article_id=article_id,
-            reaction_type=reaction,
-        )
+
         updated_article = (
             await self.session.execute(
                 update(Article)
@@ -160,23 +156,23 @@ class ArticleRepository(IArticleRepository):
             await self.session.rollback()
             raise NotFoundArticleError()
 
-        self.session.add(new_reaction)
-        try:
-            await self.session.commit()
-        except IntegrityError as error:
-            await self.session.rollback()
-            constraint_name = getattr(
-                getattr(error.orig, "diag", None),
-                "constraint_name",
-                None,
-            ) or getattr(
-                getattr(error.orig, "__cause__", None),
-                "constraint_name",
-                None,
+        new_reaction = await self.session.execute(
+            insert(Reaction)
+            .values(
+                user_id=user_id,
+                article_id=article_id,
+                reaction_type=reaction
+                )
+            .on_conflict_do_nothing(
+                constraint="uq_reactions_user_article"
             )
-            if constraint_name == "uq_reactions_user_article":
-                raise ReactionAlreadyExistsError() from error
-            raise
+            .returning(Reaction.id)
+        )
+        reaction_id = new_reaction.scalar_one_or_none()
+        if reaction_id is None:
+            await self.session.rollback()
+            raise ReactionAlreadyExistsError
+        await self.session.commit()
 
         articles = await self._to_entity([updated_article])
         return articles[0]
