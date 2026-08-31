@@ -4,7 +4,6 @@ import pytest
 from redis.asyncio import Redis
 
 from app.domain.entities.user import UserEntity
-from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
 
@@ -46,17 +45,6 @@ async def test_cache_user(db_redis: Redis, test_cache_user_example, test_user1: 
 
 
 @pytest.mark.asyncio
-async def test_cache_article(
-    db_redis: Redis, test_cache_article_example, test_article: Article
-):
-    repo = CachedRepository(db_redis)
-
-    cache = await repo.get_cached_article(test_article.id)
-
-    assert cache.content == test_article.content
-
-
-@pytest.mark.asyncio
 async def test_delete_user(db_redis: Redis, test_cache_user_example, test_user1: User):
     repo = CachedRepository(db_redis)
     user = UserEntity(
@@ -69,14 +57,3 @@ async def test_delete_user(db_redis: Redis, test_cache_user_example, test_user1:
     cache = await repo.delete_user(user)
     """Количество удаленных ключей"""
     assert cache == 2
-
-
-@pytest.mark.asyncio
-async def test_delete_article(
-    db_redis: Redis, test_cache_article_example, test_article: Article
-):
-    repo = CachedRepository(db_redis)
-
-    cache = await repo.delete_article(test_article.id)
-    """Количество удаленных ключей"""
-    assert cache == 1

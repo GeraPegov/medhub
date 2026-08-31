@@ -54,7 +54,7 @@ async def test_subscribe_and_unsubscribe(
 ):
     repo = UserRepository(db_session)
     user = await repo.subscribe(
-        subscribe_id=test_user1.id, unique_username=test_user2.unique_username
+        subscribe_id=test_user1.id, username_to_follow=test_user2.unique_username
     )
 
     assert test_user2.unique_username in user.subscriptions

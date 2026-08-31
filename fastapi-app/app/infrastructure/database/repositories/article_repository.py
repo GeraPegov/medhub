@@ -1,10 +1,10 @@
 from collections.abc import Sequence
 
 from sqlalchemy import delete, select, update
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from sqlalchemy.dialects.postgresql import insert
+
 from app.domain.entities.article import ArticleEntity
 from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
 from app.domain.interfaces.article_repository import IArticleRepository
@@ -141,7 +141,6 @@ class ArticleRepository(IArticleRepository):
         }
         counter = reaction_counters[reaction]
 
-
         updated_article = (
             await self.session.execute(
                 update(Article)
@@ -158,14 +157,8 @@ class ArticleRepository(IArticleRepository):
 
         new_reaction = await self.session.execute(
             insert(Reaction)
-            .values(
-                user_id=user_id,
-                article_id=article_id,
-                reaction_type=reaction
-                )
-            .on_conflict_do_nothing(
-                constraint="uq_reactions_user_article"
-            )
+            .values(user_id=user_id, article_id=article_id, reaction_type=reaction)
+            .on_conflict_do_nothing(constraint="uq_reactions_user_article")
             .returning(Reaction.id)
         )
         reaction_id = new_reaction.scalar_one_or_none()
@@ -181,7 +174,10 @@ class ArticleRepository(IArticleRepository):
         reaction_orm = await self.session.execute(
             select(Reaction)
             .options(selectinload(Reaction.articles).selectinload(Article.users))
-            .where(Reaction.user_id == user_id)
+            .where(
+                Reaction.user_id == user_id,
+                Reaction.reaction_type == "like",
+            )
         )
 
         reaction = reaction_orm.scalars().all()
