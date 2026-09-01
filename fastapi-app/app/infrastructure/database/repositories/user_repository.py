@@ -58,24 +58,25 @@ class UserRepository(IUserRepository):
             nickname=user_data["nickname"],
             unique_username=user_data["unique_username"],
         )
-
-        self.session.add(user)
         try:
+            self.session.add(user)
             await self.session.commit()
+
         except IntegrityError as error:
             await self.session.rollback()
+
             constraint_name = getattr(
-                getattr(error.orig, "diag", None),
+                error.orig.__cause__ if error.orig is not None else None,
                 "constraint_name",
                 None,
             )
-            if constraint_name == "users_email_key":
+
+            if constraint_name == "uq_users_email":
                 raise UserAlreadyExistsError from error
-            if constraint_name == "users_unique_username_key":
+
+            if constraint_name == "uq_users_unique_username":
                 raise UsernameAlreadyExistsError from error
-            raise
-        except SQLAlchemyError:
-            await self.session.rollback()
+
             raise
 
     async def subscribe(
@@ -112,18 +113,18 @@ class UserRepository(IUserRepository):
 
         return None
 
-    async def delete_profile(self, user_id: int) -> str:
+    async def delete_profile(self, user_id: int) -> bool:
         user_orm = await self.session.execute(
             update(User)
             .where(User.id == user_id)
             .values(is_deleted=True)
-            .returning(User.unique_username)
+            .returning(User.id)
         )
         user = user_orm.scalar_one_or_none()
         if user is None:
             raise NotFoundUserError
         await self.session.commit()
-        return user
+        return user is not None
 
     async def _to_entity(self, model: User) -> UserEntity:
 

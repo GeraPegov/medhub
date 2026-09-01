@@ -36,5 +36,5 @@ class UserService:
     async def unsubscribe(self, subscriber_id, author_unique_username) -> UserEntity | None:
         return await self.repository.unsubscribe(subscriber_id, author_unique_username)
 
-    async def delete_profile(self, user_id) -> str:
+    async def delete_profile(self, user_id) -> bool:
         return await self.repository.delete_profile(user_id)

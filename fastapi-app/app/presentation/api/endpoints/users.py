@@ -181,8 +181,7 @@ async def delete_profile(
     user_service: UserService = Depends(get_user_service),
 ):
     try:
-        username = await user_service.delete_profile(auth.user_id)
-
-        return RedirectResponse(url=f"Пользователь {username} удалён", status_code=303)
+        await user_service.delete_profile(auth.user_id)
+        return RedirectResponse(url="/", status_code=303)
     except NotFoundUserError:
         return JSONResponse("Пользователь не найден", status_code=404)

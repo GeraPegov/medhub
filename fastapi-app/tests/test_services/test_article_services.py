@@ -7,6 +7,14 @@ from app.application.dto.article_create_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
 from app.domain.entities.article import ArticleEntity
 
+@pytest.fixture
+def article_repository() -> AsyncMock:
+    return AsyncMock()
+
+
+@pytest.fixture
+def logic_repository() -> AsyncMock:
+    return AsyncMock()
 
 @pytest.fixture
 def article() -> ArticleEntity:
@@ -22,16 +30,6 @@ def article() -> ArticleEntity:
         dislikes=1,
         created_at=datetime(2026, 8, 31, 12, 0),
     )
-
-
-@pytest.fixture
-def article_repository() -> AsyncMock:
-    return AsyncMock()
-
-
-@pytest.fixture
-def logic_repository() -> AsyncMock:
-    return AsyncMock()
 
 
 @pytest.fixture

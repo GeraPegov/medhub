@@ -35,7 +35,7 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete_profile(self, user_id) -> str:
+    async def delete_profile(self, user_id) -> bool:
         pass
 
     @abstractmethod

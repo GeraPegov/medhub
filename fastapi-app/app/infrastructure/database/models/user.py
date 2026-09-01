@@ -6,6 +6,7 @@ from sqlalchemy import (
     DateTime,
     Integer,
     String,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -23,12 +24,18 @@ if TYPE_CHECKING:
 
 class User(Base, AsyncAttrs):
     __tablename__ = "users"
-    __table_args__ = None
+    __table_args__ = (
+        UniqueConstraint("email", name="uq_users_email"),
+        UniqueConstraint(
+            "unique_username",
+            name="uq_users_unique_username",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(String(64), unique=True)
+    email: Mapped[str] = mapped_column(String(64))
     nickname: Mapped[str] = mapped_column(String(64))
-    unique_username: Mapped[str] = mapped_column(String(64), unique=True)
+    unique_username: Mapped[str] = mapped_column(String(64))
     password_hash: Mapped[str] = mapped_column(String(255))
     registration_date: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now()

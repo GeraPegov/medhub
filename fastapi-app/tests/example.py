@@ -10,6 +10,7 @@ from app.infrastructure.database.models.user import User
 @pytest.fixture
 async def test_user1(db_session):
     user = User(
+        id=1,
         email="test1@example.com",
         password_hash="testpassword1",
         unique_username="testusername1",
@@ -26,6 +27,7 @@ async def test_user1(db_session):
 @pytest.fixture
 async def test_user2(db_session):
     user = User(
+        id=2,
         email="test2@example.com",
         password_hash="testpassword2",
         unique_username="testusername2",
