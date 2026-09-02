@@ -4,9 +4,9 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
+    NotFoundArticleError,
     NotFoundCommentError,
     NotFoundUserError,
-    NotValidCredentialsError,
     NotValidCsrfTokenError,
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
@@ -38,7 +38,7 @@ async def create(
         response = RedirectResponse(url=f"/article/{article_id}", status_code=303)
 
         return response
-    except NotValidCredentialsError:
+    except (NotFoundUserError, NotFoundArticleError):
         return JSONResponse(
             {"error": "Не существует пользователя или статьи"},
             status_code=404,

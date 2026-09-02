@@ -5,7 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.domain.entities.comment import CommentEntity
-from app.domain.exceptions import NotFoundCommentError, NotValidCredentialsError
+from app.domain.exceptions import (
+    NotFoundArticleError,
+    NotFoundCommentError,
+    NotFoundUserError,
+)
 from app.domain.interfaces.comment_repository import ICommentRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
@@ -23,13 +27,16 @@ class CommentRepository(ICommentRepository):
             )
         ).scalar_one_or_none()
 
+        if user_orm is None:
+            raise NotFoundUserError
+
         article_orm = (
             await self.session.execute(
                 select(Article).where(Article.id == mapping["article_id"])
             )
         ).scalar_one_or_none()
-        if not user_orm or not article_orm:
-            raise NotValidCredentialsError
+        if article_orm is None:
+            raise NotFoundArticleError
 
         comment = Comment(
             content=mapping["content"],
@@ -58,7 +65,7 @@ class CommentRepository(ICommentRepository):
 
         return await self._to_entity(comments) if comments else None
 
-    async def show_by_author(self, user_id: int) -> list[CommentEntity] | None:
+    async def list_by_author(self, user_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(
             select(Comment)
             .options(selectinload(Comment.users))
