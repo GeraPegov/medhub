@@ -35,27 +35,30 @@ class CachedRepository:
     def __init__(self, connection: Redis):
         self.connection = connection
 
+
     @handle_redis_errors(default_return=None)
     async def increment_view_counter(self, article_id: int):
         return await self.connection.incr(f"article_counter:{article_id}")
+
 
     @handle_redis_errors(default_return=None)
     async def update_views_counter(self):
         async for key in self.connection.scan_iter("article_counter:*"):
             logger.debug("Found pending article view counter: %s", key)
 
-    @handle_redis_errors(default_return=None)
-    async def set_cache(
-        self, prefix: str, key: str | int, mapping: dict, ttl: int = 3600
-    ) -> bool | None:
-        cache_key = f"{prefix}:{key}"
-        await self.connection.hset(cache_key, mapping=mapping)
-        await self.connection.expire(cache_key, ttl)
-        return True
 
     @handle_redis_errors(default_return=None)
-    async def get_cached_user(self, key: int | str) -> UserEntity | None:
-        from_cache = cast(dict[str, str], await self.connection.hgetall(f"user:{key}"))
+    async def set_cache(
+        self, record_selection: str, unique_record_identifier: str | int, record_details: dict, ttl: int = 3600
+    ) -> None:
+        cache_key = f"{record_selection}:{unique_record_identifier}"
+        await self.connection.hset(cache_key, mapping=record_details)
+        await self.connection.expire(cache_key, ttl)
+
+
+    @handle_redis_errors(default_return=None)
+    async def get_cached_user(self, unique_record_identifier: int | str) -> UserEntity | None:
+        from_cache = cast(dict[str, str], await self.connection.hgetall(f"user:{unique_record_identifier}"))
         if not from_cache:
             return None
         return UserEntity(
@@ -65,6 +68,7 @@ class CachedRepository:
             nickname=from_cache["nickname"],
             subscriptions=json.loads(from_cache["subscriptions"]),
         )
+
 
     @handle_redis_errors(default_return=None)
     async def get_cached_article(self, article_id: int) -> ArticleEntity | None:
@@ -88,6 +92,7 @@ class CachedRepository:
             dislikes=int(from_cache["dislikes"]),
         )
 
+
     @handle_redis_errors(default_return=None)
     async def delete_user(
         self,
@@ -97,6 +102,7 @@ class CachedRepository:
             f"user:{user.user_id}", f"user:{user.unique_username}"
         )
         return result
+
 
     @handle_redis_errors(default_return=None)
     async def delete_article(self, article_id: int) -> int | None:

@@ -13,7 +13,7 @@ from app.infrastructure.database.repositories.article_repository import (
 def article_data(user_id: int, **overrides) -> dict:
     data = {
         "title": "Evidence based medicine",
-        "content": "A sufficiently detailed article body.",
+        "content": "A sufficiently detailed article body",
         "user_id": user_id,
         "category": "Research",
     }
@@ -40,6 +40,12 @@ def assert_article_matches(
     assert article.likes == 0
     assert article.dislikes == 0
     assert article.created_at is not None
+
+# def assert_article_matches_model(article: ArticleEntity, data: dict, author: User):
+#     return assert_article_matches(
+#         article,
+#         article_id=
+#         )
 
 
 @pytest.mark.asyncio

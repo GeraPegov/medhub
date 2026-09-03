@@ -70,14 +70,6 @@ async def mock_logic_db_repository():
     return AsyncMock()
 
 
-# @pytest.fixture(scope='function')
-# async def get_mock_article_service(mock_logic_db_repository, mock_article_db_repository):
-#     return ArticleService(
-#         base_repository=mock_article_db_repository,
-#         logic_repository=mock_logic_db_repository
-#     )
-
-
 @pytest.fixture
 async def test_user1(db_session):
     user = User(
@@ -184,3 +176,5 @@ async def test_cache_article_example(db_redis, test_article, test_user1):
     cache = await db_redis.hgetall(f"article:{1}")
 
     return cache
+
+

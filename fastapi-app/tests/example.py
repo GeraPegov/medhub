@@ -75,41 +75,41 @@ async def test_comment(db_session, test_user1, test_article):
     return comment
 
 
-@pytest.fixture
-async def test_cache_user_example(db_redis, test_user1):
-    mapping = {
-        "user_id": str(test_user1.id),
-        "email": test_user1.email,
-        "unique_username": test_user1.unique_username,
-        "nickname": test_user1.nickname,
-        "subscriptions": json.dumps(list(test_user1.subscriptions)),
-    }
+# @pytest.fixture
+# async def test_cache_user_example(db_redis, test_user1):
+#     mapping = {
+#         "user_id": str(test_user1.id),
+#         "email": test_user1.email,
+#         "unique_username": test_user1.unique_username,
+#         "nickname": test_user1.nickname,
+#         "subscriptions": json.dumps(list(test_user1.subscriptions)),
+#     }
 
-    await db_redis.hset(f"user:{test_user1.id}", mapping=mapping)
-    await db_redis.hset(f"user:{test_user1.unique_username}", mapping=mapping)
-    await db_redis.expire(f"user:{1}", 3600)
-    cache = await db_redis.hgetall(f"user:{1}")
+#     await db_redis.hset(f"user:{test_user1.id}", mapping=mapping)
+#     await db_redis.hset(f"user:{test_user1.unique_username}", mapping=mapping)
+#     await db_redis.expire(f"user:{1}", 3600)
+#     cache = await db_redis.hgetall(f"user:{1}")
 
-    return cache
+#     return cache
 
 
-@pytest.fixture
-async def test_cache_article_example(db_redis, test_article, test_user1):
-    mapping = {
-        "unique_username": test_user1.unique_username,
-        "title": test_article.title,
-        "content": test_article.content,
-        "user_id": test_article.user_id,
-        "likes": test_article.like,
-        "dislikes": test_article.dislike,
-        "nickname": test_user1.nickname,
-        "created_at": test_article.created_at.timestamp(),
-        "category": test_article.category,
-        "article_id": test_article.id,
-    }
+# @pytest.fixture
+# async def test_cache_article_example(db_redis, test_article, test_user1):
+#     mapping = {
+#         "unique_username": test_user1.unique_username,
+#         "title": test_article.title,
+#         "content": test_article.content,
+#         "user_id": test_article.user_id,
+#         "likes": test_article.like,
+#         "dislikes": test_article.dislike,
+#         "nickname": test_user1.nickname,
+#         "created_at": test_article.created_at.timestamp(),
+#         "category": test_article.category,
+#         "article_id": test_article.id,
+#     }
 
-    await db_redis.hset(f"article:{test_article.id}", mapping=mapping)
-    await db_redis.expire(f"article:{1}", 3600)
-    cache = await db_redis.hgetall(f"article:{1}")
+#     await db_redis.hset(f"article:{test_article.id}", mapping=mapping)
+#     await db_redis.expire(f"article:{1}", 3600)
+#     cache = await db_redis.hgetall(f"article:{1}")
 
-    return cache
+#     return cache

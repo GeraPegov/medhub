@@ -30,7 +30,7 @@ def assert_user_matches(
     email: str,
     unique_username: str,
     nickname: str,
-    password_hash: str,
+    password_hash: str | None = None,
     subscriptions: list[str],
 ) -> None:
     assert user.user_id == user_id
