@@ -3,15 +3,12 @@ from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.domain.interfaces.logic_repository import ILogicRepository
 
-# from app.infrastructure.database.repositories.http_client import RateLimiterClient
-
 
 class ArticleService:
     def __init__(
         self,
         base_repository: IArticleRepository,
         logic_repository: ILogicRepository,
-        # rate_limiter: RateLimiterClient
     ):
         self.base_repository = base_repository
         self.logic_repository = logic_repository

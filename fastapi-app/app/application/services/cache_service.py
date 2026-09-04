@@ -16,9 +16,9 @@ class BaseCachedService:
         self.cache = cache
 
     async def _set_cache(
-        self, key: str | int, record_details: dict, article_or_user: str, ttl: int = 3600
+        self, record_selection: str, unique_record_identifier: str | int, record_details: dict, ttl: int = 3600
     ):
-        await self.cache.set_cache(article_or_user, key, record_details, ttl)
+        await self.cache.set_cache(record_selection, unique_record_identifier, record_details, ttl)
 
 
 class CachedUserService(BaseCachedService):
@@ -35,11 +35,12 @@ class CachedUserService(BaseCachedService):
             "nickname": user.nickname,
             "subscriptions": json.dumps(list(user.subscriptions)),
         }
-        await self._set_cache(user.unique_username, record_details=data, article_or_user="user")
+        await self._set_cache(
+            unique_record_identifier=user.user_id,
+            record_selection="user",
+            record_details=data
+            )
         return True
-
-    async def delete_user(self, user: UserEntity):
-        return await self.cache.delete_user(user)
 
     async def get_user(self, key: int | str) -> UserEntity:
         result = await self.cache.get_cached_user(key)
@@ -58,14 +59,14 @@ class CachedUserService(BaseCachedService):
             cache_key = result.user_id
 
         if result and cache_key:
-            mapping = {
+            data = {
                 "user_id": result.user_id,
                 "email": result.email,
                 "unique_username": result.unique_username,
                 "nickname": result.nickname,
                 "subscriptions": json.dumps(list(result.subscriptions)),
             }
-            await self._set_cache(cache_key, record_details=mapping, article_or_user="user")
+            await self._set_cache(record_selection="user", unique_record_identifier=cache_key, record_details=data)
         return result
 
 
@@ -98,11 +99,11 @@ class CachedArticleService(BaseCachedService):
             "likes": article.likes,
             "dislikes": article.dislikes,
         }
-        await self._set_cache(article_id, record_details=data, article_or_user="article")
+        await self._set_cache(record_selection="article", unique_record_identifier=article_id, record_details=data)
 
         return article
 
-    async def update_article(self, article: ArticleEntity):
+    async def update_article(self, article: ArticleEntity) -> None:
         await self.cache.delete_article(article.article_id)
         data = {
             "unique_username": article.unique_username,
@@ -116,8 +117,7 @@ class CachedArticleService(BaseCachedService):
             "likes": article.likes,
             "dislikes": article.dislikes,
         }
-        await self._set_cache(article.article_id, record_details=data, article_or_user="article")
-        return True
+        await self._set_cache(record_selection="article", unique_record_identifier=article.article_id, record_details=data)
 
     async def delete_article(self, article_id: int):
         return await self.cache.delete_article(article_id)
