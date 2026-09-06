@@ -10,7 +10,9 @@ from redis.exceptions import TimeoutError as RedisTimeoutError
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
-from app.domain.logging import logger
+import logging
+
+logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
 T = TypeVar("T")

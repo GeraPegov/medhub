@@ -4,13 +4,16 @@ from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+import logging
 
 from app.domain.entities.article import ArticleEntity
-from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
+from app.domain.exceptions import NotFoundArticleError, NotFoundUserError, ReactionAlreadyExistsError
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
 from app.infrastructure.database.models.user import User
+
+logger = logging.getLogger(__name__)
 
 
 class ArticleRepository(IArticleRepository):
@@ -20,7 +23,12 @@ class ArticleRepository(IArticleRepository):
     async def save(self, mapping: dict, user_id: int) -> ArticleEntity:
         user_orm = (
             await self.session.execute(select(User).where(User.id == user_id))
-        ).scalar_one()
+        ).scalar_one_or_none()
+
+        if user_orm is None:
+            logger.info(f'Пользователь с "user_id:{user_id}" не найден')
+            raise NotFoundUserError
+
         article = Article(
             title=mapping["title"],
             content=mapping["content"],

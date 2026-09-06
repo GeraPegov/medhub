@@ -1,6 +1,7 @@
 import secrets
 from typing import Literal
 
+import logging
 from fastapi import APIRouter, Depends, Form, Header, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -12,6 +13,7 @@ from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
     NotFoundArticleError,
+    NotFoundUserError,
     NotValidCsrfTokenError,
     ReactionAlreadyExistsError,
 )
@@ -25,7 +27,7 @@ from app.presentation.dependencies.parse_article import parse_article_form
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 router = APIRouter()
-
+logger = logging.getLogger(__name__)
 
 def ensure_csrf_token(request: Request) -> None:
     if "csrf_token" not in request.session:
@@ -241,6 +243,7 @@ async def add(
     request: Request,
     current_user: UserEntity | None = Depends(get_current_user),
 ):
+
     if current_user is None:
         return RedirectResponse(url="/auth", status_code=303)
 
@@ -250,6 +253,7 @@ async def add(
         name="submit_article.html",
         context={"auth": current_user},
     )
+
 
 
 @router.post("/article/submit/add")
@@ -277,3 +281,6 @@ async def create_article(
         )
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
+    except NotFoundUserError:
+        logger.info("Пользователь не найден)")
+        return JSONResponse("Пользователь не надйен", status_code=401)

@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-
+import logging
 from starlette.middleware.sessions import SessionMiddleware
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
@@ -11,9 +11,10 @@ import app.presentation.dependencies.cache as state
 from app.infrastructure.config import settings
 from app.presentation.api.router import api_router
 from app.presentation.dependencies.scheduler import scheduler_service_context
+from app.infrastructure.logging_config import init_logger
 
 scheduler = AsyncIOScheduler()
-
+logger = logging.getLogger(__name__)
 
 async def update_views_counter():
     async with scheduler_service_context() as service:
@@ -25,6 +26,7 @@ redis_pool = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    init_logger()
     state.redis_pool = ConnectionPool.from_url(
         f"redis://{settings.HOST_REDIS}:{settings.PORT_REDIS}",
         decode_responses=True,
@@ -36,6 +38,7 @@ async def lifespan(app: FastAPI):
     )
     scheduler.add_job(update_views_counter, trigger="interval", hours=12)
     scheduler.start()
+    logger.info("Запуск приложения")
     yield
     scheduler.shutdown()
     if state.redis_pool is not None:
@@ -58,7 +61,6 @@ app.add_middleware(
     session_cookie="medhub_session",
     same_site="lax",
     https_only=False
-
 )
 
 app.include_router(api_router)

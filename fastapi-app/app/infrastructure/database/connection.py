@@ -4,11 +4,12 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-from app.domain.logging import logger
+import logging
 from app.infrastructure.config import settings
 
 BASE_DIR = Path(__file__).parent.parent.parent.parent
 
+logger = logging.getLogger(__name__)
 
 async def create_database_if_not_exists(db_name: str):
     admin_engine = create_async_engine(
@@ -53,6 +54,7 @@ Base = declarative_base()
 async def get_db():
     async with AsyncSessionLocal() as session:
         try:
+            logger.info("Обращение к PostgreSQL")
             yield session
         finally:
             await session.close()
