@@ -16,6 +16,7 @@ from app.domain.exceptions import (
     UserAlreadyExistsError,
     UsernameAlreadyExistsError,
 )
+from app.presentation.api.helpers import ensure_csrf_token
 from app.presentation.dependencies.auth import (
     get_auth_login,
     get_auth_registration,
@@ -35,8 +36,7 @@ async def check_csrf_token(request: Request, csrf_token):
 
 @router.get("/auth")
 def page_of_login(request: Request):
-    if "csrf_token" not in request.session:
-        request.session["csrf_token"] = secrets.token_urlsafe(32)
+    ensure_csrf_token(request)
     return templates.TemplateResponse(request=request, name="login.html")
 
 
@@ -79,8 +79,7 @@ async def login(
 
 @router.get("/register")
 async def page_of_register(request: Request):
-    if "csrf_token" not in request.session:
-        request.session["csrf_token"] = secrets.token_urlsafe(32)
+    ensure_csrf_token(request)
     return templates.TemplateResponse(request=request, name="register.html")
 
 

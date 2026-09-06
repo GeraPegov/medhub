@@ -26,7 +26,6 @@ class ArticleRepository(IArticleRepository):
         ).scalar_one_or_none()
 
         if user_orm is None:
-            logger.info(f'Пользователь с "user_id:{user_id}" не найден')
             raise NotFoundUserError
 
         article = Article(
@@ -63,6 +62,7 @@ class ArticleRepository(IArticleRepository):
         articles = db_articles.scalars().all()
 
         if not articles:
+            logger.info("Не нашлось ни одной статьи при запросе вернуть все статьи.")
             return None
         return await self._to_entity(articles)
 
@@ -89,8 +89,10 @@ class ArticleRepository(IArticleRepository):
             .where(Article.title.ilike(f"%{title}%"))
         )
         articles = db_articles.scalars().all()
-
-        return await self._to_entity(articles) if articles else None
+        if not articles:
+            logger.info("Не нашлось статей по заголовку = %s", title)
+            return None
+        return await self._to_entity(articles)
 
     async def get_user_articles(self, user_id: int) -> list[ArticleEntity] | None:
         db_articles = await self.session.execute(
@@ -111,6 +113,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = db_articles.scalars().all()
         if not articles:
+            logger.error("Статьи для категории = '%s' не найдены", category)
             return None
         return await self._to_entity(articles)
 

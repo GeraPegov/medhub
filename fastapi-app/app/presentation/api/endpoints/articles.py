@@ -1,4 +1,3 @@
-import secrets
 from typing import Literal
 
 import logging
@@ -18,6 +17,7 @@ from app.domain.exceptions import (
     ReactionAlreadyExistsError,
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
+from app.presentation.api.helpers import ensure_csrf_token, error_page
 from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.cache import get_cached_article_service
 from app.presentation.dependencies.comments import get_comment_service
@@ -28,20 +28,6 @@ templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
-
-def ensure_csrf_token(request: Request) -> None:
-    if "csrf_token" not in request.session:
-        request.session["csrf_token"] = secrets.token_urlsafe(32)
-
-
-def error_page(request: Request, message: str, status_code: int):
-    return templates.TemplateResponse(
-        request=request,
-        name="error.html",
-        context={"error": message, "status_code": status_code},
-        status_code=status_code,
-    )
-
 
 @router.get("/article/{article_id:int}")
 async def show_article(
@@ -56,6 +42,7 @@ async def show_article(
     try:
         article = await cached_article_service.get_article(article_id)
     except NotFoundArticleError:
+        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
     await cached_article_service.increment_view_counter(article_id)
@@ -92,6 +79,7 @@ async def delete_article(
             status_code=303, url=f"/user/profile/{current_user.unique_username}"
         )
     except NotFoundArticleError:
+        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
@@ -111,6 +99,7 @@ async def preliminary_change(
     try:
         article = await article_service.get_by_id(article_id)
         if article.user_id != current_user.user_id:
+            logger.info("Статья article_id = %d не принадлежит пользователю user_id = %d", article_id, current_user.user_id)
             return error_page(request, "Недостаточно прав для изменения статьи", 403)
 
         return templates.TemplateResponse(
@@ -119,6 +108,7 @@ async def preliminary_change(
             context={"article": article, "auth": current_user},
         )
     except NotFoundArticleError:
+        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -152,6 +142,7 @@ async def final_change(
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundArticleError:
+        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -183,11 +174,13 @@ async def add_reaction(
             status_code=403,
         )
     except NotFoundArticleError:
+        logger.info("Статья с article_id = %d не найдена", article_id)
         return JSONResponse(
             {"error": "Статья не найдена"},
             status_code=404,
         )
     except ReactionAlreadyExistsError:
+        logger.info("Пользователь user_id = %d уже поставил реакицю на статью article_id = %d", current_user.user_id, article_id)
         return JSONResponse(
             {"error": "Вы уже поставили реакцию на эту статью"},
             status_code=409,
@@ -282,5 +275,5 @@ async def create_article(
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundUserError:
-        logger.info("Пользователь не найден)")
-        return JSONResponse("Пользователь не надйен", status_code=401)
+        logger.info("Пользователь с user_id=%s не найден", current_user.user_id)
+        return error_page(request, "Пользователь не найден", 401)

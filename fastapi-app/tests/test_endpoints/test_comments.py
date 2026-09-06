@@ -59,7 +59,8 @@ async def test_create_returns_404_when_user_or_article_is_missing(
     )
 
     assert response.status_code == 404
-    assert response.json() == {"error": "Не существует пользователя или статьи"}
+    assert response.headers["content-type"].startswith("text/html")
+    assert "Не существует пользователя или статьи" in response.text
     comment_service.create.assert_awaited_once_with(
         article_id=7, content="Test comment", user_id=42
     )

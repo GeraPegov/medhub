@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Form, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
@@ -10,6 +10,7 @@ from app.domain.exceptions import (
     NotValidCsrfTokenError,
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
+from app.presentation.api.helpers import error_page
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
 
@@ -39,15 +40,9 @@ async def create(
 
         return response
     except (NotFoundUserError, NotFoundArticleError):
-        return JSONResponse(
-            {"error": "Не существует пользователя или статьи"},
-            status_code=404,
-        )
+        return error_page(request, "Не существует пользователя или статьи", 404)
     except NotValidCsrfTokenError:
-        return JSONResponse(
-            {"error": "Неверный токен"},
-            status_code=403,
-        )
+        return error_page(request, "Неверный токен", 403)
 
 
 @router.post("/comments/{comment_id}/delete")
@@ -70,17 +65,8 @@ async def delete(
         response = RedirectResponse(url=f"/article/{article_id}", status_code=303)
         return response
     except NotValidCsrfTokenError:
-        return JSONResponse(
-            {"error": "Неверный токен"},
-            status_code=403,
-        )
+        return error_page(request, "Неверный токен", 403)
     except NotFoundCommentError:
-        return JSONResponse(
-            {"error": "Комментарий не найден"},
-            status_code=404,
-        )
+        return error_page(request, "Комментарий не найден", 404)
     except NotFoundUserError:
-        return JSONResponse(
-            {"error": "Нет доступа у пользователя"},
-            status_code=401,
-        )
+        return error_page(request, "Нет доступа у пользователя", 401)

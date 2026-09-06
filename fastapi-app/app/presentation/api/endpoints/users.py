@@ -1,7 +1,5 @@
-import secrets
-
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
@@ -9,6 +7,7 @@ from app.application.services.cache_service import CachedUserService
 from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
+from app.presentation.api.helpers import ensure_csrf_token, error_page
 from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cached_user_service
@@ -29,8 +28,7 @@ async def profile(
     auth: UserEntity = Depends(get_current_user),
 ):
     try:
-        if "csrf_token" not in request.session:
-            request.session['csrf_token'] = secrets.token_urlsafe(32)
+        ensure_csrf_token(request)
         user = await cache_service.get_user(unique_username)
         print(auth.subscriptions)
         return templates.TemplateResponse(
@@ -39,10 +37,7 @@ async def profile(
             context={"user": user, "auth": auth},
         )
     except NotFoundUserError:
-        return JSONResponse(
-            content="Не нашли пользователя",
-            status_code=404
-        )
+        return error_page(request, "Не нашли пользователя", 404)
 
 
 @router.get("/user/profile/{unique_username}/articles")
@@ -62,10 +57,7 @@ async def articles(
             context={"auth": auth, "user": user, "articles": articles},
         )
     except NotFoundUserError:
-        return JSONResponse(
-            content="Не нашли пользователя",
-            status_code=404
-        )
+        return error_page(request, "Не нашли пользователя", 404)
 
 
 @router.get("/user/profile/{unique_username}/comments")
@@ -86,10 +78,7 @@ async def comments(
             context={"auth": auth, "user": user, "comments": comments, "article": None},
         )
     except NotFoundUserError:
-        return JSONResponse(
-            content="Не нашли пользователя",
-            status_code=404
-        )
+        return error_page(request, "Не нашли пользователя", 404)
 
 
 @router.post("/user/profile/{unique_username}/subscribe")
@@ -151,7 +140,7 @@ async def subscriptions(
             },
         )
     except NotFoundUserError:
-        return JSONResponse("Пользователь не найден", status_code=404)
+        return error_page(request, "Пользователь не найден", 404)
 
 
 @router.get("/user/profile/{unique_username}/liked")
@@ -172,11 +161,12 @@ async def liked(
             context={"auth": auth, "user": user, "articles": articles},
         )
     except NotFoundUserError:
-        return JSONResponse("Пользователь не найден", status_code=404)
+        return error_page(request, "Пользователь не найден", 404)
 
 
 @router.get("/user/profile/{unique_username}/delete")
 async def delete_profile(
+    request: Request,
     auth: UserEntity = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service),
 ):
@@ -184,4 +174,4 @@ async def delete_profile(
         await user_service.delete_profile(auth.user_id)
         return RedirectResponse(url="/", status_code=303)
     except NotFoundUserError:
-        return JSONResponse("Пользователь не найден", status_code=404)
+        return error_page(request, "Пользователь не найден", 404)
