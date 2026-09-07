@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 async def update_views_counter():
     async with scheduler_service_context() as service:
+        logger.info("Старт планировщика")
         await service.update_views_counter()
 
 
@@ -40,6 +41,7 @@ async def lifespan(app: FastAPI):
     scheduler.start()
     logger.info("Запуск приложения")
     yield
+    logger.info("Остановка приложения")
     scheduler.shutdown()
     if state.redis_pool is not None:
         await state.redis_pool.aclose()

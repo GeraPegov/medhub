@@ -27,10 +27,10 @@
             {% if users_today %}
                 {% for user in users_today %}
                     <h3 class="stat-title">Новый пользователь</h3>
-                    <p class="stat-value">Id: {{ user['Id'] }}</p>
-                    <p class="stat-value">Email: {{ user['Email'] }}</p>
-                    <p class="stat-value">Username: {{ user['UniqueUsername'] }}</p>
-                    <p class="stat-value">Дата регистрации: {{ user['RegistrationDate'][:19] }}</p>
+                    <p class="stat-value">Id: {{ user['user_id'] }}</p>
+                    <p class="stat-value">Email: {{ user['email'] }}</p>
+                    <p class="stat-value">Username: {{ user['username'] }}</p>
+                    <p class="stat-value">Дата регистрации: {{ user['registration_date'][:19] }}</p>
                 {% endfor %}
             {% endif %}
         </div>
@@ -39,10 +39,10 @@
             {% if articles_today %}
                 {% for article in articles_today %}
                     <h3 class="stat-title">Новая статья</h3>
-                    <p class="stat-value">Id: {{ article['Id'] }}</p>
-                    <p class="stat-value">Заголовок: {{ article['Title'] }}</p>
-                    <p class="stat-value">Id автора: {{ article['User_id'] }}</p>
-                    <p class="stat-value">Дата публикации: {{ article['Created_at'][:19] }}</p>
+                    <p class="stat-value">Id: {{ article['article_id'] }}</p>
+                    <p class="stat-value">Заголовок: {{ article['title'] }}</p>
+                    <p class="stat-value">Id автора: {{ article['user_id'] }}</p>
+                    <p class="stat-value">Дата публикации: {{ article['created_at'][:19] }}</p>
                 {% endfor %}
             {% endif %}
         </div>
