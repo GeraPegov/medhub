@@ -1,3 +1,4 @@
+import logging
 import secrets
 
 from fastapi import APIRouter, Depends, Form, Request, Response
@@ -25,6 +26,11 @@ from app.presentation.dependencies.parse_user import parse_auth_form
 
 router = APIRouter()
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
+logger = logging.getLogger(__name__)
+
+
+def client_host(request: Request) -> str:
+    return request.client.host if request.client else "unknown"
 
 
 async def check_csrf_token(request: Request, csrf_token):
@@ -60,8 +66,13 @@ async def login(
             key="access_token", value=token, httponly=True, samesite="lax"
         )
 
+        logger.info("Пользователь вошёл в систему: client=%s", client_host(request))
         return response
     except (NotValidPasswordError, NotFoundUserError):
+        logger.warning(
+            "Отклонена попытка входа: client=%s",
+            client_host(request),
+        )
         return templates.TemplateResponse(
             request=request,
             name="login.html",
@@ -69,6 +80,10 @@ async def login(
             status_code=401,
         )
     except NotValidCsrfTokenError:
+        logger.warning(
+            "Отклонён вход с невалидным CSRF-токеном: client=%s",
+            client_host(request),
+        )
         return templates.TemplateResponse(
             request=request,
             name="login.html",
@@ -91,11 +106,15 @@ async def register(
     registration_service: UserRegistrationService = Depends(get_auth_registration),
 ):
     try:
-        print("hello")
         await check_csrf_token(request, csrf_token)
         await registration_service.execute(user_data)
+        logger.info("Зарегистрирован новый пользователь")
         return RedirectResponse(url="/auth", status_code=303)
     except NotValidCsrfTokenError:
+        logger.warning(
+            "Отклонена регистрация с невалидным CSRF-токеном: client=%s",
+            client_host(request),
+        )
         return templates.TemplateResponse(
             request=request,
             name="register.html",
@@ -117,6 +136,7 @@ async def register(
             status_code=409,
         )
     except SQLAlchemyError:
+        logger.exception("Ошибка базы данных при регистрации пользователя")
         return templates.TemplateResponse(
             request=request,
             name="register.html",
@@ -124,6 +144,7 @@ async def register(
             status_code=500,
         )
     except ValueError:
+        logger.warning("Регистрация отклонена из-за некорректных данных")
         return templates.TemplateResponse(
             request=request,
             name="register.html",

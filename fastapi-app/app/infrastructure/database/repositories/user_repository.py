@@ -1,11 +1,19 @@
+import logging
+
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.entities.user import UserEntity
-from app.domain.exceptions import NotFoundUserError, UserAlreadyExistsError, UsernameAlreadyExistsError
+from app.domain.exceptions import (
+    NotFoundUserError,
+    UserAlreadyExistsError,
+    UsernameAlreadyExistsError,
+)
 from app.domain.interfaces.user_repository import IUserRepository
 from app.infrastructure.database.models.user import User
+
+logger = logging.getLogger(__name__)
 
 
 class UserRepository(IUserRepository):
@@ -27,6 +35,7 @@ class UserRepository(IUserRepository):
         return await self._to_entity(user) if user else None
 
     async def restore_deleted_by_email(self, email: str) -> bool:
+        # восстановление аккаунта при повторном введении email адреса
         try:
             result = await self.session.execute(
                 update(User)
@@ -72,9 +81,11 @@ class UserRepository(IUserRepository):
             )
 
             if constraint_name == "uq_users_email":
+                logger.warning("Регистрация отклонена: email уже существует")
                 raise UserAlreadyExistsError from error
 
             if constraint_name == "uq_users_unique_username":
+                logger.warning("Регистрация отклонена: username уже существует")
                 raise UsernameAlreadyExistsError from error
 
             raise
@@ -86,6 +97,9 @@ class UserRepository(IUserRepository):
 
         user = result.scalar_one_or_none()
         if not user:
+            logger.info(
+                "Подписчик не найден: operation=subscribe user_id=%s", subscribe_id
+            )
             raise NotFoundUserError
 
         if username_to_follow not in user.subscriptions:
@@ -103,6 +117,9 @@ class UserRepository(IUserRepository):
         user = result.scalar_one_or_none()
 
         if not user:
+            logger.info(
+                "Подписчик не найден: operation=unsubscribe user_id=%s", subscribe_id
+            )
             raise NotFoundUserError
 
         if unique_username in user.subscriptions:
@@ -122,6 +139,7 @@ class UserRepository(IUserRepository):
         )
         user = user_orm.scalar_one_or_none()
         if user is None:
+            logger.info("Профиль для удаления не найден: user_id=%s", user_id)
             raise NotFoundUserError
         await self.session.commit()
         return user is not None

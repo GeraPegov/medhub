@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 
@@ -15,6 +17,7 @@ from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.post("/comments/{article_id}/create")
@@ -28,12 +31,21 @@ async def create(
 ):
     try:
         if not current_user:
+            logger.warning(
+                "Неавторизованная попытка создать комментарий: article_id=%s",
+                article_id,
+            )
             return RedirectResponse("/auth", status_code=303)
         await check_csrf_token(request, csrf_token)
         await comment_service.create(
             article_id=article_id,
             content=content,
             user_id=current_user.user_id,
+        )
+        logger.info(
+            "Создан комментарий: article_id=%s user_id=%s",
+            article_id,
+            current_user.user_id,
         )
 
         response = RedirectResponse(url=f"/article/{article_id}", status_code=303)
@@ -55,11 +67,20 @@ async def delete(
 ):
     try:
         if not current_user:
+            logger.warning(
+                "Неавторизованная попытка удалить комментарий: comment_id=%s",
+                comment_id,
+            )
             return RedirectResponse("/auth", status_code=303)
         await check_csrf_token(request, csrf_token)
         article_id = await comment_service.delete(
             comment_id=comment_id,
             user_id=current_user.user_id,
+        )
+        logger.info(
+            "Удалён комментарий: comment_id=%s user_id=%s",
+            comment_id,
+            current_user.user_id,
         )
 
         response = RedirectResponse(url=f"/article/{article_id}", status_code=303)

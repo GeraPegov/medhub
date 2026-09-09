@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -7,17 +9,20 @@ from app.application.services.cache_service import CachedUserService
 from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
+from app.domain.exceptions import NotFoundUserError
 from app.presentation.api.helpers import ensure_csrf_token, error_page
 from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cached_user_service
 from app.presentation.dependencies.comments import get_comment_service
-from app.presentation.dependencies.current_user import get_auth_service, get_current_user
-from app.domain.exceptions import NotFoundUserError
+from app.presentation.dependencies.current_user import (
+    get_current_user,
+)
 
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.get("/user/profile/{unique_username}")
@@ -30,7 +35,6 @@ async def profile(
     try:
         ensure_csrf_token(request)
         user = await cache_service.get_user(unique_username)
-        print(auth.subscriptions)
         return templates.TemplateResponse(
             request=request,
             name="profile.html",
@@ -96,6 +100,11 @@ async def subscribe(
         )
         if user is not None:
             await cache_service.update_user(user)
+            logger.info(
+                "Пользователь подписался на автора: user_id=%s author=%s",
+                auth.user_id,
+                unique_username,
+            )
         return RedirectResponse(url=f"/user/profile/{unique_username}", status_code=303)
     except NotFoundUserError:
         return RedirectResponse("/auth", status_code=303)
@@ -114,6 +123,11 @@ async def unsubscribe(
         )
         if user is not None:
             await cache_service.update_user(user)
+            logger.info(
+                "Пользователь отписался от автора: user_id=%s author=%s",
+                auth.user_id,
+                unique_username,
+            )
         return RedirectResponse(url=f"/user/profile/{unique_username}", status_code=303)
     except NotFoundUserError:
         return RedirectResponse("/auth", status_code=303)
@@ -149,7 +163,7 @@ async def liked(
     unique_username: str,
     auth: UserEntity = Depends(get_current_user),
     article_service: ArticleService = Depends(get_article_service),
-    user_service: UserService = Depends(get_user_service)
+    user_service: UserService = Depends(get_user_service),
 ):
     try:
         user = await user_service.get_by_username(unique_username)
@@ -172,6 +186,7 @@ async def delete_profile(
 ):
     try:
         await user_service.delete_profile(auth.user_id)
+        logger.info("Пользователь удалил профиль: user_id=%s", auth.user_id)
         return RedirectResponse(url="/", status_code=303)
     except NotFoundUserError:
         return error_page(request, "Пользователь не найден", 404)

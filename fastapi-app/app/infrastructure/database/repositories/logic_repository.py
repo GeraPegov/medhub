@@ -20,4 +20,5 @@ class LogicRepository(ILogicRepository):
         )
 
         result = publication_count.scalar_one()
+        # можно публиковать до 3 статей в день
         return result < 3

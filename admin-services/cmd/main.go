@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log/slog"
 	"net/http"
 	"new_prog/internal/config"
@@ -46,5 +47,10 @@ func main() {
 	http.HandleFunc("DELETE /admin/comments/{id}", adminHandler.DeleteComment)
 	http.HandleFunc("GET /admin/statistics", handler.Statistics)
 
-	http.ListenAndServe(":8001", nil)
+	address := ":8001"
+	slog.Info("admin service started", "address", address)
+	if err := http.ListenAndServe(address, nil); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		slog.Error("admin service stopped unexpectedly", "address", address, "error", err)
+		os.Exit(1)
+	}
 }

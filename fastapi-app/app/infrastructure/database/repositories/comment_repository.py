@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Sequence
 
 from sqlalchemy import delete, select
@@ -15,6 +16,8 @@ from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.user import User
 
+logger = logging.getLogger(__name__)
+
 
 class CommentRepository(ICommentRepository):
     def __init__(self, session: AsyncSession):
@@ -28,6 +31,10 @@ class CommentRepository(ICommentRepository):
         ).scalar_one_or_none()
 
         if user_orm is None:
+            logger.warning(
+                "При создании комментария пользователь с user_id = %s не найден",
+                mapping["user_id"],
+            )
             raise NotFoundUserError
 
         article_orm = (
@@ -36,6 +43,10 @@ class CommentRepository(ICommentRepository):
             )
         ).scalar_one_or_none()
         if article_orm is None:
+            logger.warning(
+                "При создании комментария статья с article_id = %s не найдена",
+                mapping["article_id"],
+            )
             raise NotFoundArticleError
 
         comment = Comment(
@@ -85,6 +96,12 @@ class CommentRepository(ICommentRepository):
         )
         article_id = comments_del_orm.scalar_one_or_none()
         if article_id is None:
+            logger.warning(
+                "Комментарий не найден или не принадлежит пользователю: "
+                "comment_id=%s user_id=%s",
+                comment_id,
+                user_id,
+            )
             raise NotFoundCommentError
         await self.session.commit()
         return article_id

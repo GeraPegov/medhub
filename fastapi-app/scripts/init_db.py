@@ -1,10 +1,13 @@
 import asyncio
+import logging
 
-from app.domain.logging import logger
 from app.infrastructure.database.connection import (
     create_database_if_not_exists,
     prod_engine,
 )
+from app.infrastructure.logging_config import init_logger
+
+logger = logging.getLogger(__name__)
 
 
 async def init_production_db():
@@ -24,6 +27,7 @@ async def init_test_db():
 
 
 async def main():
+    init_logger()
     await init_production_db()
     await init_test_db()
 

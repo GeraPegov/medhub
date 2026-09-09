@@ -2,13 +2,13 @@ import json
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
+from app.domain.exceptions import NotFoundUserError
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
 from app.infrastructure.database.repositories.logic_repository import LogicRepository
 from app.infrastructure.database.repositories.user_repository import UserRepository
-from app.domain.exceptions import NotFoundUserError
 
 
 class BaseCachedService:

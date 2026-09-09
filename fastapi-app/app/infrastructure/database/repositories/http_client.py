@@ -1,6 +1,8 @@
+import logging
+
 import httpx
 
-from app.domain.logging import logger
+logger = logging.getLogger(__name__)
 
 
 class RateLimiterClient:
@@ -11,32 +13,45 @@ class RateLimiterClient:
     async def check_limit(
         self, user_id: int, action: str, limit: int
     ) -> tuple[bool, int | None]:
-        """
-        Проверяет rate limit через Go сервис.
-
-        Returns:
-            (allowed, retry_after): allowed=True если можно выполнить действие,
-                                     retry_after в секундах если лимит превышен
-        """
         try:
             response = await self.client.post(
                 f"{self.base_url}/check-limit",
                 json={"user_id": user_id, "action": action, "limit": limit},
             )
-
-            data = response.json()
-
-            if response.status_code == 200:
-                return True, None
-            elif response.status_code == 429:
-                return False, data.get("retry_after")
-            else:
-                # Если Go сервис недоступен — пропускаем проверку (graceful degradation)
-                return True, None
-
         except httpx.HTTPError as error:
-            logger.warning("Rate limiter request failed: %s", error)
+            logger.warning(
+                "Rate limiter недоступен, проверка пропущена: user_id=%s action=%s error=%s",
+                user_id,
+                action,
+                error,
+            )
             return True, None
+
+        try:
+            data = response.json()
+        except ValueError:
+            logger.warning(
+                "Rate limiter вернул невалидный JSON, проверка пропущена: "
+                "user_id=%s action=%s status=%s",
+                user_id,
+                action,
+                response.status_code,
+            )
+            return True, None
+
+        if response.status_code == 200:
+            return True, None
+        if response.status_code == 429:
+            return False, data.get("retry_after")
+
+        logger.warning(
+            "Rate limiter вернул неожиданный статус, проверка пропущена: "
+            "user_id=%s action=%s status=%s",
+            user_id,
+            action,
+            response.status_code,
+        )
+        return True, None
 
     async def close(self):
         await self.client.aclose()

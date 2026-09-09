@@ -1,6 +1,6 @@
+import logging
 from typing import Literal
 
-import logging
 from fastapi import APIRouter, Depends, Form, Header, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -29,6 +29,15 @@ templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
+
+def current_user_is_none(request: Request):
+    logger.warning(
+        "Неавторизованный пользователь перенаправлен на страницу входа: path=%s",
+        request.url.path,
+    )
+    return RedirectResponse("/auth", status_code=303)
+
+
 @router.get("/article/{article_id:int}")
 async def show_article(
     request: Request,
@@ -42,7 +51,6 @@ async def show_article(
     try:
         article = await cached_article_service.get_article(article_id)
     except NotFoundArticleError:
-        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
     await cached_article_service.increment_view_counter(article_id)
@@ -69,17 +77,20 @@ async def delete_article(
     cached_article_service: CachedArticleService = Depends(get_cached_article_service),
 ):
     if current_user is None:
-        return RedirectResponse(url="/auth", status_code=303)
-
+        return current_user_is_none(request)
     try:
         await check_csrf_token(request, csrf_token)
         await article_service.delete_article(article_id, current_user.user_id)
         await cached_article_service.delete_article(article_id)
+        logger.info(
+            "Удалена статья: article_id=%s user_id=%s",
+            article_id,
+            current_user.user_id,
+        )
         return RedirectResponse(
             status_code=303, url=f"/user/profile/{current_user.unique_username}"
         )
     except NotFoundArticleError:
-        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
@@ -93,13 +104,17 @@ async def preliminary_change(
     current_user: UserEntity | None = Depends(get_current_user),
 ):
     if current_user is None:
-        return RedirectResponse(url="/auth", status_code=303)
-
+        return current_user_is_none(request)
     ensure_csrf_token(request)
+
     try:
         article = await article_service.get_by_id(article_id)
         if article.user_id != current_user.user_id:
-            logger.info("Статья article_id = %d не принадлежит пользователю user_id = %d", article_id, current_user.user_id)
+            logger.warning(
+                "Статья article_id = %d не принадлежит пользователю user_id = %d",
+                article_id,
+                current_user.user_id,
+            )
             return error_page(request, "Недостаточно прав для изменения статьи", 403)
 
         return templates.TemplateResponse(
@@ -108,7 +123,6 @@ async def preliminary_change(
             context={"article": article, "auth": current_user},
         )
     except NotFoundArticleError:
-        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -123,7 +137,7 @@ async def final_change(
     cached_article_service: CachedArticleService = Depends(get_cached_article_service),
 ):
     if current_user is None:
-        return RedirectResponse(url="/auth", status_code=303)
+        return current_user_is_none(request)
 
     try:
         await check_csrf_token(request, csrf_token)
@@ -133,6 +147,11 @@ async def final_change(
             current_user.user_id,
         )
         await cached_article_service.update_article(article)
+        logger.info(
+            "Изменена статья: article_id=%s user_id=%s",
+            article.article_id,
+            current_user.user_id,
+        )
 
         return RedirectResponse(
             url=f"/article/{article.article_id}",
@@ -142,7 +161,6 @@ async def final_change(
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundArticleError:
-        logger.info("Статья с article_id = %d не найдена", article_id)
         return error_page(request, "Статья не найдена", 404)
 
 
@@ -156,6 +174,10 @@ async def add_reaction(
     cached_article_service: CachedArticleService = Depends(get_cached_article_service),
 ):
     if current_user is None:
+        logger.warning(
+            "Неавторизованная попытка поставить реакцию: article_id=%s",
+            article_id,
+        )
         return JSONResponse(
             {"error": "Для реакции необходимо войти"},
             status_code=401,
@@ -169,6 +191,12 @@ async def add_reaction(
             reaction=reaction,
         )
     except NotValidCsrfTokenError:
+        logger.warning(
+            "Реакция отклонена из-за невалидного CSRF-токена: "
+            "article_id=%s user_id=%s",
+            article_id,
+            current_user.user_id,
+        )
         return JSONResponse(
             {"error": "Невалидный CSRF-токен"},
             status_code=403,
@@ -180,7 +208,11 @@ async def add_reaction(
             status_code=404,
         )
     except ReactionAlreadyExistsError:
-        logger.info("Пользователь user_id = %d уже поставил реакицю на статью article_id = %d", current_user.user_id, article_id)
+        logger.info(
+            "Пользователь user_id = %d уже поставил реакицю на статью article_id = %d",
+            current_user.user_id,
+            article_id,
+        )
         return JSONResponse(
             {"error": "Вы уже поставили реакцию на эту статью"},
             status_code=409,
@@ -238,7 +270,7 @@ async def add(
 ):
 
     if current_user is None:
-        return RedirectResponse(url="/auth", status_code=303)
+        return current_user_is_none(request)
 
     ensure_csrf_token(request)
     return templates.TemplateResponse(
@@ -246,7 +278,6 @@ async def add(
         name="submit_article.html",
         context={"auth": current_user},
     )
-
 
 
 @router.post("/article/submit/add")
@@ -258,17 +289,26 @@ async def create_article(
     current_user: UserEntity | None = Depends(get_current_user),
 ):
     if current_user is None:
-        return RedirectResponse(url="/auth", status_code=303)
+        return current_user_is_none(request)
 
     try:
         await check_csrf_token(request, csrf_token)
         article = await article_service.submit_article(dto, current_user.user_id)
         if article is None:
+            logger.warning(
+                "Достигнут дневной лимит публикаций: user_id=%s",
+                current_user.user_id,
+            )
             return error_page(
                 request,
                 "Достигнут дневной лимит публикаций",
                 429,
             )
+        logger.info(
+            "Создана статья: article_id=%s user_id=%s",
+            article.article_id,
+            current_user.user_id,
+        )
         return RedirectResponse(
             url=f"/user/profile/{current_user.unique_username}", status_code=303
         )

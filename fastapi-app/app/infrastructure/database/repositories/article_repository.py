@@ -1,13 +1,17 @@
+import logging
 from collections.abc import Sequence
 
 from sqlalchemy import delete, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-import logging
 
 from app.domain.entities.article import ArticleEntity
-from app.domain.exceptions import NotFoundArticleError, NotFoundUserError, ReactionAlreadyExistsError
+from app.domain.exceptions import (
+    NotFoundArticleError,
+    NotFoundUserError,
+    ReactionAlreadyExistsError,
+)
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.reaction import Reaction
@@ -26,6 +30,10 @@ class ArticleRepository(IArticleRepository):
         ).scalar_one_or_none()
 
         if user_orm is None:
+            logger.warning(
+                "Нельзя создать статью: пользователь не найден: user_id=%s",
+                user_id,
+            )
             raise NotFoundUserError
 
         article = Article(
@@ -51,6 +59,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = db_article.scalars().all()
         if not articles:
+            logger.warning("Статья с article_id = %d не найдена", article_id)
             raise NotFoundArticleError
         entities = await self._to_entity(articles)
         return entities[0]
@@ -113,7 +122,7 @@ class ArticleRepository(IArticleRepository):
         )
         articles = db_articles.scalars().all()
         if not articles:
-            logger.error("Статьи для категории = '%s' не найдены", category)
+            logger.info("Статьи по категории не найдены: category=%s", category)
             return None
         return await self._to_entity(articles)
 

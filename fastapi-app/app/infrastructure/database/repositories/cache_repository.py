@@ -1,4 +1,5 @@
 import json
+import logging
 from collections.abc import Awaitable, Callable
 from datetime import datetime
 from functools import wraps
@@ -10,7 +11,6 @@ from redis.exceptions import TimeoutError as RedisTimeoutError
 
 from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,12 @@ def handle_redis_errors(default_return: Any = None):
         async def wrapper(*args, **kwargs):
             try:
                 return await func(*args, **kwargs)
-            except (RedisConnectionError, RedisTimeoutError) as e:
-                logger.warning(f"Redis error in {func.__name__}: {e}")
+            except (RedisConnectionError, RedisTimeoutError) as error:
+                logger.warning(
+                    "Ошибка Redis, используется резервное поведение: operation=%s error=%s",
+                    func.__name__,
+                    error,
+                )
                 return default_return
 
         return wrapper
@@ -37,30 +41,35 @@ class CachedRepository:
     def __init__(self, connection: Redis):
         self.connection = connection
 
-
     @handle_redis_errors(default_return=None)
     async def increment_view_counter(self, article_id: int):
         return await self.connection.incr(f"article_counter:{article_id}")
-
 
     @handle_redis_errors(default_return=None)
     async def update_views_counter(self):
         async for key in self.connection.scan_iter("article_counter:*"):
             logger.debug("Found pending article view counter: %s", key)
 
-
     @handle_redis_errors(default_return=None)
     async def set_cache(
-        self, record_selection: str, unique_record_identifier: str | int, record_details: dict, ttl: int = 3600
+        self,
+        record_selection: str,
+        unique_record_identifier: str | int,
+        record_details: dict,
+        ttl: int = 3600,
     ) -> None:
         cache_key = f"{record_selection}:{unique_record_identifier}"
         await self.connection.hset(cache_key, mapping=record_details)
         await self.connection.expire(cache_key, ttl)
 
-
     @handle_redis_errors(default_return=None)
-    async def get_cached_user(self, unique_record_identifier: int | str) -> UserEntity | None:
-        from_cache = cast(dict[str, str], await self.connection.hgetall(f"user:{unique_record_identifier}"))
+    async def get_cached_user(
+        self, unique_record_identifier: int | str
+    ) -> UserEntity | None:
+        from_cache = cast(
+            dict[str, str],
+            await self.connection.hgetall(f"user:{unique_record_identifier}"),
+        )
         if not from_cache:
             return None
         return UserEntity(
@@ -70,7 +79,6 @@ class CachedRepository:
             nickname=from_cache["nickname"],
             subscriptions=json.loads(from_cache["subscriptions"]),
         )
-
 
     @handle_redis_errors(default_return=None)
     async def get_cached_article(self, article_id: int) -> ArticleEntity | None:
@@ -94,7 +102,6 @@ class CachedRepository:
             dislikes=int(from_cache["dislikes"]),
         )
 
-
     @handle_redis_errors(default_return=None)
     async def delete_user(
         self,
@@ -104,7 +111,6 @@ class CachedRepository:
             f"user:{user.user_id}", f"user:{user.unique_username}"
         )
         return result
-
 
     @handle_redis_errors(default_return=None)
     async def delete_article(self, article_id: int) -> int | None:

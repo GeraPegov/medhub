@@ -1,25 +1,32 @@
-from contextlib import asynccontextmanager
 import logging
-from starlette.middleware.sessions import SessionMiddleware
+from contextlib import asynccontextmanager
+
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from redis.asyncio.connection import ConnectionPool
+from starlette.middleware.sessions import SessionMiddleware
 
 import app.presentation.dependencies.cache as state
 from app.infrastructure.config import settings
+from app.infrastructure.logging_config import init_logger
 from app.presentation.api.router import api_router
 from app.presentation.dependencies.scheduler import scheduler_service_context
-from app.infrastructure.logging_config import init_logger
 
 scheduler = AsyncIOScheduler()
 logger = logging.getLogger(__name__)
 
+
 async def update_views_counter():
     async with scheduler_service_context() as service:
-        logger.info("Старт планировщика")
-        await service.update_views_counter()
+        logger.info("Запущено обновление счётчиков просмотров")
+        try:
+            await service.update_views_counter()
+        except Exception:
+            logger.exception("Не удалось обновить счётчики просмотров")
+            raise
+        logger.info("Обновление счётчиков просмотров завершено")
 
 
 redis_pool = None
@@ -62,7 +69,7 @@ app.add_middleware(
     secret_key=settings.SECRET_KEY_MIDDLEWARE,
     session_cookie="medhub_session",
     same_site="lax",
-    https_only=False
+    https_only=False,
 )
 
 app.include_router(api_router)
