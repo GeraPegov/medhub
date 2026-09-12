@@ -130,7 +130,7 @@ async def register_check(
                     )
                     return admin_api_error_response()
 
-                if not isinstance(response.json(), dict):
+                if not isinstance(await response.json(), dict):
                     logger.error(
                         "Admin API вернул невалидный ответ при авторизации: login=%s",
                         login,

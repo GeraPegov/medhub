@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).parent.parent.parent
 class Settings(BaseSettings):
     SECRET_KEY: str
     SECRET_KEY_MIDDLEWARE: str
+    SECRET_KEY_GO: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     ADMIN_DB_URL: str
@@ -20,7 +21,7 @@ class Settings(BaseSettings):
     PORT_REDIS: int
     ADMIN_API_URL: str
 
-    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env")
+    model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", extra="ignore")
 
 
 settings = Settings()

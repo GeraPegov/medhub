@@ -268,3 +268,13 @@
         flex-direction: column;
     }
 }
+
+.delete-profile-btn {
+    padding: 10px 16px;
+    border-radius: var(--radius-control);
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
