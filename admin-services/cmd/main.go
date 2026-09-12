@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	mux := http.NewServeMux()
 	logger := slog.New(
 		slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 			Level: slog.LevelInfo,
@@ -36,20 +37,19 @@ func main() {
 	adminService := service.NewAdminService(repository)
 	adminHandler := handler.NewAdminHandler(adminService)
 
-	http.HandleFunc("GET /admin/me", handler.AuthCheck)
-	http.HandleFunc("POST /admin/register", handler.Register)
-	http.HandleFunc("POST /admin/login", handler.Login)
-	http.HandleFunc("GET /admin/users", adminHandler.GetUsers)
-	http.HandleFunc("DELETE /admin/users/{id}", adminHandler.DeleteUser)
-	http.HandleFunc("GET /admin/articles", adminHandler.GetArticles)
-	http.HandleFunc("DELETE /admin/articles/{id}", adminHandler.DeleteArticle)
-	http.HandleFunc("GET /admin/comments", adminHandler.GetComments)
-	http.HandleFunc("DELETE /admin/comments/{id}", adminHandler.DeleteComment)
-	http.HandleFunc("GET /admin/statistics", handler.Statistics)
+	mux.HandleFunc("POST /admin/register", handler.Register)
+	mux.HandleFunc("POST /admin/login", handler.Login)
+	mux.Handle("GET /admin/users", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetUsers)))
+	mux.Handle("DELETE /admin/users/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteUser)))
+	mux.Handle("GET /admin/articles", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetArticles)))
+	mux.Handle("DELETE /admin/articles/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteArticle)))
+	mux.Handle("GET /admin/comments", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetComments)))
+	mux.Handle("DELETE /admin/comments/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteComment)))
+	mux.Handle("GET /admin/statistics", handler.RequireAdmin(http.HandlerFunc(handler.Statistics)))
 
 	address := ":8001"
 	slog.Info("admin service started", "address", address)
-	if err := http.ListenAndServe(address, nil); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := http.ListenAndServe(address, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		slog.Error("admin service stopped unexpectedly", "address", address, "error", err)
 		os.Exit(1)
 	}

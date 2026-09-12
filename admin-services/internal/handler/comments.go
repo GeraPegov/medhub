@@ -6,6 +6,7 @@ import (
 )
 
 func (h *AdminHandler) GetComments(w http.ResponseWriter, r *http.Request) {
+	AuthCheck(w, r)
 	articleID, err := optionalInt(r, "article_id")
 	if err != nil {
 		responseError(w, http.StatusBadRequest, "invalid article id")
@@ -28,13 +29,14 @@ func (h *AdminHandler) GetComments(w http.ResponseWriter, r *http.Request) {
 		Date:      date,
 	})
 	if err != nil {
-		http.Error(w, "failed to get comments", http.StatusInternalServerError)
+		responseError(w, http.StatusInternalServerError, "internal server error")
 		return
 	}
 	writeJSON(w, http.StatusOK, comments)
 }
 
 func (h *AdminHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
+	AuthCheck(w, r)
 	id, err := pathID(r)
 	if err != nil {
 		http.Error(w, "invalid comment id", http.StatusBadRequest)

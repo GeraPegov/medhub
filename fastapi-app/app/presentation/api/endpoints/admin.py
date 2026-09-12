@@ -29,8 +29,8 @@ def admin_api_error_response() -> JSONResponse:
     )
 
 
-async def delete_admin_api(path: str) -> None:
-    status, _ = await request_admin_api("DELETE", path)
+async def delete_admin_api(path: str, headers: dict[str, str]) -> None:
+    status, _ = await request_admin_api(method="DELETE", path=path, headers_data=headers)
     if status == 204:
         return
     if status == 404:
@@ -46,6 +46,7 @@ async def delete_admin_api(path: str) -> None:
 async def request_admin_api(
     method: str,
     path: str,
+    headers_data: dict,
     **kwargs: Any,
 ) -> tuple[int, Any]:
     try:
@@ -54,6 +55,7 @@ async def request_admin_api(
                 method,
                 f"{ADMIN_API_URL}{path}",
                 **kwargs,
+                headers=headers_data
             ) as response:
                 if response.status == 204:
                     return response.status, None
@@ -78,8 +80,8 @@ async def request_admin_api(
         raise AdminApiUnavailableError from error
 
 
-async def get_admin_data(method: str, path: str, params: dict[str, Any]) -> Any:
-    status, data = await request_admin_api(method, path, params=params)
+async def get_admin_data(method: str, path: str, params: dict[str, Any], headers: dict) -> Any:
+    status, data = await request_admin_api(method, path, params=params, headers_data=headers)
     if status != 200:
         logger.error(
             "Admin API вернул неожиданный статус: method=%s path=%s status=%s",
@@ -89,33 +91,6 @@ async def get_admin_data(method: str, path: str, params: dict[str, Any]) -> Any:
         )
         raise BadGatewayError(status)
     return data
-
-
-def check_token(func):
-    @wraps(func)
-    async def wrapper(request: Request, *args, **kwargs):
-        token = request.cookies.get("admin_access_token")
-        if not token:
-            return RedirectResponse("/admin/login", status_code=303)
-        try:
-            status, _ = await request_admin_api(
-                "GET",
-                "/admin/me",
-                headers={"Authorization": f"Bearer {token}"},
-            )
-        except (AdminApiUnavailableError, BadGatewayError):
-            return admin_api_error_response()
-        if status == 401:
-            return RedirectResponse("/admin/login", status_code=303)
-        if status != 204:
-            logger.error(
-                "Admin API вернул неожиданный статус при проверке токена: status=%s",
-                status,
-            )
-            return admin_api_error_response()
-        return await func(request, *args, **kwargs)
-
-    return wrapper
 
 
 @router.get("/admin/login")
@@ -128,44 +103,48 @@ async def register_form(request: Request):
 
 @router.post("/admin/login")
 async def register_check(
+    request: Request,
     login: str = Form(...),
     password: str = Form(...),
 ):
     try:
-        status, data = await request_admin_api(
-            "POST",
-            "/admin/login",
-            json={"login": login, "password": password},
-        )
-        if status in (401, 403):
-            logger.warning(
-                "Авторизация администратора отклонена: login=%s status=%s",
-                login,
-                status,
-            )
-            return Response(content="invalid credentials", status_code=401)
+        async with aiohttp.ClientSession() as session:
+            async with session.request(
+                "POST",
+                "/admin/login",
+                json={"login": login, "password": password},
+            ) as response:
 
-        if status != 200:
-            logger.error(
-                "Admin API вернул неожиданный статус при авторизации: status=%s",
-                status,
-            )
-            return admin_api_error_response()
+                if response.status in (401, 403):
+                    logger.warning(
+                        "Авторизация администратора отклонена: login=%s status=%s",
+                        login,
+                        response.status,
+                    )
+                    return Response(content="invalid credentials", status_code=401)
 
-        if not isinstance(data, dict):
-            logger.error(
-                "Admin API вернул невалидный ответ при авторизации: login=%s",
-                login,
-            )
-            return admin_api_error_response()
+                if response.status != 200:
+                    logger.error(
+                        "Admin API вернул неожиданный статус при авторизации: status=%s",
+                        response.status,
+                    )
+                    return admin_api_error_response()
 
-        token = data.get("access_token")
-        if not token:
-            logger.error(
-                "Admin API вернул успешный статус без access_token: login=%s",
-                login,
-            )
-            return Response(content="internal server error", status_code=502)
+                if not isinstance(response.json(), dict):
+                    logger.error(
+                        "Admin API вернул невалидный ответ при авторизации: login=%s",
+                        login,
+                    )
+                    return admin_api_error_response()
+
+                data = await response.json()
+                token = data.get("access_token")
+                if not token:
+                    logger.error(
+                        "Admin API вернул успешный статус без access_token: login=%s",
+                        login,
+                    )
+                    return Response(content="internal server error", status_code=502)
 
         response = RedirectResponse("/admin", status_code=303)
 
@@ -179,14 +158,14 @@ async def register_check(
 
 
 @router.get("/admin")
-@check_token
 async def admin(
     request: Request,
     selected_date: dt.date | None = Query(None, alias="date"),
 ):
     try:
+        token = request.cookies.get("admin_access_token")
         date = (selected_date or dt.datetime.now().date()).isoformat()
-        statistics = await get_admin_data("GET", "/admin/statistics", {"date": date})
+        statistics = await get_admin_data("GET", "/admin/statistics", {"date": date}, {"Authorization": f"Bearer {token}"})
         return templates.TemplateResponse(
             request=request,
             name="admin/admin.html",
@@ -205,7 +184,6 @@ async def admin(
         return admin_api_error_response()
 
 @router.get("/admin/users")
-@check_token
 async def users_menu(
     request: Request,
     user_id: int | None = Query(None, alias="id"),
@@ -213,6 +191,7 @@ async def users_menu(
     username: str | None = Query(None),
 ):
     try:
+        token = request.cookies.get("admin_access_token")
         params = {
             key: value
             for key, value in {
@@ -222,7 +201,7 @@ async def users_menu(
             }.items()
             if value not in (None, "")
         }
-        users = await get_admin_data("GET", "/admin/users", params)
+        users = await get_admin_data("GET", "/admin/users", params, {"Authorization": f"Bearer {token}"})
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_users.html",
@@ -233,13 +212,13 @@ async def users_menu(
 
 
 @router.post("/admin/users/{user_id}")
-@check_token
 async def user_delete(
     request: Request,
     user_id: int,
 ):
     try:
-        await delete_admin_api(f"/admin/users/{user_id}")
+        token = request.cookies.get("admin_access_token")
+        await delete_admin_api(f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил пользователя: user_id=%s", user_id)
         return RedirectResponse("/admin/users", status_code=303)
     except NotFoundRecordsError:
@@ -253,7 +232,6 @@ async def user_delete(
 
 
 @router.get("/admin/articles")
-@check_token
 async def articles_menu(
     request: Request,
     user_id: int | None = Query(None),
@@ -261,6 +239,7 @@ async def articles_menu(
     article_id: int | None = Query(None),
 ):
     try:
+        token = request.cookies.get("admin_access_token")
         params = {
             key: value
             for key, value in {
@@ -270,7 +249,7 @@ async def articles_menu(
             }.items()
             if value not in (None, "")
         }
-        articles = await get_admin_data("GET", "/admin/articles", params)
+        articles = await get_admin_data("GET", "/admin/articles", params, {"Authorization": f"Bearer {token}"})
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_articles.html",
@@ -281,13 +260,13 @@ async def articles_menu(
 
 
 @router.post("/admin/articles/{article_id}")
-@check_token
 async def article_delete(
     request: Request,
     article_id: int,
 ):
     try:
-        await delete_admin_api(f"/admin/articles/{article_id}")
+        token = request.cookies.get("admin_access_token")
+        await delete_admin_api(f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил статью: article_id=%s", article_id)
         return RedirectResponse("/admin/articles", status_code=303)
     except NotFoundRecordsError:
@@ -301,7 +280,6 @@ async def article_delete(
 
 
 @router.get("/admin/comments")
-@check_token
 async def comments_menu(
     request: Request,
     user_id: int | None = Query(None),
@@ -309,6 +287,7 @@ async def comments_menu(
     public_date: dt.date | None = Query(None),
 ):
     try:
+        token = request.cookies.get("admin_access_token")
         params = {
             key: value
             for key, value in {
@@ -318,7 +297,7 @@ async def comments_menu(
             }.items()
             if value not in (None, "")
         }
-        comments = await get_admin_data("GET", "/admin/comments", params)
+        comments = await get_admin_data("GET", "/admin/comments", params, {"Authorization": f"Bearer {token}"})
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_comments.html",
@@ -329,13 +308,13 @@ async def comments_menu(
 
 
 @router.post("/admin/comments/{comment_id}")
-@check_token
 async def comment_delete(
     request: Request,
     comment_id: int,
 ):
     try:
-        await delete_admin_api(f"/admin/comments/{comment_id}")
+        token = request.cookies.get("admin_access_token")
+        await delete_admin_api(f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил комментарий: comment_id=%s", comment_id)
         return RedirectResponse("/admin/comments", status_code=303)
     except NotFoundRecordsError:

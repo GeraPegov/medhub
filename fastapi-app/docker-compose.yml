@@ -32,7 +32,7 @@ services:
       dockerfile: Dockerfile
     environment:
       PROD_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/medhub?sslmode=disable
-      SECRET_KEY: ${SECRET_KEY}
+      SECRET_KEY: ${SECRET_KEY_GO}
     depends_on:
       db:
         condition: service_healthy

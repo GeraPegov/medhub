@@ -9,20 +9,33 @@ import (
 	"strings"
 )
 
-func AuthCheck(w http.ResponseWriter, r *http.Request) {
-	authHeader := r.Header.Get("Authorization")
+func RequireAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		authHeader := r.Header.Get("Authorization")
+		parts := strings.SplitN(authHeader, " ", 2)
 
-	parts := strings.SplitN(authHeader, " ", 2)
-	if len(parts) != 2 || parts[0] != "Bearer" {
-		responseError(w, http.StatusUnauthorized, "invalid Authorization header")
-		return
-	}
-	_, err := service.ValidateToken(parts[1])
-	if err != nil {
-		responseError(w, http.StatusUnauthorized, "invalid or expired token")
-		return
-	}
-	w.WriteHeader(http.StatusNoContent)
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			responseError(
+				w,
+				http.StatusUnauthorized,
+				"invalid Authorization header",
+			)
+			return
+		}
+
+		claims, err := service.ValidateToken(parts[1])
+		if err != nil || claims.UserID <= 0 {
+			responseError(
+				w,
+				http.StatusUnauthorized,
+				"invalid or expired token",
+			)
+			return
+		}
+
+		// Обработчик запустится только после успешной проверки.
+		next.ServeHTTP(w, r)
+	})
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {

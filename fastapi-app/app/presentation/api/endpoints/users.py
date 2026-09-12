@@ -178,7 +178,7 @@ async def liked(
         return error_page(request, "Пользователь не найден", 404)
 
 
-@router.get("/user/profile/{unique_username}/delete")
+@router.post("/user/profile/{unique_username}/delete")
 async def delete_profile(
     request: Request,
     auth: UserEntity = Depends(get_current_user),

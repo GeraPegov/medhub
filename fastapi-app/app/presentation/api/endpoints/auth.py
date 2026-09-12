@@ -66,7 +66,7 @@ async def login(
             key="access_token", value=token, httponly=True, samesite="lax"
         )
 
-        logger.info("Пользователь вошёл в систему: client=%s", client_host(request))
+        logger.info("Пользователь вошёл в систему: client=%s", form_data.username)
         return response
     except (NotValidPasswordError, NotFoundUserError):
         logger.warning(
