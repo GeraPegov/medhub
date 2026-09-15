@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     HOST_REDIS: str
     PORT_REDIS: int
     ADMIN_API_URL: str
+    ADMIN_PORT: str
+    MAIN_PORT: str
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", extra="ignore")
 

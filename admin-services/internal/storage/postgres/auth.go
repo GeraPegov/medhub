@@ -11,6 +11,24 @@ import (
 )
 
 func Register(ctx context.Context, login string, password []byte) error {
+	admins := Pool.QueryRow(ctx, "SELECT COUNT(id) FROM admins")
+	var check_admins_quantity int
+	if err := admins.Scan(&check_admins_quantity); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to scan comment",
+			"operation", "Register",
+		)
+		return domain.ErrDatabase
+	}
+	if check_admins_quantity >= 1 {
+		slog.ErrorContext(
+			ctx,
+			"Admin already exists",
+			"operation", "Register",
+		)
+		return domain.ErrAdminAlreadyExists
+	}
 	_, err := Pool.Exec(ctx, "INSERT INTO admins (login, password) VALUES ($1, $2)", login, password)
 	if err != nil {
 		var pgErr *pgconn.PgError

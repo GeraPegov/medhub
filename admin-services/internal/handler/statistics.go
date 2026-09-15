@@ -9,7 +9,6 @@ import (
 )
 
 func Statistics(w http.ResponseWriter, r *http.Request) {
-	AuthCheck(w, r)
 	date := r.URL.Query().Get("date")
 	ctx := r.Context()
 

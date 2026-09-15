@@ -37,7 +37,7 @@ services:
       db:
         condition: service_healthy
     ports:
-      - "8001:8001"
+      - ${ADMIN_PORT}
 
   app:
     build: .
@@ -47,8 +47,8 @@ services:
       ADMIN_DB_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/postgres
       PROD_DB_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/medhub
       HOST_REDIS: redis
-      PORT_REDIS: 6379
-      ADMIN_API_URL: http://admin:8001
+      PORT_REDIS: ${PORT_REDIS}
+      ADMIN_API_URL: ${ADMIN_API_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -57,7 +57,7 @@ services:
       admin:
         condition: service_started
     ports:
-      - "8000:8000"
+      - ${MAIN_PORT}
     command: sh -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"
 
 volumes:

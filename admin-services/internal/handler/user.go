@@ -6,7 +6,6 @@ import (
 )
 
 func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
-	AuthCheck(w, r)
 	id, err := optionalInt(r, "user_id")
 	if err != nil {
 		http.Error(w, "invalid user id", http.StatusBadRequest)
@@ -26,7 +25,6 @@ func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	AuthCheck(w, r)
 	id, err := pathID(r)
 	if err != nil {
 		http.Error(w, "invalid user id", http.StatusBadRequest)

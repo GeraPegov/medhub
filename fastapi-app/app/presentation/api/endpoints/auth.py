@@ -33,7 +33,7 @@ def client_host(request: Request) -> str:
     return request.client.host if request.client else "unknown"
 
 
-async def check_csrf_token(request: Request, csrf_token):
+async def check_csrf_token(request: Request, csrf_token: str):
     expected = request.session.get("csrf_token")
     if not expected or not secrets.compare_digest(expected, csrf_token):
         raise NotValidCsrfTokenError

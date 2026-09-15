@@ -26,6 +26,32 @@ body{
     opacity: 0.8;
 }
 
+.item-menu-form{
+    display: flex;
+    margin-left: 10px;
+    height: 100%;
+    align-items: flex-end;
+}
+
+.item-menu-button{
+    background-color: #111827;
+    color: aliceblue;
+    text-decoration: none;
+    font-size: 15px;
+    padding: 12px 20px;
+    /* width: 180px; */
+    margin-left: 10px;
+    opacity: 0.8;   
+    border: black solid 0px;
+    border-radius: 10px;
+    cursor: pointer;
+    /* justify-content: end; */
+}
+
+.item-menu-button:hover{
+    opacity: 1;
+}
+
 .item-menu:hover{
     opacity: 1;
 }

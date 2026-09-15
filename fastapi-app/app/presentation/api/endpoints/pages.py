@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response
+from fastapi import APIRouter, Depends, Form, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -6,6 +6,7 @@ from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
 from app.presentation.dependencies.articles_dependencies import get_article_service
 from app.presentation.dependencies.current_user import get_current_user
+from app.presentation.api.endpoints.auth import check_csrf_token
 
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 router = APIRouter()
@@ -26,8 +27,9 @@ async def home(
     )
 
 
-@router.get("/exit")
-async def exit():
+@router.post("/exit")
+async def exit(request: Request, csrf_token: str = Form(...)):
+    await check_csrf_token(request, csrf_token)
     response = RedirectResponse(url="/", status_code=303)
 
     response.delete_cookie(key="access_token")

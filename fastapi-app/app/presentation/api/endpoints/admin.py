@@ -111,7 +111,7 @@ async def register_check(
         async with aiohttp.ClientSession() as session:
             async with session.request(
                 "POST",
-                "/admin/login",
+                f"{ADMIN_API_URL}/admin/login",
                 json={"login": login, "password": password},
             ) as response:
 

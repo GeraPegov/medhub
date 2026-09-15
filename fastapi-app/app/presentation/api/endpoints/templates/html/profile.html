@@ -22,13 +22,18 @@
                         <a href="/user/profile/{{ user.unique_username }}">{{ user.unique_username }}</a>
                         {% if auth and auth.user_id != user.user_id %}
                             {% if user.unique_username not in auth.subscriptions %}
-                                <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user">
+                                <form action="/user/profile/{{ user.unique_username }}/subscribe" method="post" class="subscribe-user" >
+                                    <input 
+                                    type="hidden" 
+                                    name="csrf_token" 
+                                    value="{{ request.session['csrf_token'] }}">
                                     <button type="submit" class="subscribe-user-btn" id="followButton">
                                         Подписаться
                                     </button>
                                 </form>  
                             {% elif user.unique_username in auth.subscriptions %}
                                 <form action="/user/profile/{{ user.unique_username }}/unsubscribe" method="post" class="unsubscribe-user">
+                                    <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                                     <button type="submit" class="unsubscribe-user-btn" id="followButton">
                                         Отписаться
                                     </button>
@@ -37,12 +42,18 @@
                         {% endif %}    
 
                     </div>
-                                    
-                    {% if auth.user_id == user.user_id %}
-                    <form action="/user/profile/delete" method="POST" class="delete-profile">
-                        <button class="delete-profile-btn" type="submit">Удалить профиль</button>
-                    </form>
-                    {% endif %}
+                    <div class="profile-controls">
+                        {% if auth.user_id == user.user_id %}
+                        <form action="/user/profile/delete" method="POST" class="delete-profile">
+                            <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
+                            <button class="delete-profile-btn" type="submit">Удалить профиль</button>
+                        </form>
+                        <form class="exit-profile" action="/exit" method="POST">
+                            <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
+                            <button class="exit-profile-btn" type="submit">Выход</button>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
 
                    

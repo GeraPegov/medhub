@@ -1,6 +1,7 @@
 import logging
+import re
 
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -18,6 +19,7 @@ from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import (
     get_current_user,
 )
+from app.presentation.api.endpoints.auth import check_csrf_token
 
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
@@ -87,12 +89,15 @@ async def comments(
 
 @router.post("/user/profile/{unique_username}/subscribe")
 async def subscribe(
+    request: Request,
     unique_username: str,
+    csrf_token: str = Form(...),
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
     cache_service: CachedUserService = Depends(get_cached_user_service),
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         if auth.user_id is None:
             return RedirectResponse("/auth", status_code=303)
         user = await user_service.subscribe(
@@ -112,12 +117,15 @@ async def subscribe(
 
 @router.post("/user/profile/{unique_username}/unsubscribe")
 async def unsubscribe(
+    request: Request,
     unique_username: str,
+    csrf_token: str = Form(...),
     user_service: UserService = Depends(get_user_service),
     auth: UserEntity = Depends(get_current_user),
     cache_service: CachedUserService = Depends(get_cached_user_service),
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         user = await user_service.unsubscribe(
             subscriber_id=auth.user_id, author_unique_username=unique_username
         )
@@ -181,10 +189,12 @@ async def liked(
 @router.post("/user/profile/delete")
 async def delete_profile(
     request: Request,
+    csrf_token: str = Form(...),
     auth: UserEntity = Depends(get_current_user),
     user_service: UserService = Depends(get_user_service),
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         await user_service.delete_profile(auth.user_id)
         logger.info("Пользователь удалил профиль: user_id=%s", auth.user_id)
         return RedirectResponse(url="/", status_code=303)

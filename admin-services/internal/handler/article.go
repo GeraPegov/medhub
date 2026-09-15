@@ -7,7 +7,6 @@ import (
 )
 
 func (h *AdminHandler) GetArticles(w http.ResponseWriter, r *http.Request) {
-	AuthCheck(w, r)
 	articleID, err := optionalInt(r, "article_id")
 	if err != nil {
 		responseError(w, http.StatusBadRequest, "invalid article id")
@@ -31,7 +30,6 @@ func (h *AdminHandler) GetArticles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AdminHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
-	AuthCheck(w, r)
 	id, err := pathID(r)
 	if err != nil {
 		responseError(w, http.StatusBadRequest, "invalid article id")
