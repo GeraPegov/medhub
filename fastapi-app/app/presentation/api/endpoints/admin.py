@@ -14,6 +14,8 @@ from app.domain.exceptions import (
     NotFoundRecordsError,
 )
 from app.infrastructure.config import settings
+from app.presentation.api.endpoints.auth import check_csrf_token
+from app.presentation.api.helpers import ensure_csrf_token
 
 router = APIRouter()
 
@@ -95,6 +97,7 @@ async def get_admin_data(method: str, path: str, params: dict[str, Any], headers
 
 @router.get("/admin/login")
 async def register_form(request: Request):
+    ensure_csrf_token(request)
     return templates.TemplateResponse(
         request=request,
         name="admin/admin_login.html",
@@ -104,10 +107,12 @@ async def register_form(request: Request):
 @router.post("/admin/login")
 async def register_check(
     request: Request,
+    csrf_token: str = Form(...),
     login: str = Form(...),
     password: str = Form(...),
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         async with aiohttp.ClientSession() as session:
             async with session.request(
                 "POST",
@@ -160,9 +165,11 @@ async def register_check(
 @router.get("/admin")
 async def admin(
     request: Request,
+    csrf_token: str = Form(...),
     selected_date: dt.date | None = Query(None, alias="date"),
 ):
     try:
+
         token = request.cookies.get("admin_access_token")
         date = (selected_date or dt.datetime.now().date()).isoformat()
         statistics = await get_admin_data("GET", "/admin/statistics", {"date": date}, {"Authorization": f"Bearer {token}"})
@@ -215,8 +222,10 @@ async def users_menu(
 async def user_delete(
     request: Request,
     user_id: int,
+    csrf_token: str = Form(...)
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
         await delete_admin_api(f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил пользователя: user_id=%s", user_id)
@@ -263,8 +272,10 @@ async def articles_menu(
 async def article_delete(
     request: Request,
     article_id: int,
+    csrf_token: str = Form(...)
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
         await delete_admin_api(f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил статью: article_id=%s", article_id)
@@ -311,8 +322,10 @@ async def comments_menu(
 async def comment_delete(
     request: Request,
     comment_id: int,
+    csrf_token: str = Form(...)
 ):
     try:
+        await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
         await delete_admin_api(f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил комментарий: comment_id=%s", comment_id)

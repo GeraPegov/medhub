@@ -9,31 +9,28 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var Pool *pgxpool.Pool
-
 type Repository struct {
 	pool *pgxpool.Pool
 }
 
-func NewRepository(pool *pgxpool.Pool) *Repository {
-	return &Repository{pool: pool}
-}
-
-func StartPostgres(cfg *config.MedhubDB) error {
+func StartPostgres(cfg *config.MedhubDB) (*Repository, error) {
 	pool, err := pgxpool.New(context.Background(), cfg.DB_URL)
 	if err != nil {
-		return fmt.Errorf("create postgres pool: %w", err)
+		return nil, fmt.Errorf("create postgres pool: %w", err)
 	}
 
 	if err := pool.Ping(context.Background()); err != nil {
 		pool.Close()
-		return fmt.Errorf("ping postgres: %w", err)
+		return nil, fmt.Errorf("ping postgres: %w", err)
 	}
 
-	Pool = pool
 	slog.Info(
 		"connected to postgres",
 		"operation", "StartPostgres",
 	)
-	return nil
+	return &Repository{pool: pool}, nil
+}
+
+func PostgresClose(repository *Repository) {
+	repository.pool.Close()
 }

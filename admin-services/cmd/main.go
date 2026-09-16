@@ -8,6 +8,7 @@ import (
 	"new_prog/internal/handler"
 	"new_prog/internal/service"
 	"new_prog/internal/storage/postgres"
+	"new_prog/internal/storage/redis"
 	"os"
 )
 
@@ -24,7 +25,9 @@ func main() {
 		panic(err)
 	}
 	service.GenerateKey(cfg)
-	if err := postgres.StartPostgres(cfg); err != nil {
+
+	repository, err := postgres.StartPostgres(cfg)
+	if err != nil {
 		slog.Error(
 			"failed to start postgres",
 			"operation", "StartPostgres",
@@ -32,13 +35,18 @@ func main() {
 		)
 		os.Exit(1)
 	}
-	defer postgres.Pool.Close()
-	repository := postgres.NewRepository(postgres.Pool)
+	defer postgres.PostgresClose(repository)
+	rdb := redis.GetRedis()
+	defer redis.RedisClose(rdb)
 	adminService := service.NewAdminService(repository)
 	adminHandler := handler.NewAdminHandler(adminService)
 
+	limiterService := service.NewLimiterService(rdb)
+	limiterHandler := handler.NewLimiterHandler(limiterService)
+
 	mux.HandleFunc("POST /admin/register", handler.Register)
 	mux.HandleFunc("POST /admin/login", handler.Login)
+	mux.HandleFunc("GET /limiter/{user_id}/articles", limiterHandler.LimiterArticlerForUser)
 	mux.Handle("GET /admin/users", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetUsers)))
 	mux.Handle("DELETE /admin/users/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteUser)))
 	mux.Handle("GET /admin/articles", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetArticles)))

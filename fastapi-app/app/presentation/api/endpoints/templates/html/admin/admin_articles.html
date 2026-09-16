@@ -14,6 +14,7 @@
             <p class="article-card_field">Заголовок статьи: {{ article['title'] }}</p>
             <p class="article-card_field">Дата публикации: {{ article['created_at'][:19] }}</p>
             <form action="/admin/articles/{{ article['article_id'] }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <button type="submit" class="button-delete" onclick="return confirm('Удалить эту запись?')">Удалить</button>
             </form>
         </div>

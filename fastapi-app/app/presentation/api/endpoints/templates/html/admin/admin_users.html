@@ -14,6 +14,7 @@
             <p class="user-card_field">Username: {{ user['username'] }}</p>
             <p class="user-card_field">Дата регистрации: {{ user['registration_date'][:19] }}</p>
             <form action="/admin/users/{{ user['user_id'] }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <button type="submit" class="button-delete" onclick="return confirm('Удалить эту запись?')">Удалить</button>
             </form>
         </div>

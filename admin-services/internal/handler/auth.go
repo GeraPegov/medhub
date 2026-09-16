@@ -33,7 +33,6 @@ func RequireAdmin(next http.Handler) http.Handler {
 			return
 		}
 
-		// Обработчик запустится только после успешной проверки.
 		next.ServeHTTP(w, r)
 	})
 }
@@ -41,6 +40,7 @@ func RequireAdmin(next http.Handler) http.Handler {
 func Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var NewAdmin domain.Admin
+
 	if err := json.NewDecoder(r.Body).Decode(&NewAdmin); err != nil {
 		responseError(w, http.StatusBadRequest, "invalid request body")
 		return

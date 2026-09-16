@@ -3,6 +3,7 @@
 {% block admin_content %}
     <div class="period-stat">
         <form class="form-period-stat" action="/admin" method="get">
+            <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
             <input type="date" name="date" class="input-period-stat">
             <button type="submit" class="btn-period-stat">Показать</button>
         </form>

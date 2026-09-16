@@ -12,6 +12,7 @@
             <h1>Авторизация админа</h1>
 
             <form action="/admin/login" method="POST" class="auth-form">
+            <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <div class="form-group">
                     <label for="login">Логин</label>
                     <input
