@@ -44,16 +44,17 @@ func main() {
 	limiterService := service.NewLimiterService(rdb)
 	limiterHandler := handler.NewLimiterHandler(limiterService)
 
-	mux.HandleFunc("POST /admin/register", handler.Register)
-	mux.HandleFunc("POST /admin/login", handler.Login)
-	mux.HandleFunc("GET /limiter/{user_id}/articles", limiterHandler.LimiterArticlerForUser)
+	mux.HandleFunc("POST /admin/register", adminHandler.Register)
+	mux.HandleFunc("POST /admin/login", adminHandler.Login)
+	mux.HandleFunc("POST /limiter/{user_id}/articles", limiterHandler.LimiterArticler)
+	mux.HandleFunc("POST /limiter/{user_id}/{article_id}/comments", limiterHandler.LimiterComment)
 	mux.Handle("GET /admin/users", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetUsers)))
 	mux.Handle("DELETE /admin/users/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteUser)))
 	mux.Handle("GET /admin/articles", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetArticles)))
 	mux.Handle("DELETE /admin/articles/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteArticle)))
 	mux.Handle("GET /admin/comments", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetComments)))
 	mux.Handle("DELETE /admin/comments/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteComment)))
-	mux.Handle("GET /admin/statistics", handler.RequireAdmin(http.HandlerFunc(handler.Statistics)))
+	mux.Handle("GET /admin/statistics", handler.RequireAdmin(http.HandlerFunc(adminHandler.Statistics)))
 
 	address := ":8001"
 	slog.Info("admin service started", "address", address)

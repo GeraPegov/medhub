@@ -4,28 +4,29 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"new_prog/internal/config"
 	"new_prog/internal/domain"
-	"new_prog/internal/storage/postgres"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(ctx context.Context, admin domain.Admin) error {
+func (s *AdminService) Register(ctx context.Context, admin domain.Admin) error {
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(admin.Password),
 		bcrypt.DefaultCost,
 	)
 	if err != nil {
-		return err
+		slog.ErrorContext(ctx, "Failed for generate password hash", "opeartion", "Register", "err", err)
+		return domain.ErrGenerateHash
 	}
-	return postgres.Register(ctx, admin.Login, hash)
+	return s.repository.Register(ctx, admin.Login, hash)
 }
 
-func Login(ctx context.Context, admin domain.Admin) (string, error) {
-	id, hash, err := postgres.Login(ctx, admin.Login)
+func (s *AdminService) Login(ctx context.Context, admin domain.Admin) (string, error) {
+	id, hash, err := s.repository.Login(ctx, admin.Login)
 	if err != nil {
 		return "", err
 	}

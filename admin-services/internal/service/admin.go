@@ -12,6 +12,12 @@ type AdminRepository interface {
 	DeleteUser(context.Context, int) error
 	DeleteArticle(context.Context, int) error
 	DeleteComment(context.Context, int) error
+	QuantityUsers(context.Context) (int, error)
+	QuantityArticles(context.Context) (int, error)
+	ArticlesByDate(context.Context, string) ([]domain.Article, error)
+	UsersByDate(context.Context, string) ([]domain.User, error)
+	Login(context.Context, string) (int, string, error)
+	Register(context.Context, string, []byte) error
 }
 
 type AdminService struct {
@@ -44,4 +50,20 @@ func (s *AdminService) DeleteArticle(ctx context.Context, id int) error {
 
 func (s *AdminService) DeleteComment(ctx context.Context, id int) error {
 	return s.repository.DeleteComment(ctx, id)
+}
+
+func (s *AdminService) QuantityUsers(ctx context.Context) (int, error) {
+	return s.repository.QuantityUsers(ctx)
+}
+
+func (s *AdminService) QuantityArticles(ctx context.Context) (int, error) {
+	return s.repository.QuantityArticles(ctx)
+}
+
+func (s *AdminService) ArticlesByDate(ctx context.Context, date string) ([]domain.Article, error) {
+	return s.repository.ArticlesByDate(ctx, date)
+}
+
+func (s *AdminService) UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
+	return s.repository.UsersByDate(ctx, date)
 }

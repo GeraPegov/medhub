@@ -15,7 +15,7 @@ from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
 from app.presentation.api.endpoints import articles
-from app.presentation.dependencies.articles_dependencies import get_article_service
+from app.presentation.dependencies.articles import get_article_service
 from app.presentation.dependencies.cache import get_cached_article_service
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user

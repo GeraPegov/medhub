@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.services.article_service import ArticleService
 from app.domain.entities.user import UserEntity
-from app.presentation.dependencies.articles_dependencies import get_article_service
+from app.presentation.dependencies.articles import get_article_service
 from app.presentation.dependencies.current_user import get_current_user
 from app.presentation.api.endpoints.auth import check_csrf_token
 

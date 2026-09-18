@@ -5,6 +5,7 @@ import pytest
 from app.application.services.comment_service import CommentService
 from app.domain.exceptions import NotFoundUserError
 from app.domain.interfaces.comment_repository import ICommentRepository
+from app.domain.interfaces.logic_repository import ILogicRepository
 from app.domain.interfaces.user_repository import IUserRepository
 
 
@@ -19,10 +20,17 @@ def user_repository() -> AsyncMock:
 
 
 @pytest.fixture
+def logic_repository() -> AsyncMock:
+    return AsyncMock(spec=ILogicRepository)
+
+
+@pytest.fixture
 def service(
-    comment_repository: AsyncMock, user_repository: AsyncMock
+    comment_repository: AsyncMock,
+    user_repository: AsyncMock,
+    logic_repository: AsyncMock,
 ) -> CommentService:
-    return CommentService(comment_repository, user_repository)
+    return CommentService(comment_repository, user_repository, logic_repository)
 
 
 @pytest.mark.asyncio

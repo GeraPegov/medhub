@@ -15,7 +15,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def save(self, mapping: dict, author_id: int) -> ArticleEntity:
+    async def save(self, mapping: dict, author_id: int) -> int:
         pass
 
     @abstractmethod

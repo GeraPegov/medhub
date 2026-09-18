@@ -12,7 +12,7 @@ from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import NotFoundUserError
 from app.presentation.api.helpers import ensure_csrf_token, error_page
-from app.presentation.dependencies.articles_dependencies import get_article_service
+from app.presentation.dependencies.articles import get_article_service
 from app.presentation.dependencies.auth import get_user_service
 from app.presentation.dependencies.cache import get_cached_user_service
 from app.presentation.dependencies.comments import get_comment_service

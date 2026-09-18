@@ -3,12 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.application.services.comment_service import CommentService
 from app.domain.interfaces.comment_repository import ICommentRepository
+from app.domain.interfaces.logic_repository import ILogicRepository
 from app.domain.interfaces.user_repository import IUserRepository
 from app.infrastructure.database.connection import get_db
 from app.infrastructure.database.repositories.comment_repository import (
     CommentRepository,
 )
 from app.presentation.dependencies.auth import get_user_repository
+from app.presentation.dependencies.logic import get_logic_repository
 
 
 def get_comment_repository(
@@ -20,5 +22,6 @@ def get_comment_repository(
 def get_comment_service(
     comment_repository: ICommentRepository = Depends(get_comment_repository),
     user_repository: IUserRepository = Depends(get_user_repository),
+    logic_repository: ILogicRepository = Depends(get_logic_repository),
 ) -> CommentService:
-    return CommentService(comment_repository, user_repository)
+    return CommentService(comment_repository, user_repository, logic_repository)

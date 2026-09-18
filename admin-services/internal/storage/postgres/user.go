@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-func QuantityUsers(ctx context.Context) (int, error) {
+func (r *Repository) QuantityUsers(ctx context.Context) (int, error) {
 	var quantityUsers int
-	err := Pool.QueryRow(ctx, "SELECT COUNT(id) FROM users").Scan(&quantityUsers)
+	err := r.pool.QueryRow(ctx, "SELECT COUNT(id) FROM users").Scan(&quantityUsers)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,
@@ -105,8 +105,8 @@ func (r *Repository) DeleteUser(ctx context.Context, id int) error {
 	return nil
 }
 
-func UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
-	rows, err := Pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE registration_date::date = $1", date)
+func (r *Repository) UsersByDate(ctx context.Context, date string) ([]domain.User, error) {
+	rows, err := r.pool.Query(ctx, "SELECT id, email, unique_username, registration_date FROM users WHERE registration_date::date = $1", date)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,

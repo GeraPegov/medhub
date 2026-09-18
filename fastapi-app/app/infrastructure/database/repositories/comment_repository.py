@@ -23,7 +23,7 @@ class CommentRepository(ICommentRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def create(self, mapping: dict) -> CommentEntity:
+    async def create(self, mapping: dict) -> int:
         user_orm = (
             await self.session.execute(
                 select(User).where(User.id == mapping["user_id"])
@@ -61,8 +61,7 @@ class CommentRepository(ICommentRepository):
         await self.session.commit()
         await self.session.refresh(comment)
 
-        comments = await self._to_entity([comment])
-        return comments[0]
+        return comment.id
 
     async def list_by_article_id(self, article_id: int) -> list[CommentEntity] | None:
         comments_orm = await self.session.execute(

@@ -10,6 +10,7 @@ from app.domain.exceptions import (
     NotFoundCommentError,
     NotFoundUserError,
     NotValidCsrfTokenError,
+    PublicationLimitError,
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import error_page
@@ -37,13 +38,14 @@ async def create(
             )
             return RedirectResponse("/auth", status_code=303)
         await check_csrf_token(request, csrf_token)
-        await comment_service.create(
+        comment_id = await comment_service.create(
             article_id=article_id,
             content=content,
             user_id=current_user.user_id,
         )
         logger.info(
-            "Создан комментарий: article_id=%s user_id=%s",
+            "Создан комментарий: comment_id=%s article_id=%s user_id=%s",
+            comment_id,
             article_id,
             current_user.user_id,
         )
@@ -55,6 +57,8 @@ async def create(
         return error_page(request, "Не существует пользователя или статьи", 404)
     except NotValidCsrfTokenError:
         return error_page(request, "Неверный токен", 403)
+    except PublicationLimitError:
+        return error_page(request, "Достигнут лимит комментариев", 429)
 
 
 @router.post("/comments/{comment_id}/delete")

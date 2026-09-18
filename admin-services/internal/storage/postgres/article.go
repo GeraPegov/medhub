@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-func QuantityArticles(ctx context.Context) (int, error) {
+func (r *Repository) QuantityArticles(ctx context.Context) (int, error) {
 	var quantityArticles int
-	err := Pool.QueryRow(ctx, "SELECT COUNT(id) FROM articles").Scan(&quantityArticles)
+	err := r.pool.QueryRow(ctx, "SELECT COUNT(id) FROM articles").Scan(&quantityArticles)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,
@@ -108,8 +108,8 @@ func (r *Repository) DeleteArticle(ctx context.Context, id int) error {
 	return nil
 }
 
-func ArticlesByDate(ctx context.Context, date string) ([]domain.Article, error) {
-	rows, err := Pool.Query(
+func (r *Repository) ArticlesByDate(ctx context.Context, date string) ([]domain.Article, error) {
+	rows, err := r.pool.Query(
 		ctx,
 		"SELECT id, title, user_id, created_at FROM articles WHERE created_at::date = $1",
 		date,

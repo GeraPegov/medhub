@@ -14,11 +14,12 @@ from app.domain.exceptions import (
     NotFoundArticleError,
     NotFoundUserError,
     NotValidCsrfTokenError,
+    PublicationLimitError,
     ReactionAlreadyExistsError,
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import ensure_csrf_token, error_page
-from app.presentation.dependencies.articles_dependencies import get_article_service
+from app.presentation.dependencies.articles import get_article_service
 from app.presentation.dependencies.cache import get_cached_article_service
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
@@ -293,8 +294,8 @@ async def create_article(
 
     try:
         await check_csrf_token(request, csrf_token)
-        article = await article_service.submit_article(dto, current_user.user_id)
-        if article is None:
+        article_id = await article_service.submit_article(dto, current_user.user_id)
+        if article_id is None:
             logger.warning(
                 "Достигнут дневной лимит публикаций: user_id=%s",
                 current_user.user_id,
@@ -306,7 +307,7 @@ async def create_article(
             )
         logger.info(
             "Создана статья: article_id=%s user_id=%s",
-            article.article_id,
+            article_id,
             current_user.user_id,
         )
         return RedirectResponse(
@@ -317,3 +318,6 @@ async def create_article(
     except NotFoundUserError:
         logger.info("Пользователь с user_id=%s не найден", current_user.user_id)
         return error_page(request, "Пользователь не найден", 401)
+    except PublicationLimitError:
+        logger.info("Достигнут лимит публкаций для user_id=%s", current_user.user_id)
+        return error_page(request, "Достигнут лимит публикаций", 422)

@@ -34,6 +34,9 @@ class NotFoundRecordsError(Exception):
 class AdminApiUnavailableError(Exception):
     pass
 
+class PublicationLimitError(Exception):
+    pass
+
 
 class BadGatewayError(Exception):
     def __init__(self, status_code: int):

@@ -7,7 +7,11 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
-from app.domain.exceptions import NotFoundArticleError, NotFoundUserError
+from app.domain.exceptions import (
+    NotFoundArticleError,
+    NotFoundUserError,
+    PublicationLimitError,
+)
 from app.presentation.api.endpoints import comments
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
@@ -61,6 +65,24 @@ async def test_create_returns_404_when_user_or_article_is_missing(
     assert response.status_code == 404
     assert response.headers["content-type"].startswith("text/html")
     assert "Не существует пользователя или статьи" in response.text
+    comment_service.create.assert_awaited_once_with(
+        article_id=7, content="Test comment", user_id=42
+    )
+
+
+@pytest.mark.asyncio
+async def test_create_returns_429_when_comment_limit_is_reached(
+    comment_client, comment_service: AsyncMock
+):
+    client, token = comment_client
+    comment_service.create.side_effect = PublicationLimitError
+
+    response = await client.post(
+        "/comments/7/create",
+        data={"content": "Test comment", "csrf_token": token},
+    )
+
+    assert response.status_code == 429
     comment_service.create.assert_awaited_once_with(
         article_id=7, content="Test comment", user_id=42
     )

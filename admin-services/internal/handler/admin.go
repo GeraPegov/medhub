@@ -16,6 +16,12 @@ type AdminService interface {
 	DeleteUser(context.Context, int) error
 	DeleteArticle(context.Context, int) error
 	DeleteComment(context.Context, int) error
+	QuantityUsers(context.Context) (int, error)
+	QuantityArticles(context.Context) (int, error)
+	ArticlesByDate(context.Context, string) ([]domain.Article, error)
+	UsersByDate(context.Context, string) ([]domain.User, error)
+	Login(context.Context, domain.Admin) (string, error)
+	Register(context.Context, domain.Admin) error
 }
 
 type AdminHandler struct {

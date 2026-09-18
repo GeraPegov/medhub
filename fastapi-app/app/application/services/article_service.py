@@ -1,8 +1,13 @@
+import aiohttp
+
 from app.application.dto.article_create_dto import ArticleCreateDTO
 from app.domain.entities.article import ArticleEntity
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.domain.interfaces.logic_repository import ILogicRepository
+from app.infrastructure.config import settings
+from app.domain.exceptions import PublicationLimitError
 
+ADMIN_API_URL = settings.ADMIN_API_URL
 
 class ArticleService:
     def __init__(
@@ -18,17 +23,29 @@ class ArticleService:
 
     async def submit_article(
         self, dto: ArticleCreateDTO, user_id: int
-    ) -> ArticleEntity | None:
-        check_limited = await self.logic_repository.can_publish_today(user_id=user_id)
-        if not check_limited:
-            return None
+    ) -> int | None:
+        try:
+            async with aiohttp.request(
+                "POST",
+                f"{ADMIN_API_URL}/limiter/{user_id}/articles"
+            ) as response:
+                if response.status == 422:
+                    raise PublicationLimitError
+                elif response.status != 204:
+                    await self.logic_repository.can_publish_article_today(user_id)
+
+        except aiohttp.ClientConnectionError:
+            await self.logic_repository.can_publish_article_today(user_id)
+
         mapping = {
-            "title": dto.title,
-            "content": dto.content,
-            "user_id": user_id,
-            "category": dto.category,
-        }
-        return await self.base_repository.save(mapping, user_id)
+                    "title": dto.title,
+                    "content": dto.content,
+                    "user_id": user_id,
+                    "category": dto.category,
+                    }
+        article_id = await self.base_repository.save(mapping, user_id)
+        return article_id
+
 
     async def delete_article(self, article_id: int, user_id: int) -> bool:
         return await self.base_repository.delete(article_id, user_id)

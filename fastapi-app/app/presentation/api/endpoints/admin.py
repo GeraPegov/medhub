@@ -12,10 +12,11 @@ from app.domain.exceptions import (
     AdminApiUnavailableError,
     BadGatewayError,
     NotFoundRecordsError,
+    NotValidCsrfTokenError,
 )
 from app.infrastructure.config import settings
 from app.presentation.api.endpoints.auth import check_csrf_token
-from app.presentation.api.helpers import ensure_csrf_token
+from app.presentation.api.helpers import ensure_csrf_token, error_page
 
 router = APIRouter()
 
@@ -158,6 +159,8 @@ async def register_check(
         )
         logger.info("Успешная авторизация с логином = %s", login)
         return response
+    except NotValidCsrfTokenError:
+        return error_page(request, "Невалидный CSRF-токен", 403)
     except (AdminApiUnavailableError, BadGatewayError):
         return admin_api_error_response()
 
@@ -165,11 +168,9 @@ async def register_check(
 @router.get("/admin")
 async def admin(
     request: Request,
-    csrf_token: str = Form(...),
     selected_date: dt.date | None = Query(None, alias="date"),
 ):
     try:
-
         token = request.cookies.get("admin_access_token")
         date = (selected_date or dt.datetime.now().date()).isoformat()
         statistics = await get_admin_data("GET", "/admin/statistics", {"date": date}, {"Authorization": f"Bearer {token}"})
@@ -230,6 +231,8 @@ async def user_delete(
         await delete_admin_api(f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил пользователя: user_id=%s", user_id)
         return RedirectResponse("/admin/users", status_code=303)
+    except NotValidCsrfTokenError:
+        return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundRecordsError:
         logger.info("Пользователь для удаления не найден: user_id=%s", user_id)
         return JSONResponse(
@@ -280,6 +283,8 @@ async def article_delete(
         await delete_admin_api(f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил статью: article_id=%s", article_id)
         return RedirectResponse("/admin/articles", status_code=303)
+    except NotValidCsrfTokenError:
+        return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundRecordsError:
         logger.info("Статья для удаления не найдена: article_id=%s", article_id)
         return JSONResponse(
@@ -298,6 +303,7 @@ async def comments_menu(
     public_date: dt.date | None = Query(None),
 ):
     try:
+        ensure_csrf_token(request)
         token = request.cookies.get("admin_access_token")
         params = {
             key: value
@@ -330,6 +336,8 @@ async def comment_delete(
         await delete_admin_api(f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"})
         logger.info("Администратор удалил комментарий: comment_id=%s", comment_id)
         return RedirectResponse("/admin/comments", status_code=303)
+    except NotValidCsrfTokenError:
+        return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundRecordsError:
         logger.info("Комментарий для удаления не найден: comment_id=%s", comment_id)
         return JSONResponse(

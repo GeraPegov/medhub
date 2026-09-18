@@ -5,35 +5,16 @@ from app.application.services.article_service import ArticleService
 from app.domain.interfaces.article_repository import IArticleRepository
 from app.domain.interfaces.logic_repository import ILogicRepository
 from app.infrastructure.database.connection import get_db
-
-# from app.infrastructure.database.repositories.http_client import RateLimiterClient
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
-from app.infrastructure.database.repositories.logic_repository import LogicRepository
-
-# _rate_limiter_client: RateLimiterClient | None = None
-
-
-# def get_rate_limiter() -> RateLimiterClient:
-#     global _rate_limiter_client
-#     if _rate_limiter_client is None:
-#         _rate_limiter_client = RateLimiterClient(
-#             base_url=os.getenv("RATE_LIMITER_URL", "http://localhost:8080")
-#         )
-#     return _rate_limiter_client
+from app.presentation.dependencies.logic import get_logic_repository
 
 
 async def get_article_repository(
     session: AsyncSession = Depends(get_db),
 ) -> IArticleRepository:
     return ArticleRepository(session)
-
-
-async def get_logic_repository(
-    session: AsyncSession = Depends(get_db),
-) -> ILogicRepository:
-    return LogicRepository(session)
 
 
 async def get_article_service(

@@ -37,7 +37,7 @@ func RequireAdmin(next http.Handler) http.Handler {
 	})
 }
 
-func Register(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var NewAdmin domain.Admin
 
@@ -45,7 +45,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		responseError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	err := service.Register(ctx, NewAdmin)
+	err := h.service.Register(ctx, NewAdmin)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrAdminAlreadyExists):
@@ -59,7 +59,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		"message": "admin created"})
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var admin domain.Admin
 
@@ -67,7 +67,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		responseError(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
-	newToken, err := service.Login(ctx, admin)
+	newToken, err := h.service.Login(ctx, admin)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrInvalidCredentials):

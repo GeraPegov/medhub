@@ -13,6 +13,7 @@
             <p class="comment-card_field">Контент: {{ comment['content'] }}</p>
             <p class="comment-card_field">Дата публикации: {{ comment['created_at'][:19] }}</p>
             <form action="/admin/comments/{{ comment['comment_id'] }}" method="post">
+                <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <button type="submit" class="button-delete" onclick="return confirm('Удалить эту запись?')">Удалить</button>
             </form>
         </div>

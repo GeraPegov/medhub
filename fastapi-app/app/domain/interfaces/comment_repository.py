@@ -19,7 +19,7 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(self, mapping: dict) -> CommentEntity:
+    async def create(self, mapping: dict) -> int:
         pass
 
     @abstractmethod

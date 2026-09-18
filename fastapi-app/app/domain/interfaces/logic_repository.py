@@ -9,5 +9,9 @@ class ILogicRepository(ABC):
         pass
 
     @abstractmethod
-    async def can_publish_today(self, user_id):
+    async def can_publish_article_today(self, user_id) -> None:
+        pass
+
+    @abstractmethod
+    async def can_publish_comment_today(self, user_id, article_id) -> None:
         pass

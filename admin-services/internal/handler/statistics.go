@@ -3,12 +3,12 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"new_prog/internal/domain"
-	"new_prog/internal/storage/postgres"
 	"sync"
+
+	"new_prog/internal/domain"
 )
 
-func Statistics(w http.ResponseWriter, r *http.Request) {
+func (h *AdminHandler) Statistics(w http.ResponseWriter, r *http.Request) {
 	date := r.URL.Query().Get("date")
 	ctx := r.Context()
 
@@ -24,7 +24,7 @@ func Statistics(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		defer wg.Done()
-		q, err := postgres.QuantityUsers(ctx)
+		q, err := h.service.QuantityUsers(ctx)
 		if err != nil {
 			quantityUsers.Err = "no content"
 			return
@@ -34,7 +34,7 @@ func Statistics(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		defer wg.Done()
-		q, err := postgres.QuantityArticles(ctx)
+		q, err := h.service.QuantityArticles(ctx)
 		if err != nil {
 			quantityArticles.Err = "no content"
 			return
@@ -45,7 +45,7 @@ func Statistics(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		defer wg.Done()
 		var err error
-		articlesToday, err = postgres.ArticlesByDate(ctx, date)
+		articlesToday, err = h.service.ArticlesByDate(ctx, date)
 		if err != nil {
 			articlesToday = []domain.Article{}
 		}
@@ -54,7 +54,7 @@ func Statistics(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		defer wg.Done()
 		var err error
-		usersToday, err = postgres.UsersByDate(ctx, date)
+		usersToday, err = h.service.UsersByDate(ctx, date)
 		if err != nil {
 			usersToday = []domain.User{}
 		}
