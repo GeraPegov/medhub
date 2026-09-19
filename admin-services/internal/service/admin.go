@@ -16,8 +16,6 @@ type AdminRepository interface {
 	QuantityArticles(context.Context) (int, error)
 	ArticlesByDate(context.Context, string) ([]domain.Article, error)
 	UsersByDate(context.Context, string) ([]domain.User, error)
-	Login(context.Context, string) (int, string, error)
-	Register(context.Context, string, []byte) error
 }
 
 type AdminService struct {

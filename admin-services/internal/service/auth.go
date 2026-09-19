@@ -13,7 +13,22 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (s *AdminService) Register(ctx context.Context, admin domain.Admin) error {
+type AuthRepository interface {
+	Register(context.Context, string, []byte) error
+	Login(context.Context, string) (int, string, error)
+}
+
+type AuthService struct {
+	repository AuthRepository
+}
+
+func NewAuthService(repository AuthRepository) *AuthService {
+	return &AuthService{
+		repository: repository,
+	}
+}
+
+func (s *AuthService) Register(ctx context.Context, admin domain.Admin) error {
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(admin.Password),
 		bcrypt.DefaultCost,
@@ -25,7 +40,7 @@ func (s *AdminService) Register(ctx context.Context, admin domain.Admin) error {
 	return s.repository.Register(ctx, admin.Login, hash)
 }
 
-func (s *AdminService) Login(ctx context.Context, admin domain.Admin) (string, error) {
+func (s *AuthService) Login(ctx context.Context, admin domain.Admin) (string, error) {
 	id, hash, err := s.repository.Login(ctx, admin.Login)
 	if err != nil {
 		return "", err
