@@ -9,9 +9,11 @@ import (
 )
 
 type authRepositoryStub struct {
-	receivedLogin string
-	receivedHash  []byte
-	receivedErr   error
+	receivedId             int
+	receivedLogin          string
+	receivedHash           []byte
+	receivedErr            error
+	receivedPasswordFromDb string
 }
 
 func (a *authRepositoryStub) Register(ctx context.Context, login string, password []byte) error {
@@ -21,7 +23,7 @@ func (a *authRepositoryStub) Register(ctx context.Context, login string, passwor
 }
 
 func (a *authRepositoryStub) Login(ctx context.Context, login string) (int, string, error) {
-	return 1, a.receivedLogin, a.receivedErr
+	return a.receivedId, a.receivedPasswordFromDb, a.receivedErr
 }
 
 func TestRegister(t *testing.T) {
@@ -49,5 +51,31 @@ func TestRegister(t *testing.T) {
 	)
 	if err != nil {
 		t.Fatalf("repository received invalid password hash: %v", err)
+	}
+}
+
+func TestLogin(t *testing.T) {
+	hash, err := bcrypt.GenerateFromPassword(
+		[]byte("Vera"),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	repository := &authRepositoryStub{
+		receivedId:             1,
+		receivedPasswordFromDb: string(hash),
+	}
+	service := NewAuthService(repository)
+
+	admin := domain.Admin{Login: "Gera", Password: "Vera"}
+	token, err := service.Login(context.Background(), admin)
+	if err != nil {
+		t.Fatalf("user failed access login, %v", err)
+	}
+
+	claims, err := ValidateToken(token)
+	if err != nil || claims.UserID <= 0 {
+		t.Fatal("token failed validation")
 	}
 }

@@ -7,7 +7,9 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
+    false,
     func,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.asyncio import AsyncAttrs
@@ -32,19 +34,27 @@ class User(Base, AsyncAttrs):
         ),
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    email: Mapped[str] = mapped_column(String(64))
-    nickname: Mapped[str] = mapped_column(String(64))
-    unique_username: Mapped[str] = mapped_column(String(64))
-    password_hash: Mapped[str] = mapped_column(String(255))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(64), nullable=False)
+    nickname: Mapped[str] = mapped_column(String(64), nullable=False)
+    unique_username: Mapped[str] = mapped_column(String(64), nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     registration_date: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now()
+        DateTime,
+        server_default=func.now(),
+        nullable=False,
     )
     subscriptions: Mapped[list[str]] = mapped_column(
-        MutableList.as_mutable(JSONB), default=list
+        MutableList.as_mutable(JSONB),
+        default=list,
+        server_default=text("'[]'::jsonb"),
+        nullable=False,
     )
     is_deleted: Mapped[bool] = mapped_column(
-        Boolean, default=False, server_default="false"
+        Boolean,
+        default=False,
+        server_default=false(),
+        nullable=False,
     )
 
     reactions: Mapped[list["Reaction"]] = relationship(

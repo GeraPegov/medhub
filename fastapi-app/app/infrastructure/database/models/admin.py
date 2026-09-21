@@ -7,6 +7,6 @@ from app.infrastructure.database.connection import Base
 class Admin(Base):
     __tablename__ = "admins"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     login: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)

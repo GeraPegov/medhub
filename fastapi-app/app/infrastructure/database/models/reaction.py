@@ -21,15 +21,23 @@ class Reaction(Base):
         ),
     )
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, nullable=False)
     user_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE")
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
     )
     article_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("articles.id", ondelete="CASCADE")
+        Integer,
+        ForeignKey("articles.id", ondelete="CASCADE"),
+        nullable=False,
     )
-    reaction_type: Mapped[str] = mapped_column(String(32))
-    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    reaction_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        server_default=func.now(),
+        nullable=False,
+    )
 
     users: Mapped["User"] = relationship("User", back_populates="reactions")
     articles: Mapped["Article"] = relationship("Article", back_populates="reactions")

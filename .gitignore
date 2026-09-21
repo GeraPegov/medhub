@@ -37,3 +37,6 @@ dump.rdb
 # Build output
 build/
 dist/
+
+# Local Go build caches
+/.gocache*/

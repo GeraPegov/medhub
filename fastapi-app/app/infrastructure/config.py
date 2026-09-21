@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     ADMIN_API_URL: str
     ADMIN_PORT: str
     MAIN_PORT: str
+    TEST_DB_URL_FOR_ADMIN_SERVICES: str
 
     model_config = SettingsConfigDict(env_file=BASE_DIR / ".env", extra="ignore")
 

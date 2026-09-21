@@ -39,13 +39,16 @@ func main() {
 	rdb := redis.GetRedis()
 	defer redis.RedisClose(rdb)
 	adminService := service.NewAdminService(repository)
+	authService := service.NewAuthService(repository)
+
 	adminHandler := handler.NewAdminHandler(adminService)
+	authHandler := handler.NewAuthHandler(authService)
 
 	limiterService := service.NewLimiterService(rdb)
 	limiterHandler := handler.NewLimiterHandler(limiterService)
 
-	mux.HandleFunc("POST /admin/register", adminHandler.Register)
-	mux.HandleFunc("POST /admin/login", adminHandler.Login)
+	mux.HandleFunc("POST /admin/register", authHandler.Register)
+	mux.HandleFunc("POST /admin/login", authHandler.Login)
 	mux.HandleFunc("POST /limiter/{user_id}/articles", limiterHandler.LimiterArticler)
 	mux.HandleFunc("POST /limiter/{user_id}/{article_id}/comments", limiterHandler.LimiterComment)
 	mux.Handle("GET /admin/users", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetUsers)))

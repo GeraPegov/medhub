@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -8,6 +9,21 @@ import (
 	"new_prog/internal/service"
 	"strings"
 )
+
+type AuthService interface {
+	Register(context.Context, domain.Admin) error
+	Login(context.Context, domain.Admin) (string, error)
+}
+
+type AuthHandler struct {
+	service AuthService
+}
+
+func NewAuthHandler(service AuthService) *AuthHandler {
+	return &AuthHandler{
+		service: service,
+	}
+}
 
 func RequireAdmin(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +53,7 @@ func RequireAdmin(next http.Handler) http.Handler {
 	})
 }
 
-func (h *AdminHandler) Register(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var NewAdmin domain.Admin
 
@@ -59,7 +75,7 @@ func (h *AdminHandler) Register(w http.ResponseWriter, r *http.Request) {
 		"message": "admin created"})
 }
 
-func (h *AdminHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	var admin domain.Admin
 
