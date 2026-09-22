@@ -11,24 +11,6 @@ import (
 )
 
 func (r *Repository) Register(ctx context.Context, login string, password []byte) error {
-	admins := r.pool.QueryRow(ctx, "SELECT COUNT(id) FROM admins")
-	var check_admins_quantity int
-	if err := admins.Scan(&check_admins_quantity); err != nil {
-		slog.ErrorContext(
-			ctx,
-			"failed to scan comment",
-			"operation", "Register",
-		)
-		return domain.ErrDatabase
-	}
-	if check_admins_quantity >= 1 {
-		slog.ErrorContext(
-			ctx,
-			"Admin already exists",
-			"operation", "Register",
-		)
-		return domain.ErrAdminAlreadyExists
-	}
 	_, err := r.pool.Exec(ctx, "INSERT INTO admins (login, password) VALUES ($1, $2)", login, password)
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -52,8 +34,8 @@ func (r *Repository) Register(ctx context.Context, login string, password []byte
 
 func (r *Repository) Login(ctx context.Context, login string) (int, string, error) {
 	var id int
-	var hash string
-	err := r.pool.QueryRow(ctx, "SELECT id, password FROM admins WHERE login = $1", login).Scan(&id, &hash)
+	var password string
+	err := r.pool.QueryRow(ctx, "SELECT id, password FROM admins WHERE login = $1", login).Scan(&id, &password)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			slog.ErrorContext(
@@ -66,5 +48,5 @@ func (r *Repository) Login(ctx context.Context, login string) (int, string, erro
 		}
 		return 0, "", domain.ErrDatabase
 	}
-	return id, hash, nil
+	return id, password, nil
 }
