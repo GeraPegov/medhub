@@ -18,33 +18,34 @@ func NewLimiterHandler(service LimiterService) *LimiterHandler {
 	return &LimiterHandler{service: service}
 }
 
-func conditionResponse(w http.ResponseWriter, err error, number int) {
+func writeLimiterResponse(w http.ResponseWriter, err error, number int) {
 	if err != nil {
-		responseError(w, 500, "Ошибка базы данных")
+		responseError(w, http.StatusInternalServerError, "Ошибка базы данных")
 		return
 	}
-	if number == 0 {
-		w.WriteHeader(422)
-		return
-	}
-	if number == 1 {
-		w.WriteHeader(204)
-		return
+
+	switch number {
+	case 0:
+		w.WriteHeader(http.StatusTooManyRequests)
+	case 1:
+		w.WriteHeader(http.StatusNoContent)
+	default:
+		responseError(w, http.StatusInternalServerError, "Некорректный ответ сервиса")
 	}
 }
 
-func (h *LimiterHandler) LimiterArticler(w http.ResponseWriter, r *http.Request) {
+func (h *LimiterHandler) LimiterArticle(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId := r.PathValue("user_id")
-	number, err := h.service.GetIncrementLimiterArticle(ctx, userId)
-	conditionResponse(w, err, number)
+	userID := r.PathValue("user_id")
+	number, err := h.service.GetIncrementLimiterArticle(ctx, userID)
+	writeLimiterResponse(w, err, number)
 }
 
 func (h *LimiterHandler) LimiterComment(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId := r.PathValue("user_id")
-	articleId := r.PathValue("article_id")
+	userID := r.PathValue("user_id")
+	articleID := r.PathValue("article_id")
 
-	number, err := h.service.GetIncrementLimiterComment(ctx, userId, articleId)
-	conditionResponse(w, err, number)
+	number, err := h.service.GetIncrementLimiterComment(ctx, userID, articleID)
+	writeLimiterResponse(w, err, number)
 }

@@ -1,6 +1,6 @@
-from app.domain.exceptions import NotFoundUserError, NotValidPasswordError
 from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository
+from app.domain.exceptions import NotValidPasswordError, NotFoundUserError
 
 
 class UserAuthenticationService:
@@ -12,6 +12,7 @@ class UserAuthenticationService:
         user = await self.user_repo.get_by_email(email)
         if user is None:
             raise NotFoundUserError
+
         if not user.password_hash:
             raise NotValidPasswordError
         if not self.auth_service.verify_password(password, user.password_hash):

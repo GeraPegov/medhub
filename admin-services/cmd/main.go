@@ -49,7 +49,7 @@ func main() {
 
 	mux.HandleFunc("POST /admin/register", authHandler.Register)
 	mux.HandleFunc("POST /admin/login", authHandler.Login)
-	mux.HandleFunc("POST /limiter/{user_id}/articles", limiterHandler.LimiterArticler)
+	mux.HandleFunc("POST /limiter/{user_id}/articles", limiterHandler.LimiterArticle)
 	mux.HandleFunc("POST /limiter/{user_id}/{article_id}/comments", limiterHandler.LimiterComment)
 	mux.Handle("GET /admin/users", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetUsers)))
 	mux.Handle("DELETE /admin/users/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteUser)))
