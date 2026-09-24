@@ -6,11 +6,13 @@ import (
 	"log/slog"
 	"new_prog/internal/domain"
 	"strings"
+	"time"
 )
 
-func (r *Repository) QuantityUsers(ctx context.Context) (int, error) {
+func (r *Repository) QuantityUsers(ctx context.Context, dateFrom time.Time, dateTo time.Time) (int, error) {
 	var quantityUsers int
-	err := r.pool.QueryRow(ctx, "SELECT COUNT(id) FROM users").Scan(&quantityUsers)
+	fmt.Println(dateFrom, dateTo)
+	err := r.pool.QueryRow(ctx, "SELECT COUNT(*) FROM users WHERE registration_date >= $1 AND registration_date < $2", dateFrom, dateTo).Scan(&quantityUsers)
 	if err != nil {
 		slog.ErrorContext(
 			ctx,

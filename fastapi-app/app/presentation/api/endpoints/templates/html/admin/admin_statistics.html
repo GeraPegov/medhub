@@ -1,13 +1,14 @@
 {% extends "admin/base.html" %}
 
 {% block admin_content %}
-    <!-- <div class="period-stat">
+    <div class="period-stat">
         <form class="form-period-stat" action="/admin" method="get">
             <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
-            <input type="datetime" name="date" class="input-period-stat">
+            <input type="date" name="date_first" class="input-period-stat">
+            <input type="date" name="date_last" class="input-period-stat">
             <button type="submit" class="btn-period-stat">Показать</button>
         </form>
-    </div> -->
+    </div>
 
     <div class="content-stats">
         <div class="stat-item-first">
@@ -23,6 +24,5 @@
                 <p class="stat-value">{{ quantity_articles }}</p>
             {% endif %}
         </div>
-
     </div>
 {% endblock %}

@@ -9,10 +9,10 @@
     </div>
     {% for article in articles %}
         <div class="article-card">
-            <p class="article-card_field">Id статьи: {{ article['article_id'] }}</p>
-            <p class="article-card_field">Id автора: {{ article['user_id'] }}</p>
-            <p class="article-card_field">Заголовок статьи: {{ article['title'] }}</p>
-            <p class="article-card_field">Дата публикации: {{ article['created_at'][:19] }}</p>
+            <p class="article-card_field"><span class="card-field-label">ID статьи:</span> <span class="card-field-value card-field-value--id">{{ article['article_id'] }}</span></p>
+            <p class="article-card_field"><span class="card-field-label">ID автора:</span> <span class="card-field-value card-field-value--id">{{ article['user_id'] }}</span></p>
+            <p class="article-card_field"><span class="card-field-label">Заголовок статьи:</span> <span class="card-field-value">{{ article['title'] }}</span></p>
+            <p class="article-card_field"><span class="card-field-label">Дата публикации:</span> <span class="card-field-value">{{ article['created_at'][:19] }}</span></p>
             <form action="/admin/articles/{{ article['article_id'] }}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <button type="submit" class="button-delete" onclick="return confirm('Удалить эту запись?')">Удалить</button>

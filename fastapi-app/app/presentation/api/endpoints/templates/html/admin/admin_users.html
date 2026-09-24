@@ -9,10 +9,10 @@
     </div>
     {% for user in users %}
         <div class="user-card">
-            <p class="user-card_field">Id: {{ user['user_id'] }}</p>
-            <p class="user-card_field">Email: {{ user['email'] }}</p>
-            <p class="user-card_field">Username: {{ user['username'] }}</p>
-            <p class="user-card_field">Дата регистрации: {{ user['registration_date'][:19] }}</p>
+            <p class="user-card_field"><span class="card-field-label">ID:</span> <span class="card-field-value card-field-value--id">{{ user['user_id'] }}</span></p>
+            <p class="user-card_field"><span class="card-field-label">Email:</span> <span class="card-field-value">{{ user['email'] }}</span></p>
+            <p class="user-card_field"><span class="card-field-label">Username:</span> <span class="card-field-value">{{ user['username'] }}</span></p>
+            <p class="user-card_field"><span class="card-field-label">Дата регистрации:</span> <span class="card-field-value">{{ user['registration_date'][:19] }}</span></p>
             <form action="/admin/users/{{ user['user_id'] }}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
                 <button type="submit" class="button-delete" onclick="return confirm('Удалить эту запись?')">Удалить</button>

@@ -9,167 +9,167 @@ import (
 	"testing"
 )
 
-func TestGetArticles_searchForID_return_StatusNoContent(t *testing.T) {
+func TestGetUsers_searchForUserID_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 
 	handler := NewAdminHandler(service)
-	articleId := 1
+	userID := 1
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?article_id=%d", articleId),
+		fmt.Sprintf("/admin/users?user_id=%d", userID),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetUsers(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].Id != articleId {
+	if service.resultUsers[0].Id != userID {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.User
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
-	if bodyResponse[0].Id != articleId {
-		t.Fatalf("Returned %d, excepted %d", bodyResponse[0].Id, articleId)
+	if bodyResponse[0].Id != userID {
+		t.Fatalf("Returned %d, excepted %d", bodyResponse[0].Id, userID)
 	}
 }
 
-func TestGetArticles_searchForUserId_return_StatusNoContent(t *testing.T) {
+func TestGetUsers_searchForUsername_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
-	userId := 1
+	username := "username"
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?user_id=%d", userId),
+		fmt.Sprintf("/admin/Users?username=%s", username),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetUsers(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].UserID != userId {
+	if service.resultUsers[0].UniqueUsername != username {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.User
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
-	if bodyResponse[0].UserID != userId {
-		t.Fatalf("Returned %d, excepted %d", bodyResponse[0].UserID, userId)
+	if bodyResponse[0].UniqueUsername != username {
+		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].UniqueUsername, username)
 	}
 }
 
-func TestGetArticles_searchForTitle_return_StatusNoContent(t *testing.T) {
+func TestGetUsers_searchForEmail_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
-	title := "example_title"
+	email := "email@example.tu"
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?title=%s", title),
+		fmt.Sprintf("/admin/users?email=%s", email),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetUsers(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].Title != title {
+	if service.resultUsers[0].Email != email {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.User
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
-	if bodyResponse[0].Title != title {
-		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].Title, title)
+	if bodyResponse[0].Email != email {
+		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].Email, email)
 	}
 }
 
-func TestGetArticle_return_BadRequest(t *testing.T) {
+func TestGetUser_return_BadRequest(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
 	r := httptest.NewRequest(
 		http.MethodGet,
-		"/admin/articles?article_id=one",
+		"/admin/users?user_id=one",
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetUsers(w, r)
 
 	if w.Code != http.StatusBadRequest {
 		t.Fatalf("Status code = %d, excepeted = %d", w.Code, http.StatusBadRequest)
 	}
 }
 
-func TestDeleteArticle_return_StatusNoContent(t *testing.T) {
+func TestDeleteUser_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/users/1",
 		nil,
 	)
 	r.SetPathValue("id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteComment(w, r)
 
 	if w.Code != http.StatusNoContent {
 		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
 	}
 
-	if service.articleId != 1 {
-		t.Fatalf("DeleteArticle() returning %d, excepted 1", service.articleId)
+	if service.commentId != 1 {
+		t.Fatalf("DeleteUser() returning %d, excepted 1", service.userId)
 	}
 }
 
-func TestDeleteArticle_return_StatusBadRequest(t *testing.T) {
+func TestDeleteUser_return_StatusBadRequest(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/users/1",
 		nil,
 	)
-	r.SetPathValue("article_id", "1")
+	r.SetPathValue("user_id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteComment(w, r)
 
 	if w.Code != http.StatusBadRequest {
 		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
 	}
 }
 
-func TestDeleteArticle_return_StatusNotFound(t *testing.T) {
+func TestDeleteUser_return_StatusNotFound(t *testing.T) {
 	service := &adminServiceStub{
-		errArticles: domain.ErrRowsNotFound,
+		errUsers: domain.ErrRowsNotFound,
 	}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/users/1",
 		nil,
 	)
 	r.SetPathValue("id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteUser(w, r)
 
 	if w.Code != http.StatusNotFound {
-		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
+		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNotFound)
 	}
 }

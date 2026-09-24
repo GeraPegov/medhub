@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"new_prog/internal/domain"
 )
@@ -8,7 +9,7 @@ import (
 func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	id, err := optionalInt(r, "user_id")
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		responseError(w, http.StatusBadRequest, "invalid user id")
 		return
 	}
 
@@ -18,7 +19,7 @@ func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 		Username: r.URL.Query().Get("username"),
 	})
 	if err != nil {
-		http.Error(w, "failed to get users", http.StatusInternalServerError)
+		responseError(w, http.StatusInternalServerError, "failed to get users")
 		return
 	}
 	writeJSON(w, http.StatusOK, users)
@@ -27,11 +28,16 @@ func (h *AdminHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 func (h *AdminHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id, err := pathID(r)
 	if err != nil {
-		http.Error(w, "invalid user id", http.StatusBadRequest)
+		responseError(w, http.StatusBadRequest, "ivalid user id")
 		return
 	}
 	if err := h.service.DeleteUser(r.Context(), id); err != nil {
-		http.Error(w, "failed to delete user", http.StatusInternalServerError)
+		switch {
+		case errors.Is(err, domain.ErrRowsNotFound):
+			responseError(w, http.StatusNotFound, "user not found")
+		default:
+			responseError(w, http.StatusInternalServerError, "failed to delete user")
+		}
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)

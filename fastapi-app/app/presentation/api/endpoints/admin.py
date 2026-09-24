@@ -168,18 +168,21 @@ async def register_check(
 @router.get("/admin")
 async def admin(
     request: Request,
-    selected_date: dt.date | None = Query(None, alias="date"),
+    date_first: dt.date | None = Query(None),
+    date_last: dt.date | None = Query(None)
 ):
     try:
         token = request.cookies.get("admin_access_token")
-        date = (selected_date or dt.datetime.now().date()).isoformat()
-        statistics = await get_admin_data("GET", "/admin/statistics", {"date": date}, {"Authorization": f"Bearer {token}"})
+        date_from = (date_first or dt.date.today()).isoformat()
+        date_to = ((date_last or dt.date.today()) + dt.timedelta(days=1)).isoformat()
+        statistics = await get_admin_data(
+            "GET", "/admin/statistics",
+            {"date_from": date_from, "date_to": date_to},
+            {"Authorization": f"Bearer {token}"})
         return templates.TemplateResponse(
             request=request,
-            name="admin/admin.html",
+            name="admin/admin_statistics.html",
             context={
-                "articles_today": statistics["articles_today"],
-                "users_today": statistics["users_today"],
                 "quantity_users": statistics["quantity_users"]["Value"]
                 if statistics["quantity_users"]["Err"].strip() == ""
                 else statistics["quantity_users"]["Err"],
@@ -189,6 +192,7 @@ async def admin(
             },
         )
     except (AdminApiUnavailableError, BadGatewayError):
+        logger.error(f"Ошибка при данных, date from = {date_from}, date to = {date_to}")
         return admin_api_error_response()
 
 @router.get("/admin/users")

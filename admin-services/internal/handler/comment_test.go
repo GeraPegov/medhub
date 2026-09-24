@@ -7,58 +7,59 @@ import (
 	"net/http/httptest"
 	"new_prog/internal/domain"
 	"testing"
+	"time"
 )
 
-func TestGetArticles_searchForID_return_StatusNoContent(t *testing.T) {
+func TestGetComments_searchForArticleID_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 
 	handler := NewAdminHandler(service)
-	articleId := 1
+	articleID := 1
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?article_id=%d", articleId),
+		fmt.Sprintf("/admin/comments?article_id=%d", articleID),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetComments(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].Id != articleId {
+	if service.resultComments[0].ArticleID != articleID {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.Comment
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
-	if bodyResponse[0].Id != articleId {
-		t.Fatalf("Returned %d, excepted %d", bodyResponse[0].Id, articleId)
+	if bodyResponse[0].ArticleID != articleID {
+		t.Fatalf("Returned %d, excepted %d", bodyResponse[0].ArticleID, articleID)
 	}
 }
 
-func TestGetArticles_searchForUserId_return_StatusNoContent(t *testing.T) {
+func TestGetComments_searchForUserId_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
 	userId := 1
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?user_id=%d", userId),
+		fmt.Sprintf("/admin/comments?user_id=%d", userId),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetComments(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].UserID != userId {
+	if service.resultComments[0].UserID != userId {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.Comment
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
@@ -67,109 +68,113 @@ func TestGetArticles_searchForUserId_return_StatusNoContent(t *testing.T) {
 	}
 }
 
-func TestGetArticles_searchForTitle_return_StatusNoContent(t *testing.T) {
+func TestGetComments_searchForDate_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
-	title := "example_title"
+	date := time.Now().Format("2006-01-02")
+	date_from_db, err := time.Parse("2006-01-02", date)
+	if err != nil {
+		t.Fatalf("Failed for parse Date, %e", err)
+	}
 	r := httptest.NewRequest(
 		http.MethodGet,
-		fmt.Sprintf("/admin/articles?title=%s", title),
+		fmt.Sprintf("/admin/comments?public_date=%s", date),
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetComments(w, r)
 
 	if w.Code != http.StatusOK {
 		t.Fatalf("response code = %d, excepted = %d", w.Code, http.StatusOK)
 	}
-	if service.resultArticles[0].Title != title {
+	if service.resultComments[0].CreatedAt != date_from_db {
 		t.Fatalf("Send wrong data in service")
 	}
-	var bodyResponse []domain.Article
+	var bodyResponse []domain.Comment
 	if err := json.Unmarshal(w.Body.Bytes(), &bodyResponse); err != nil {
 		t.Fatalf("decode response body: %v", err)
 	}
-	if bodyResponse[0].Title != title {
-		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].Title, title)
+	if bodyResponse[0].CreatedAt != date_from_db {
+		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].CreatedAt, date)
 	}
 }
 
-func TestGetArticle_return_BadRequest(t *testing.T) {
+func TestGetComment_return_BadRequest(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 
 	r := httptest.NewRequest(
 		http.MethodGet,
-		"/admin/articles?article_id=one",
+		"/admin/comments?article_id=one",
 		nil,
 	)
 	w := httptest.NewRecorder()
 
-	handler.GetArticles(w, r)
+	handler.GetComments(w, r)
 
 	if w.Code != http.StatusBadRequest {
 		t.Fatalf("Status code = %d, excepeted = %d", w.Code, http.StatusBadRequest)
 	}
 }
 
-func TestDeleteArticle_return_StatusNoContent(t *testing.T) {
+func TestDeleteComment_return_StatusNoContent(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/comments/1",
 		nil,
 	)
 	r.SetPathValue("id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteComment(w, r)
 
 	if w.Code != http.StatusNoContent {
 		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
 	}
 
-	if service.articleId != 1 {
-		t.Fatalf("DeleteArticle() returning %d, excepted 1", service.articleId)
+	if service.commentId != 1 {
+		t.Fatalf("DeleteComment() returning %d, excepted 1", service.commentId)
 	}
 }
 
-func TestDeleteArticle_return_StatusBadRequest(t *testing.T) {
+func TestDeleteComment_return_StatusBadRequest(t *testing.T) {
 	service := &adminServiceStub{}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/comments/1",
 		nil,
 	)
-	r.SetPathValue("article_id", "1")
+	r.SetPathValue("comment_id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteComment(w, r)
 
 	if w.Code != http.StatusBadRequest {
 		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
 	}
 }
 
-func TestDeleteArticle_return_StatusNotFound(t *testing.T) {
+func TestDeleteComment_return_StatusNotFound(t *testing.T) {
 	service := &adminServiceStub{
-		errArticles: domain.ErrRowsNotFound,
+		errComments: domain.ErrRowsNotFound,
 	}
 	handler := NewAdminHandler(service)
 	r := httptest.NewRequest(
 		http.MethodPost,
-		"/admin/articles/1",
+		"/admin/comments/1",
 		nil,
 	)
 	r.SetPathValue("id", "1")
 	w := httptest.NewRecorder()
 
-	handler.DeleteArticle(w, r)
+	handler.DeleteComment(w, r)
 
 	if w.Code != http.StatusNotFound {
-		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNoContent)
+		t.Fatalf("Status code = %d, excepted = %d", w.Code, http.StatusNotFound)
 	}
 }

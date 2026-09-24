@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Repository) SearchComments(ctx context.Context, filter domain.CommentFilter) ([]domain.Comment, error) {
-	query := "SELECT id, content, created_at FROM comments"
+	query := "SELECT id, article_id, user_id, content, created_at FROM comments"
 	conditions := make([]string, 0, 3)
 	args := make([]any, 0, 3)
 
@@ -48,7 +48,7 @@ func (r *Repository) SearchComments(ctx context.Context, filter domain.CommentFi
 	comments := make([]domain.Comment, 0)
 	for rows.Next() {
 		var comment domain.Comment
-		if err := rows.Scan(&comment.Id, &comment.Content, &comment.CreatedAt); err != nil {
+		if err := rows.Scan(&comment.Id, &comment.ArticleID, &comment.UserID, &comment.Content, &comment.CreatedAt); err != nil {
 			slog.ErrorContext(
 				ctx,
 				"failed to scan comment",
