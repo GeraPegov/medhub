@@ -1,28 +1,167 @@
 {% extends "admin/base.html" %}
 
+{% block title %}Статистика — MedHub{% endblock %}
+
 {% block admin_content %}
-    <div class="period-stat">
-        <form class="form-period-stat" action="/admin" method="get">
-            <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
-            <input type="date" name="date_first" class="input-period-stat">
-            <input type="date" name="date_last" class="input-period-stat">
-            <button type="submit" class="btn-period-stat">Показать</button>
-        </form>
-    </div>
+    <section class="statistics-page" aria-labelledby="statistics-title">
+        <header class="statistics-header">
+            <div>
+                <span class="statistics-eyebrow">Аналитика</span>
+                <h1 id="statistics-title" class="statistics-title">Статистика платформы</h1>
+                <p class="statistics-description">
+                    Основные показатели и самые популярные материалы за выбранный период.
+                </p>
+            </div>
+        </header>
 
-    <div class="content-stats">
-        <div class="stat-item-first">
-            <h3 class="stat-title">Общее количество пользователей</h3>
-            {% if quantity_users is not none %}
-                <p class="stat-value">{{ quantity_users }}</p>
-            {% endif %}
+        <section class="period-stat" aria-labelledby="period-title">
+            <div class="period-stat__heading">
+                <span class="period-stat__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M7 3v3m10-3v3M4.5 9.5h15M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <div>
+                    <h2 id="period-title">Период отчёта</h2>
+                    <p>Оставьте поля пустыми, чтобы посмотреть данные за сегодня.</p>
+                </div>
+            </div>
+
+            <form class="form-period-stat" action="/admin" method="get">
+                <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">
+
+                <label class="period-field">
+                    <span>Дата начала</span>
+                    <input type="date" name="date_first" class="input-period-stat" value="{{ request.query_params.get('date_first', '') }}">
+                </label>
+
+                <label class="period-field">
+                    <span>Дата окончания</span>
+                    <input type="date" name="date_last" class="input-period-stat" value="{{ request.query_params.get('date_last', '') }}">
+                </label>
+
+                <button type="submit" class="btn-period-stat">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="m5 12 4 4 10-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Показать
+                </button>
+            </form>
+        </section>
+
+        <div class="statistics-summary">
+            <article class="summary-card summary-card--users">
+                <div class="summary-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m7-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="summary-card__content">
+                    <p class="summary-card__label">Пользователи</p>
+                    {% if quantity_users is none %}
+                        <p class="summary-card__value">—</p>
+                        <p class="summary-card__hint">Нет данных</p>
+                    {% elif quantity_users is string %}
+                        <p class="stat-message stat-message--error">{{ quantity_users }}</p>
+                    {% else %}
+                        <p class="summary-card__value">{{ quantity_users }}</p>
+                        <p class="summary-card__hint">зарегистрировано за период</p>
+                    {% endif %}
+                </div>
+            </article>
+
+            <article class="summary-card summary-card--articles">
+                <div class="summary-card__icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8m-6-6 6 6m-6-6v6h6M8 13h8m-8 4h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="summary-card__content">
+                    <p class="summary-card__label">Статьи</p>
+                    {% if quantity_articles is none %}
+                        <p class="summary-card__value">—</p>
+                        <p class="summary-card__hint">Нет данных</p>
+                    {% elif quantity_articles is string %}
+                        <p class="stat-message stat-message--error">{{ quantity_articles }}</p>
+                    {% else %}
+                        <p class="summary-card__value">{{ quantity_articles }}</p>
+                        <p class="summary-card__hint">опубликовано за период</p>
+                    {% endif %}
+                </div>
+            </article>
         </div>
 
-        <div class="stat-item-first">
-            <h3 class="stat-title">Общее количество статей</h3>
-            {% if quantity_articles is not none %}
-                <p class="stat-value">{{ quantity_articles }}</p>
-            {% endif %}
+        <div class="statistics-details">
+            <section class="ranking-card" aria-labelledby="categories-title">
+                <header class="ranking-card__header">
+                    <div>
+                        <span class="ranking-card__eyebrow">Топ-3</span>
+                        <h2 id="categories-title">Популярные категории</h2>
+                    </div>
+                    <span class="ranking-card__header-icon ranking-card__header-icon--category" aria-hidden="true">#</span>
+                </header>
+
+                {% if popularity_category is string %}
+                    <p class="stat-message stat-message--error">{{ popularity_category }}</p>
+                {% elif popularity_category %}
+                    <ol class="ranking-list">
+                        {% for category in popularity_category %}
+                            <li class="ranking-item">
+                                <span class="ranking-item__position">{{ loop.index }}</span>
+                                <div class="ranking-item__main">
+                                    <span class="ranking-item__name">{{ category["Category"] }}</span>
+                                    <span class="ranking-item__meta">Статей в категории</span>
+                                </div>
+                                <strong class="ranking-item__count">{{ category["Quantity"] }}</strong>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <div class="stat-empty">
+                        <span aria-hidden="true">—</span>
+                        <p>За выбранный период категорий не найдено</p>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="ranking-card" aria-labelledby="authors-title">
+                <header class="ranking-card__header">
+                    <div>
+                        <span class="ranking-card__eyebrow">Топ-3</span>
+                        <h2 id="authors-title">Популярные авторы</h2>
+                    </div>
+                    <span class="ranking-card__header-icon ranking-card__header-icon--author" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M20 21a8 8 0 0 0-16 0m8-10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </header>
+
+                {% if popularity_authors is string %}
+                    <p class="stat-message stat-message--error">{{ popularity_authors }}</p>
+                {% elif popularity_authors %}
+                    <ol class="ranking-list ranking-list--authors">
+                        {% for author in popularity_authors %}
+                            <li class="ranking-item">
+                                <span class="ranking-item__position">{{ loop.index }}</span>
+                                <div class="author-avatar" aria-hidden="true">{{ author["Username"][:1] | upper }}</div>
+                                <div class="ranking-item__main">
+                                    <span class="ranking-item__name">{{ author["Username"] }}</span>
+                                    <span class="ranking-item__meta">ID пользователя: {{ author["UserId"] }}</span>
+                                </div>
+                                <strong class="ranking-item__count" title="Количество статей">
+                                    {{ author["Quantity"] }} <span>ст.</span>
+                                </strong>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% else %}
+                    <div class="stat-empty">
+                        <span aria-hidden="true">—</span>
+                        <p>За выбранный период авторов не найдено</p>
+                    </div>
+                {% endif %}
+            </section>
         </div>
-    </div>
+    </section>
 {% endblock %}

@@ -179,16 +179,23 @@ async def admin(
             "GET", "/admin/statistics",
             {"date_from": date_from, "date_to": date_to},
             {"Authorization": f"Bearer {token}"})
+        print(statistics)
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_statistics.html",
             context={
+                "popularity_authors": statistics["popularity_authors"]["Value"]
+                    if statistics["popularity_authors"]["Err"].strip() == ""
+                    else statistics["popularity_authors"]["Err"],
+                "popularity_category": statistics["popularity_category"]["Value"]
+                    if statistics["popularity_category"]["Err"].strip() == ""
+                    else statistics["popularity_category"]["Err"],
                 "quantity_users": statistics["quantity_users"]["Value"]
-                if statistics["quantity_users"]["Err"].strip() == ""
-                else statistics["quantity_users"]["Err"],
+                    if statistics["quantity_users"]["Err"].strip() == ""
+                    else statistics["quantity_users"]["Err"],
                 "quantity_articles": statistics["quantity_articles"]["Value"]
-                if statistics["quantity_articles"]["Err"].strip() == ""
-                else statistics["quantity_articles"]["Err"],
+                    if statistics["quantity_articles"]["Err"].strip() == ""
+                    else statistics["quantity_articles"]["Err"],
             },
         )
     except (AdminApiUnavailableError, BadGatewayError):

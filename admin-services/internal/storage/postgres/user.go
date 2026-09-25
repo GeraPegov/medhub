@@ -6,24 +6,7 @@ import (
 	"log/slog"
 	"new_prog/internal/domain"
 	"strings"
-	"time"
 )
-
-func (r *Repository) QuantityUsers(ctx context.Context, dateFrom time.Time, dateTo time.Time) (int, error) {
-	var quantityUsers int
-	fmt.Println(dateFrom, dateTo)
-	err := r.pool.QueryRow(ctx, "SELECT COUNT(*) FROM users WHERE registration_date >= $1 AND registration_date < $2", dateFrom, dateTo).Scan(&quantityUsers)
-	if err != nil {
-		slog.ErrorContext(
-			ctx,
-			"failed to count users",
-			"operation", "QuantityUsers",
-			"error", err,
-		)
-		return 0, domain.ErrDatabase
-	}
-	return quantityUsers, nil
-}
 
 func (r *Repository) SearchUsers(ctx context.Context, filter domain.UserFilter) ([]domain.User, error) {
 	query := "SELECT id, email, unique_username, registration_date FROM users"

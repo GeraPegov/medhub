@@ -346,3 +346,434 @@
         width: 100%;
     }
 }
+
+/* Statistics dashboard */
+.statistics-page {
+    box-sizing: border-box;
+    width: min(100%, 1120px);
+}
+
+.statistics-header {
+    margin-bottom: 26px;
+}
+
+.statistics-eyebrow,
+.ranking-card__eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.statistics-title {
+    margin: 0;
+    color: var(--color-sidebar);
+    font-size: clamp(30px, 4vw, 42px);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+}
+
+.statistics-description {
+    max-width: 650px;
+    margin: 10px 0 0;
+    color: var(--color-muted);
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.statistics-page .period-stat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 22px 24px;
+    border-color: #dbe5f1;
+    border-radius: 18px;
+    background-color: var(--color-white);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+.period-stat__heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 240px;
+}
+
+.period-stat__icon {
+    display: grid;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background-color: #eff6ff;
+    color: var(--color-primary);
+    place-items: center;
+}
+
+.period-stat__icon svg,
+.summary-card__icon svg,
+.ranking-card__header-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.period-stat__heading h2 {
+    margin: 0 0 4px;
+    color: var(--color-sidebar);
+    font-size: 16px;
+}
+
+.period-stat__heading p {
+    margin: 0;
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.statistics-page .form-period-stat {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.period-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.period-field > span {
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.statistics-page .input-period-stat {
+    width: 164px;
+    min-height: 42px;
+}
+
+.statistics-page .btn-period-stat {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+}
+
+.btn-period-stat svg {
+    width: 17px;
+    height: 17px;
+}
+
+.statistics-summary,
+.statistics-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.statistics-summary {
+    margin-bottom: 16px;
+}
+
+.summary-card {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    min-height: 150px;
+    padding: 24px;
+    border: 1px solid #dbe5f1;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+.summary-card__icon {
+    display: grid;
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 17px;
+    place-items: center;
+}
+
+.summary-card--users .summary-card__icon {
+    background-color: #eef2ff;
+    color: #4f46e5;
+}
+
+.summary-card--articles .summary-card__icon {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.summary-card__content {
+    min-width: 0;
+}
+
+.summary-card__label {
+    margin: 0 0 5px;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.summary-card__value {
+    margin: 0;
+    color: var(--color-sidebar);
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.summary-card__hint {
+    margin: 8px 0 0;
+    color: var(--color-muted);
+    font-size: 13px;
+}
+
+.ranking-card {
+    box-sizing: border-box;
+    min-height: 340px;
+    padding: 24px;
+    border: 1px solid #dbe5f1;
+    border-radius: 18px;
+    background-color: var(--color-white);
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.045);
+}
+
+.ranking-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.ranking-card__header h2 {
+    margin: 0;
+    color: var(--color-sidebar);
+    font-size: 20px;
+    letter-spacing: -0.015em;
+}
+
+.ranking-card__header-icon {
+    display: grid;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 13px;
+    font-size: 21px;
+    font-weight: 800;
+    place-items: center;
+}
+
+.ranking-card__header-icon--category {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.ranking-card__header-icon--author {
+    background-color: #f0fdf4;
+    color: #16a34a;
+}
+
+.ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ranking-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 13px 14px;
+    border: 1px solid #e7edf5;
+    border-radius: 13px;
+    background-color: #f8fafc;
+}
+
+.ranking-item__position {
+    display: grid;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 9px;
+    background-color: #e8efff;
+    color: var(--color-primary);
+    font-size: 13px;
+    font-weight: 800;
+    place-items: center;
+}
+
+.ranking-item:first-child .ranking-item__position {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.ranking-item__main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.ranking-item__name {
+    overflow: hidden;
+    color: var(--color-sidebar);
+    font-size: 15px;
+    font-weight: 750;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ranking-item__meta {
+    margin-top: 3px;
+    color: var(--color-muted);
+    font-size: 12px;
+}
+
+.ranking-item__count {
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border-radius: 9px;
+    background-color: #e8efff;
+    color: var(--color-primary);
+    font-size: 15px;
+}
+
+.ranking-item__count span {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.author-avatar {
+    display: grid;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 800;
+    place-items: center;
+}
+
+.stat-message {
+    margin: 20px 0 0;
+    padding: 12px 14px;
+    border-radius: 11px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.stat-message--error {
+    border: 1px solid #fecaca;
+    background-color: #fef2f2;
+    color: #b91c1c;
+}
+
+.stat-empty {
+    display: grid;
+    min-height: 190px;
+    color: var(--color-muted);
+    text-align: center;
+    place-content: center;
+}
+
+.stat-empty span {
+    display: grid;
+    width: 42px;
+    height: 42px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    font-weight: 800;
+    place-items: center;
+}
+
+.stat-empty p {
+    margin: 0;
+    font-size: 14px;
+}
+
+@media (max-width: 980px) {
+    .statistics-page .period-stat {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .statistics-page .form-period-stat,
+    .statistics-page .period-field {
+        width: 100%;
+    }
+
+    .statistics-page .input-period-stat {
+        width: 100%;
+    }
+}
+
+@media (max-width: 700px) {
+    .statistics-summary,
+    .statistics-details {
+        grid-template-columns: 1fr;
+    }
+
+    .statistics-page .form-period-stat {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .statistics-page .btn-period-stat {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .statistics-page .period-stat,
+    .summary-card,
+    .ranking-card {
+        padding: 18px;
+    }
+
+    .statistics-page .form-period-stat {
+        grid-template-columns: 1fr;
+    }
+
+    .statistics-page .btn-period-stat {
+        grid-column: auto;
+    }
+
+    .summary-card {
+        min-height: 128px;
+    }
+
+    .summary-card__value {
+        font-size: 36px;
+    }
+
+    .ranking-item {
+        gap: 9px;
+        padding: 12px 10px;
+    }
+
+    .ranking-list--authors .ranking-item__position {
+        display: none;
+    }
+}

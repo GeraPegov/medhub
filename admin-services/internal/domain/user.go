@@ -8,8 +8,3 @@ type User struct {
 	UniqueUsername   string    `json:"username"`
 	RegistrationDate time.Time `json:"registration_date"`
 }
-
-type StatUsers struct {
-	Value int
-	Err   string
-}

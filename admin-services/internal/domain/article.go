@@ -8,8 +8,3 @@ type Article struct {
 	UserID    int       `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
 }
-
-type StatArticles struct {
-	Value int
-	Err   string
-}

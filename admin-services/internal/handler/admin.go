@@ -16,8 +16,6 @@ type AdminService interface {
 	DeleteUser(context.Context, int) error
 	DeleteArticle(context.Context, int) error
 	DeleteComment(context.Context, int) error
-	QuantityUsers(context.Context, time.Time, time.Time) (int, error)
-	QuantityArticles(context.Context, time.Time, time.Time) (int, error)
 	ArticlesByDate(context.Context, string) ([]domain.Article, error)
 	UsersByDate(context.Context, string) ([]domain.User, error)
 }

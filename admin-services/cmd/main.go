@@ -38,11 +38,14 @@ func main() {
 	defer postgres.PostgresClose(repository)
 	rdb := redis.GetRedis()
 	defer redis.RedisClose(rdb)
+
 	adminService := service.NewAdminService(repository)
 	authService := service.NewAuthService(repository)
+	statisticsService := service.NewStatisticsService(repository)
 
 	adminHandler := handler.NewAdminHandler(adminService)
 	authHandler := handler.NewAuthHandler(authService)
+	statisticsHandler := handler.NewStatisticsHandler(statisticsService)
 
 	limiterService := service.NewLimiterService(rdb)
 	limiterHandler := handler.NewLimiterHandler(limiterService)
@@ -57,7 +60,7 @@ func main() {
 	mux.Handle("DELETE /admin/articles/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteArticle)))
 	mux.Handle("GET /admin/comments", handler.RequireAdmin(http.HandlerFunc(adminHandler.GetComments)))
 	mux.Handle("DELETE /admin/comments/{id}", handler.RequireAdmin(http.HandlerFunc(adminHandler.DeleteComment)))
-	mux.Handle("GET /admin/statistics", handler.RequireAdmin(http.HandlerFunc(adminHandler.Statistics)))
+	mux.Handle("GET /admin/statistics", handler.RequireAdmin(http.HandlerFunc(statisticsHandler.Statistics)))
 
 	address := ":8001"
 	slog.Info("admin service started", "address", address)

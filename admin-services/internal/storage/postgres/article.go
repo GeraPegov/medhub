@@ -6,23 +6,7 @@ import (
 	"log/slog"
 	"new_prog/internal/domain"
 	"strings"
-	"time"
 )
-
-func (r *Repository) QuantityArticles(ctx context.Context, dateFrom time.Time, dateTo time.Time) (int, error) {
-	var quantityArticles int
-	err := r.pool.QueryRow(ctx, "SELECT COUNT(*) FROM articles WHERE created_at >= $1 and created_at < $2", dateFrom, dateTo).Scan(&quantityArticles)
-	if err != nil {
-		slog.ErrorContext(
-			ctx,
-			"failed to count articles",
-			"operation", "QuantityArticles",
-			"error", err,
-		)
-		return 0, domain.ErrDatabase
-	}
-	return quantityArticles, nil
-}
 
 func (r *Repository) SearchArticles(ctx context.Context, filter domain.ArticleFilter) ([]domain.Article, error) {
 	query := "SELECT id, title, user_id, created_at FROM articles"

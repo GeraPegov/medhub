@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"new_prog/internal/domain"
-	"time"
 )
 
 type AdminRepository interface {
@@ -13,8 +12,6 @@ type AdminRepository interface {
 	DeleteUser(context.Context, int) error
 	DeleteArticle(context.Context, int) error
 	DeleteComment(context.Context, int) error
-	QuantityUsers(context.Context, time.Time, time.Time) (int, error)
-	QuantityArticles(context.Context, time.Time, time.Time) (int, error)
 	ArticlesByDate(context.Context, string) ([]domain.Article, error)
 	UsersByDate(context.Context, string) ([]domain.User, error)
 }
@@ -49,14 +46,6 @@ func (s *AdminService) DeleteArticle(ctx context.Context, id int) error {
 
 func (s *AdminService) DeleteComment(ctx context.Context, id int) error {
 	return s.repository.DeleteComment(ctx, id)
-}
-
-func (s *AdminService) QuantityUsers(ctx context.Context, dateFrom time.Time, dateTo time.Time) (int, error) {
-	return s.repository.QuantityUsers(ctx, dateFrom, dateTo)
-}
-
-func (s *AdminService) QuantityArticles(ctx context.Context, dateFrom time.Time, dateTo time.Time) (int, error) {
-	return s.repository.QuantityArticles(ctx, dateFrom, dateTo)
 }
 
 func (s *AdminService) ArticlesByDate(ctx context.Context, date string) ([]domain.Article, error) {
