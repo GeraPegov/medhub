@@ -141,9 +141,7 @@ async def test_admin_post_rejects_invalid_csrf_without_calling_admin_api(
         transport=ASGITransport(app=app), base_url="http://testserver"
     ) as client:
         await client.get("/admin/login")
-        response = await client.post(
-            path, data={**form_data, "csrf_token": "invalid"}
-        )
+        response = await client.post(path, data={**form_data, "csrf_token": "invalid"})
 
     assert response.status_code == 403
     assert "Невалидный CSRF-токен" in response.text
@@ -177,9 +175,7 @@ async def test_comment_delete_form_sends_csrf_token(monkeypatch):
     ) as client:
         client.cookies.set("admin_access_token", "admin-token")
         page = await client.get("/admin/comments")
-        token_input = re.search(
-            r'name="csrf_token" value="([^"]+)"', page.text
-        )
+        token_input = re.search(r'name="csrf_token" value="([^"]+)"', page.text)
         assert page.status_code == 200
         assert token_input is not None
 
@@ -191,3 +187,41 @@ async def test_comment_delete_form_sends_csrf_token(monkeypatch):
     delete_admin_api.assert_awaited_once_with(
         "/admin/comments/19", {"Authorization": "Bearer admin-token"}
     )
+
+
+@pytest.mark.asyncio
+async def test_articles_page_forwards_date_and_links_to_article(monkeypatch):
+    async def get_admin_data(method: str, path: str, params: dict, headers: dict):
+        assert method == "GET"
+        assert path == "/admin/articles"
+        assert params == {"public_date": "2026-09-27"}
+        assert headers == {"Authorization": "Bearer admin-token"}
+        return [
+            {
+                "article_id": 19,
+                "user_id": 7,
+                "title": "Test article",
+                "created_at": "2026-09-27T12:00:00",
+            }
+        ]
+
+    monkeypatch.setattr(admin, "get_admin_data", get_admin_data)
+
+    app = FastAPI()
+    app.add_middleware(SessionMiddleware, secret_key="test-session-secret")
+    app.include_router(admin.router)
+
+    async with AsyncClient(
+        transport=ASGITransport(app=app), base_url="http://testserver"
+    ) as client:
+        client.cookies.set("admin_access_token", "admin-token")
+        response = await client.get(
+            "/admin/articles", params={"public_date": "2026-09-27"}
+        )
+
+    assert response.status_code == 200
+    assert 'href="/article/19"' in response.text
+    assert response.text.count('action="/admin/articles" method="get"') == 1
+    assert 'name="public_date"' in response.text
+    assert 'type="date"' in response.text
+    assert 'value="2026-09-27"' in response.text

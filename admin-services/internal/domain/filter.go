@@ -12,6 +12,7 @@ type ArticleFilter struct {
 	ID     *int
 	UserID *int
 	Title  string
+	Date   *time.Time
 }
 
 type CommentFilter struct {

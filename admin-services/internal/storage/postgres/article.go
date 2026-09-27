@@ -10,8 +10,8 @@ import (
 
 func (r *Repository) SearchArticles(ctx context.Context, filter domain.ArticleFilter) ([]domain.Article, error) {
 	query := "SELECT id, title, user_id, created_at FROM articles"
-	conditions := make([]string, 0, 3)
-	args := make([]any, 0, 3)
+	conditions := make([]string, 0, 4)
+	args := make([]any, 0, 4)
 
 	if filter.ID != nil {
 		args = append(args, *filter.ID)
@@ -25,6 +25,10 @@ func (r *Repository) SearchArticles(ctx context.Context, filter domain.ArticleFi
 		args = append(args, "%"+filter.Title+"%")
 		conditions = append(conditions, fmt.Sprintf("title ILIKE $%d", len(args)))
 	}
+	if filter.Date != nil {
+		args = append(args, *filter.Date)
+		conditions = append(conditions, fmt.Sprintf("created_at::date = $%d", len(args)))
+	}
 	if len(conditions) > 0 {
 		query += " WHERE " + strings.Join(conditions, " AND ")
 	}
@@ -37,6 +41,7 @@ func (r *Repository) SearchArticles(ctx context.Context, filter domain.ArticleFi
 			"article_id", filter.ID,
 			"user_id", filter.UserID,
 			"title", filter.Title,
+			"date", filter.Date,
 			"error", err,
 		)
 		return nil, domain.ErrDatabase

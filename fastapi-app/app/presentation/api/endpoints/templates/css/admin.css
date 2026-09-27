@@ -173,6 +173,76 @@
     font-size: 15px;
 }
 
+.article-filters {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: 120px minmax(190px, 1fr) 140px 170px auto;
+    align-items: end;
+    gap: 12px;
+    width: min(100%, 1080px);
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background-color: var(--color-surface);
+}
+
+.article-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+.article-filter > span {
+    color: #475569;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.article-filter > input {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 40px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control);
+    outline: none;
+    background-color: var(--color-white);
+    color: var(--color-text);
+}
+
+.article-filter > input:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+}
+
+.article-filters__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+}
+
+.article-filters__actions .button-search {
+    height: 40px;
+    padding: 8px 18px;
+}
+
+.article-filters__actions a {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.article-filters__actions a:hover,
+.article-filters__actions a:focus-visible {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
 .article-card,
 .user-card,
 .comment-card {
@@ -283,6 +353,14 @@
 }
 
 @media (max-width: 1100px) {
+    .article-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .article-filters__actions {
+        grid-column: 1 / -1;
+    }
+
     .article-card,
     .user-card,
     .comment-card {
@@ -325,6 +403,15 @@
 }
 
 @media (max-width: 560px) {
+    .article-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .article-filters__actions {
+        grid-column: auto;
+        justify-content: space-between;
+    }
+
     .form-period-stat,
     .article-card,
     .user-card,

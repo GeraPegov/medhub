@@ -38,83 +38,97 @@ func (r *Repository) QuantityUsers(ctx context.Context, dateFrom time.Time, date
 }
 
 func (r *Repository) PopularityCategory(ctx context.Context, dateFrom time.Time, dateTo time.Time) ([]domain.PopularCategory, error) {
-	check_rows := false
 	rows, err := r.pool.Query(ctx, `
 		SELECT category, COUNT(id)
 		FROM articles
+		WHERE created_at >= $1 AND created_at < $2
 		GROUP BY category
 		ORDER BY COUNT(id) DESC
 		LIMIT 3
-	`)
+	`, dateFrom, dateTo)
 	if err != nil {
-		slog.ErrorContext(ctx,
-			"Error database to request",
+		slog.ErrorContext(
+			ctx,
+			"failed to query popular categories",
 			"operation", "PopularityCategory",
-			"err", err,
+			"error", err,
 		)
 		return nil, domain.ErrDatabase
 	}
-	listWithPopularCategory := []domain.PopularCategory{}
+	defer rows.Close()
+
+	popularCategories := make([]domain.PopularCategory, 0)
 	for rows.Next() {
-		check_rows = true
 		var popularCategory domain.PopularCategory
 
-		err := rows.Scan(&popularCategory.Category, &popularCategory.Quantity)
-		if err != nil {
-			slog.ErrorContext(ctx,
-				"Failed for scan rows",
+		if err := rows.Scan(&popularCategory.Category, &popularCategory.Quantity); err != nil {
+			slog.ErrorContext(
+				ctx,
+				"failed to scan popular category",
 				"operation", "PopularityCategory",
-				"err", err,
+				"error", err,
 			)
 			return nil, domain.ErrDatabase
 		}
-		listWithPopularCategory = append(listWithPopularCategory, popularCategory)
+		popularCategories = append(popularCategories, popularCategory)
 	}
-	if check_rows == false {
-		slog.Info("Nothing found popular category")
-		listWithPopularCategory = append(listWithPopularCategory, domain.PopularCategory{Err: "not found popular category"})
-		return listWithPopularCategory, nil
+	if err := rows.Err(); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed while reading popular categories",
+			"operation", "PopularityCategory",
+			"error", err,
+		)
+		return nil, domain.ErrDatabase
 	}
-	return listWithPopularCategory, nil
+
+	return popularCategories, nil
 }
 
 func (r *Repository) PopularityAuthors(ctx context.Context, dateFrom time.Time, dateTo time.Time) ([]domain.PopularAuthors, error) {
-	check_rows := false
 	rows, err := r.pool.Query(ctx, `
 		SELECT COUNT(articles.id), user_id, users.unique_username
 		FROM articles
 		JOIN users ON articles.user_id = users.id
+		WHERE articles.created_at >= $1 AND articles.created_at < $2
 		GROUP BY articles.user_id, users.unique_username
 		ORDER BY COUNT(articles.id) DESC
 		LIMIT 3
-	`)
+	`, dateFrom, dateTo)
 	if err != nil {
-		slog.ErrorContext(ctx,
-			"Error database to request",
+		slog.ErrorContext(
+			ctx,
+			"failed to query popular authors",
 			"operation", "PopularityAuthors",
-			"err", err,
+			"error", err,
 		)
 		return nil, domain.ErrDatabase
 	}
-	var listWithPopularAuthors []domain.PopularAuthors
+	defer rows.Close()
+
+	popularAuthorsList := make([]domain.PopularAuthors, 0)
 	for rows.Next() {
-		check_rows = true
 		var popularAuthors domain.PopularAuthors
-		err := rows.Scan(&popularAuthors.Quantity, &popularAuthors.UserId, &popularAuthors.Username)
-		if err != nil {
-			slog.ErrorContext(ctx,
-				"Failed for scan rows",
-				"operation", "PopularityCategory",
-				"err", err,
+		if err := rows.Scan(&popularAuthors.Quantity, &popularAuthors.UserId, &popularAuthors.Username); err != nil {
+			slog.ErrorContext(
+				ctx,
+				"failed to scan popular author",
+				"operation", "PopularityAuthors",
+				"error", err,
 			)
 			return nil, domain.ErrDatabase
 		}
-		listWithPopularAuthors = append(listWithPopularAuthors, popularAuthors)
+		popularAuthorsList = append(popularAuthorsList, popularAuthors)
 	}
-	if check_rows == false {
-		slog.Info("Nothing found popular authors")
-		listWithPopularAuthors = append(listWithPopularAuthors, domain.PopularAuthors{Err: "not found popular authours"})
-		return listWithPopularAuthors, nil
+	if err := rows.Err(); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed while reading popular authors",
+			"operation", "PopularityAuthors",
+			"error", err,
+		)
+		return nil, domain.ErrDatabase
 	}
-	return listWithPopularAuthors, nil
+
+	return popularAuthorsList, nil
 }

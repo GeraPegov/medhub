@@ -30,12 +30,10 @@ type StatisticsResponse struct {
 type PopularCategory struct {
 	Category string
 	Quantity int
-	Err      string
 }
 
 type PopularAuthors struct {
 	Username string
 	UserId   int
 	Quantity int
-	Err      string
 }

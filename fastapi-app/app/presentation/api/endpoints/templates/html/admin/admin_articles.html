@@ -1,17 +1,33 @@
 {% extends "admin/base.html" %}
-{% from "admin/_admin_macros.html" import search_form %}
 
 {% block admin_content %}
-    <div class="form-search">
-        {{ search_form("/admin/articles", "Поиск по ID статьи", "article_id") }}
-        {{ search_form("/admin/articles", "Поиск по заголовку", "title") }}
-        {{ search_form("/admin/articles", "Поиск по ID пользователя", "user_id") }}
-    </div>
+    <form class="article-filters" action="/admin/articles" method="get" aria-label="Фильтры статей">
+        <label class="article-filter">
+            <span>ID статьи</span>
+            <input type="number" name="article_id" min="1" value="{{ request.query_params.get('article_id', '') }}" placeholder="Например, 42">
+        </label>
+        <label class="article-filter">
+            <span>Заголовок</span>
+            <input type="search" name="title" value="{{ request.query_params.get('title', '') }}" placeholder="Введите заголовок">
+        </label>
+        <label class="article-filter">
+            <span>ID пользователя</span>
+            <input type="number" name="user_id" min="1" value="{{ request.query_params.get('user_id', '') }}" placeholder="Например, 7">
+        </label>
+        <label class="article-filter">
+            <span>Дата публикации</span>
+            <input type="date" name="public_date" value="{{ request.query_params.get('public_date', '') }}">
+        </label>
+        <div class="article-filters__actions">
+            <button class="button-search" type="submit">Найти</button>
+            <a href="/admin/articles">Сбросить</a>
+        </div>
+    </form>
     {% for article in articles %}
         <div class="article-card">
             <p class="article-card_field"><span class="card-field-label">ID статьи:</span> <span class="card-field-value card-field-value--id">{{ article['article_id'] }}</span></p>
             <p class="article-card_field"><span class="card-field-label">ID автора:</span> <span class="card-field-value card-field-value--id">{{ article['user_id'] }}</span></p>
-            <p class="article-card_field"><span class="card-field-label">Заголовок статьи:</span> <span class="card-field-value">{{ article['title'] }}</span></p>
+            <p class="article-card_field"><span class="card-field-label">Заголовок статьи:</span> <a class="card-field-value" href="/article/{{ article['article_id'] }}">{{ article['title'] }}</a></p>
             <p class="article-card_field"><span class="card-field-label">Дата публикации:</span> <span class="card-field-value">{{ article['created_at'][:19] }}</span></p>
             <form action="/admin/articles/{{ article['article_id'] }}" method="post">
                 <input type="hidden" name="csrf_token" value="{{ request.session['csrf_token'] }}">

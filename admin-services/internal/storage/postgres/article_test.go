@@ -72,6 +72,36 @@ func TestSearchArticles_Success(t *testing.T) {
 	assertSingleArticle(t, threeExample, articleID, userID)
 }
 
+func TestSearchArticlesByDate(t *testing.T) {
+	repository := setupTest(t)
+	targetDate := time.Date(2026, time.January, 2, 12, 0, 0, 0, time.UTC)
+	otherDate := targetDate.AddDate(0, 0, 1)
+	targetArticleID, targetUserID := createTestArticle(
+		t,
+		repository,
+		"target-date@mail.com",
+		"target_date_user",
+		targetDate,
+	)
+	createTestArticle(
+		t,
+		repository,
+		"other-date@mail.com",
+		"other_date_user",
+		otherDate,
+	)
+
+	articles, err := repository.SearchArticles(
+		context.Background(),
+		domain.ArticleFilter{Date: &targetDate},
+	)
+	if err != nil {
+		t.Fatalf("SearchArticles() by date returned an unexpected error: %v", err)
+	}
+
+	assertSingleArticle(t, articles, targetArticleID, targetUserID)
+}
+
 func assertSingleArticle(
 	t *testing.T,
 	articles []domain.Article,

@@ -17,10 +17,16 @@ func (h *AdminHandler) GetArticles(w http.ResponseWriter, r *http.Request) {
 		responseError(w, http.StatusBadRequest, "invalid user id")
 		return
 	}
+	date, err := optionalDate(r, "public_date")
+	if err != nil {
+		responseError(w, http.StatusBadRequest, "invalid date")
+		return
+	}
 	articles, err := h.service.GetArticles(r.Context(), domain.ArticleFilter{
 		ID:     articleID,
 		UserID: userID,
 		Title:  r.URL.Query().Get("title"),
+		Date:   date,
 	})
 	if err != nil {
 		responseError(w, http.StatusInternalServerError, "failed to get articles")

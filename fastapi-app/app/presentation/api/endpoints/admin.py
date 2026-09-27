@@ -1,6 +1,5 @@
 import datetime as dt
 import logging
-from functools import wraps
 from typing import Any
 
 import aiohttp
@@ -33,7 +32,9 @@ def admin_api_error_response() -> JSONResponse:
 
 
 async def delete_admin_api(path: str, headers: dict[str, str]) -> None:
-    status, _ = await request_admin_api(method="DELETE", path=path, headers_data=headers)
+    status, _ = await request_admin_api(
+        method="DELETE", path=path, headers_data=headers
+    )
     if status == 204:
         return
     if status == 404:
@@ -55,10 +56,7 @@ async def request_admin_api(
     try:
         async with aiohttp.ClientSession() as session:
             async with session.request(
-                method,
-                f"{ADMIN_API_URL}{path}",
-                **kwargs,
-                headers=headers_data
+                method, f"{ADMIN_API_URL}{path}", **kwargs, headers=headers_data
             ) as response:
                 if response.status == 204:
                     return response.status, None
@@ -83,8 +81,12 @@ async def request_admin_api(
         raise AdminApiUnavailableError from error
 
 
-async def get_admin_data(method: str, path: str, params: dict[str, Any], headers: dict) -> Any:
-    status, data = await request_admin_api(method, path, params=params, headers_data=headers)
+async def get_admin_data(
+    method: str, path: str, params: dict[str, Any], headers: dict
+) -> Any:
+    status, data = await request_admin_api(
+        method, path, params=params, headers_data=headers
+    )
     if status != 200:
         logger.error(
             "Admin API вернул неожиданный статус: method=%s path=%s status=%s",
@@ -120,7 +122,6 @@ async def register_check(
                 f"{ADMIN_API_URL}/admin/login",
                 json={"login": login, "password": password},
             ) as response:
-
                 if response.status in (401, 403):
                     logger.warning(
                         "Авторизация администратора отклонена: login=%s status=%s",
@@ -169,38 +170,40 @@ async def register_check(
 async def admin(
     request: Request,
     date_first: dt.date | None = Query(None),
-    date_last: dt.date | None = Query(None)
+    date_last: dt.date | None = Query(None),
 ):
     try:
         token = request.cookies.get("admin_access_token")
         date_from = (date_first or dt.date.today()).isoformat()
         date_to = ((date_last or dt.date.today()) + dt.timedelta(days=1)).isoformat()
         statistics = await get_admin_data(
-            "GET", "/admin/statistics",
+            "GET",
+            "/admin/statistics",
             {"date_from": date_from, "date_to": date_to},
-            {"Authorization": f"Bearer {token}"})
-        print(statistics)
+            {"Authorization": f"Bearer {token}"},
+        )
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_statistics.html",
             context={
                 "popularity_authors": statistics["popularity_authors"]["Value"]
-                    if statistics["popularity_authors"]["Err"].strip() == ""
-                    else statistics["popularity_authors"]["Err"],
+                if statistics["popularity_authors"]["Err"].strip() == ""
+                else statistics["popularity_authors"]["Err"],
                 "popularity_category": statistics["popularity_category"]["Value"]
-                    if statistics["popularity_category"]["Err"].strip() == ""
-                    else statistics["popularity_category"]["Err"],
+                if statistics["popularity_category"]["Err"].strip() == ""
+                else statistics["popularity_category"]["Err"],
                 "quantity_users": statistics["quantity_users"]["Value"]
-                    if statistics["quantity_users"]["Err"].strip() == ""
-                    else statistics["quantity_users"]["Err"],
+                if statistics["quantity_users"]["Err"].strip() == ""
+                else statistics["quantity_users"]["Err"],
                 "quantity_articles": statistics["quantity_articles"]["Value"]
-                    if statistics["quantity_articles"]["Err"].strip() == ""
-                    else statistics["quantity_articles"]["Err"],
+                if statistics["quantity_articles"]["Err"].strip() == ""
+                else statistics["quantity_articles"]["Err"],
             },
         )
     except (AdminApiUnavailableError, BadGatewayError):
         logger.error(f"Ошибка при данных, date from = {date_from}, date to = {date_to}")
         return admin_api_error_response()
+
 
 @router.get("/admin/users")
 async def users_menu(
@@ -220,7 +223,9 @@ async def users_menu(
             }.items()
             if value not in (None, "")
         }
-        users = await get_admin_data("GET", "/admin/users", params, {"Authorization": f"Bearer {token}"})
+        users = await get_admin_data(
+            "GET", "/admin/users", params, {"Authorization": f"Bearer {token}"}
+        )
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_users.html",
@@ -231,15 +236,13 @@ async def users_menu(
 
 
 @router.post("/admin/users/{user_id}")
-async def user_delete(
-    request: Request,
-    user_id: int,
-    csrf_token: str = Form(...)
-):
+async def user_delete(request: Request, user_id: int, csrf_token: str = Form(...)):
     try:
         await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
-        await delete_admin_api(f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"})
+        await delete_admin_api(
+            f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"}
+        )
         logger.info("Администратор удалил пользователя: user_id=%s", user_id)
         return RedirectResponse("/admin/users", status_code=303)
     except NotValidCsrfTokenError:
@@ -260,8 +263,10 @@ async def articles_menu(
     user_id: int | None = Query(None),
     title: str | None = Query(None),
     article_id: int | None = Query(None),
+    public_date: dt.date | None = Query(None),
 ):
     try:
+        ensure_csrf_token(request)
         token = request.cookies.get("admin_access_token")
         params = {
             key: value
@@ -269,10 +274,13 @@ async def articles_menu(
                 "article_id": article_id,
                 "title": title,
                 "user_id": user_id,
+                "public_date": public_date.isoformat() if public_date else None,
             }.items()
             if value not in (None, "")
         }
-        articles = await get_admin_data("GET", "/admin/articles", params, {"Authorization": f"Bearer {token}"})
+        articles = await get_admin_data(
+            "GET", "/admin/articles", params, {"Authorization": f"Bearer {token}"}
+        )
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_articles.html",
@@ -284,14 +292,14 @@ async def articles_menu(
 
 @router.post("/admin/articles/{article_id}")
 async def article_delete(
-    request: Request,
-    article_id: int,
-    csrf_token: str = Form(...)
+    request: Request, article_id: int, csrf_token: str = Form(...)
 ):
     try:
         await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
-        await delete_admin_api(f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"})
+        await delete_admin_api(
+            f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"}
+        )
         logger.info("Администратор удалил статью: article_id=%s", article_id)
         return RedirectResponse("/admin/articles", status_code=303)
     except NotValidCsrfTokenError:
@@ -325,7 +333,9 @@ async def comments_menu(
             }.items()
             if value not in (None, "")
         }
-        comments = await get_admin_data("GET", "/admin/comments", params, {"Authorization": f"Bearer {token}"})
+        comments = await get_admin_data(
+            "GET", "/admin/comments", params, {"Authorization": f"Bearer {token}"}
+        )
         return templates.TemplateResponse(
             request=request,
             name="admin/admin_comments.html",
@@ -337,14 +347,14 @@ async def comments_menu(
 
 @router.post("/admin/comments/{comment_id}")
 async def comment_delete(
-    request: Request,
-    comment_id: int,
-    csrf_token: str = Form(...)
+    request: Request, comment_id: int, csrf_token: str = Form(...)
 ):
     try:
         await check_csrf_token(request, csrf_token)
         token = request.cookies.get("admin_access_token")
-        await delete_admin_api(f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"})
+        await delete_admin_api(
+            f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"}
+        )
         logger.info("Администратор удалил комментарий: comment_id=%s", comment_id)
         return RedirectResponse("/admin/comments", status_code=303)
     except NotValidCsrfTokenError:

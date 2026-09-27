@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"new_prog/internal/domain"
 	"testing"
+	"time"
 )
 
 func TestGetArticles_searchForID_return_StatusNoContent(t *testing.T) {
@@ -93,6 +94,54 @@ func TestGetArticles_searchForTitle_return_StatusNoContent(t *testing.T) {
 	}
 	if bodyResponse[0].Title != title {
 		t.Fatalf("Returned %s, excepted %s", bodyResponse[0].Title, title)
+	}
+}
+
+func TestGetArticlesSearchByDate(t *testing.T) {
+	service := &adminServiceStub{}
+	handler := NewAdminHandler(service)
+	publicationDate := "2026-09-27"
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/admin/articles?public_date="+publicationDate,
+		nil,
+	)
+	responseRecorder := httptest.NewRecorder()
+
+	handler.GetArticles(responseRecorder, request)
+
+	if responseRecorder.Code != http.StatusOK {
+		t.Fatalf("status code = %d, expected %d", responseRecorder.Code, http.StatusOK)
+	}
+	if len(service.resultArticles) != 1 {
+		t.Fatalf("service received %d matching articles, expected 1", len(service.resultArticles))
+	}
+	expectedDate, err := time.Parse("2006-01-02", publicationDate)
+	if err != nil {
+		t.Fatalf("parse expected date: %v", err)
+	}
+	if !service.resultArticles[0].CreatedAt.Equal(expectedDate) {
+		t.Errorf(
+			"service received date %s, expected %s",
+			service.resultArticles[0].CreatedAt.Format("2006-01-02"),
+			publicationDate,
+		)
+	}
+}
+
+func TestGetArticlesRejectsInvalidDate(t *testing.T) {
+	handler := NewAdminHandler(&adminServiceStub{})
+	request := httptest.NewRequest(
+		http.MethodGet,
+		"/admin/articles?public_date=27-09-2026",
+		nil,
+	)
+	responseRecorder := httptest.NewRecorder()
+
+	handler.GetArticles(responseRecorder, request)
+
+	if responseRecorder.Code != http.StatusBadRequest {
+		t.Fatalf("status code = %d, expected %d", responseRecorder.Code, http.StatusBadRequest)
 	}
 }
 

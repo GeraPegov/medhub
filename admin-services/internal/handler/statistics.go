@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"sync"
 	"time"
@@ -20,6 +19,11 @@ type StatisticsService interface {
 type StatisticsHandler struct {
 	service StatisticsService
 }
+
+const (
+	statisticsNoContent     = "no content"
+	statisticsInternalError = "internal server error"
+)
 
 func NewStatisticsHandler(service StatisticsService) *StatisticsHandler {
 	return &StatisticsHandler{service: service}
@@ -48,50 +52,50 @@ func (h *StatisticsHandler) Statistics(w http.ResponseWriter, r *http.Request) {
 
 	go func() {
 		defer wg.Done()
-		q, err := h.service.QuantityUsers(ctx, dateFrom, dateTo)
+		quantity, err := h.service.QuantityUsers(ctx, dateFrom, dateTo)
 		if err != nil {
-			quantityUsers.Err = "no content"
+			quantityUsers.Err = statisticsInternalError
 			return
 		}
-		quantityUsers.Value = q
+		quantityUsers.Value = quantity
 	}()
 
 	go func() {
 		defer wg.Done()
-		q, err := h.service.QuantityArticles(ctx, dateFrom, dateTo)
+		quantity, err := h.service.QuantityArticles(ctx, dateFrom, dateTo)
 		if err != nil {
-			quantityArticles.Err = "no content"
+			quantityArticles.Err = statisticsInternalError
 			return
 		}
-		quantityArticles.Value = q
+		quantityArticles.Value = quantity
 	}()
 
 	go func() {
 		defer wg.Done()
-		q, err := h.service.PopularityCategory(ctx, dateFrom, dateTo)
+		categories, err := h.service.PopularityCategory(ctx, dateFrom, dateTo)
 		if err != nil {
-			popularityCategory.Err = "no content"
+			popularityCategory.Err = statisticsInternalError
 			return
 		}
-		if len(q) == 1 || q[0].Err != "" {
-			popularityCategory.Err = q[0].Err
+		if len(categories) == 0 {
+			popularityCategory.Err = statisticsNoContent
 			return
 		}
-		popularityCategory.Value = q
+		popularityCategory.Value = categories
 	}()
 
 	go func() {
 		defer wg.Done()
-		q, err := h.service.PopularityAuthors(ctx, dateFrom, dateTo)
+		authors, err := h.service.PopularityAuthors(ctx, dateFrom, dateTo)
 		if err != nil {
-			popularityAuthors.Err = "no content"
+			popularityAuthors.Err = statisticsInternalError
 			return
 		}
-		if len(q) == 1 || q[0].Err != "" {
-			popularityAuthors.Err = q[0].Err
+		if len(authors) == 0 {
+			popularityAuthors.Err = statisticsNoContent
 			return
 		}
-		popularityAuthors.Value = q
+		popularityAuthors.Value = authors
 	}()
 
 	wg.Wait()
@@ -101,9 +105,5 @@ func (h *StatisticsHandler) Statistics(w http.ResponseWriter, r *http.Request) {
 		PopularityCategory: popularityCategory,
 		PopularityAuthors:  popularityAuthors,
 	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		return
-	}
+	writeJSON(w, http.StatusOK, response)
 }

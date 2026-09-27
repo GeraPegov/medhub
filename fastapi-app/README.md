@@ -1,6 +1,6 @@
 # MedHub — Python-приложение
 
-Пользовательская часть [MedHub](../README.md): лента статей, публикации, профили, подписки, комментарии и реакции. FastAPI обслуживает HTTP-маршруты, Jinja2 — HTML-страницы. Административный интерфейс запрашивает данные у отдельного [Go-сервиса](../admin-services/README.md).
+Пользовательская часть [MedHub](../README.md): лента статей, публикации, профили, подписки, комментарии и реакции. FastAPI обслуживает HTTP-маршруты и Jinja2-страницы, проксирует административные запросы в отдельный [Go-сервис](../admin-services/README.md) и использует его Redis-лимитеры с резервной SQL-проверкой.
 
 Описание всей системы, бизнес-правил и запуска контейнеров находится в [главном README](../README.md).
 
@@ -58,14 +58,17 @@ python -m pip install -e ".[dev]"
 | Переменная | Назначение |
 | --- | --- |
 | `SECRET_KEY` | Секрет подписи пользовательского JWT |
+| `SECRET_KEY_GO` | Секрет административного JWT, передаваемый Go-контейнеру |
 | `SECRET_KEY_MIDDLEWARE` | Отдельный секрет подписи сессионной cookie |
 | `ALGORITHM`, `ACCESS_TOKEN_EXPIRE_MINUTES` | Алгоритм JWT и срок действия в минутах |
 | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | Параметры PostgreSQL; используются также в Compose |
 | `ADMIN_DB_URL` | Подключение с правом создания БД |
 | `PROD_DB_URL` | Подключение к базе приложения `medhub` |
 | `TEST_DB_URL` | Подключение к отдельной тестовой базе `testmedhub` |
+| `TEST_DB_URL_FOR_ADMIN_SERVICES` | PostgreSQL DSN тестовой базы Go-сервиса |
 | `HOST_REDIS`, `PORT_REDIS` | Адрес Redis |
 | `ADMIN_API_URL` | Адрес Go API; локально `http://127.0.0.1:8001` |
+| `MAIN_PORT`, `ADMIN_PORT` | Публикация портов Compose, например `8000:8000` и `8001:8001` |
 
 Все перечисленные поля обязательны в [Settings](app/infrastructure/config.py). Python-строки подключения используют `postgresql+asyncpg://`. При изменении пароля PostgreSQL обновите его и в строках подключения.
 
@@ -85,7 +88,7 @@ docker compose up -d db redis
 alembic upgrade head
 ```
 
-Миграции создают в том числе таблицу администраторов для Go-сервиса. Старый `python -m scripts.init_db` пока не используется в этой инструкции: в нём остался импорт отсутствующего `app.domain.logging`.
+Миграции создают в том числе таблицу администраторов для Go-сервиса. Вспомогательный `python -m scripts.init_db` может создать локальные базы `medhub`, `testmedhub` и `test_admin_services`, но не заменяет `alembic upgrade head` как источник актуальной схемы.
 
 ### 4. Запустить приложение
 
@@ -101,7 +104,7 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 | --- | --- |
 | Лента | `GET /` |
 | Регистрация | `GET /register`, `POST /auth/register` |
-| Вход и выход | `GET /auth`, `POST /auth/login`, `GET /exit` |
+| Вход и выход | `GET /auth`, `POST /auth/login`, `POST /exit` |
 | Публикация | `GET /article/submit`, `POST /article/submit/add` |
 | Статья | `GET /article/{article_id}` |
 | Редактирование | `GET /article/change/{article_id}`, `POST /article/change/{article_id}/access` |
@@ -114,7 +117,9 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 | Удаление профиля | `GET /user/profile/{unique_username}/delete` |
 | Администрирование | `/admin/login`, `/admin`, `/admin/users`, `/admin/articles`, `/admin/comments` |
 
-Большая часть пользовательских маршрутов принимает формы и возвращает HTML или редиректы. Правило реакций — одна реакция на статью от пользователя за всё время, с уникальным ограничением PostgreSQL; ограничения «раз в день» в текущей реализации нет.
+Административная страница статей поддерживает комбинируемые фильтры `article_id`, `user_id`, `title` и `public_date`; статистика строится по диапазону дат и показывает общие количества, популярные категории и активных авторов.
+
+Большая часть пользовательских маршрутов принимает формы и возвращает HTML или редиректы. Правило реакций — одна реакция на статью от пользователя за всё время, с уникальным ограничением PostgreSQL; ограничения «раз в день» в текущей реализации нет. Публикации ограничены тремя статьями в день и десятью комментариями к одной статье в час.
 
 ## Тесты и проверки
 

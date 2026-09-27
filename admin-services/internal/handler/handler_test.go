@@ -65,6 +65,12 @@ func (a *adminServiceStub) GetArticles(ctx context.Context, articleFilter domain
 		}
 		a.resultArticles = append(a.resultArticles, article)
 	}
+	if articleFilter.Date != nil {
+		article := domain.Article{
+			CreatedAt: *articleFilter.Date,
+		}
+		a.resultArticles = append(a.resultArticles, article)
+	}
 	return a.resultArticles, a.errArticles
 }
 
