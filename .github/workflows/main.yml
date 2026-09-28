@@ -84,7 +84,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: rate-limiter
+        working-directory: admin-services
 
     steps:
       - name: Checkout code
@@ -93,8 +93,8 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version-file: rate-limiter/go.mod
-          cache-dependency-path: rate-limiter/go.sum
+          go-version-file: admin-services/go.mod
+          cache-dependency-path: admin-services/go.sum
 
       - name: Run tests
         run: go test ./...

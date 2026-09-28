@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -14,7 +15,9 @@ type MedhubDB struct {
 }
 
 func Load() (*MedhubDB, error) {
-	_ = godotenv.Load(".env")
+	if err := godotenv.Load(".env"); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return nil, fmt.Errorf("load .env: %w", err)
+	}
 	db := MedhubDB{
 		DB_URL:    os.Getenv("PROD_DB_URL"),
 		SecretKey: os.Getenv("SECRET_KEY"),
