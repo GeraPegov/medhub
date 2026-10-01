@@ -63,7 +63,7 @@ async def login(
         response = RedirectResponse(url="/", status_code=303)
 
         response.set_cookie(
-            key="access_token", value=token, httponly=True, samesite="lax"
+            key="access_token", value=token, httponly=True, samesite="lax", secure=True
         )
 
         logger.info("Пользователь вошёл в систему: client=%s", form_data.username)

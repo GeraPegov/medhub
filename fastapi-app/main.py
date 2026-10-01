@@ -69,7 +69,7 @@ app.add_middleware(
     secret_key=settings.SECRET_KEY_MIDDLEWARE,
     session_cookie="medhub_session",
     same_site="lax",
-    https_only=False,
+    https_only=True,
 )
 
 app.include_router(api_router)

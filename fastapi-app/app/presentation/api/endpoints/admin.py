@@ -156,7 +156,7 @@ async def register_check(
         response = RedirectResponse("/admin", status_code=303)
 
         response.set_cookie(
-            key="admin_access_token", value=token, httponly=True, samesite="lax"
+            key="admin_access_token", value=token, httponly=True, samesite="lax", secure=True
         )
         logger.info("Успешная авторизация с логином = %s", login)
         return response
