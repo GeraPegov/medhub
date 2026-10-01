@@ -42,7 +42,6 @@ def assert_article_matches(
     assert article.created_at is not None
 
 
-
 @pytest.mark.asyncio
 async def test_save_returns_complete_article_entity(
     db_session: AsyncSession, test_user1: User
@@ -137,6 +136,24 @@ async def test_search_by_title_is_partial_and_case_insensitive(
 
 
 @pytest.mark.asyncio
+async def test_search_by_title_tolerates_a_typo(
+    db_session: AsyncSession, test_user1: User
+):
+    repository = ArticleRepository(db_session)
+    expected = await repository.save(
+        article_data(test_user1.id, title="Evidence Based Medicine"), test_user1.id
+    )
+    await repository.save(
+        article_data(test_user1.id, title="Nutrition basics"), test_user1.id
+    )
+
+    articles = await repository.search_by_title("Medcine")
+
+    assert articles is not None
+    assert [article.article_id for article in articles] == [expected.article_id]
+
+
+@pytest.mark.asyncio
 async def test_search_by_title_returns_none_without_matches(
     db_session: AsyncSession, test_article: Article
 ):
@@ -221,7 +238,7 @@ async def test_change_updates_all_editable_fields_for_owner(
         author=test_user1,
         title=changes["title"],
         content=changes["content"],
-        category=changes["category"]
+        category=changes["category"],
     )
 
 

@@ -235,16 +235,16 @@ async def search(
 @router.get("/articles/search/title", response_class=HTMLResponse)
 async def get_title(
     request: Request,
-    query: str = Query(..., min_length=2),
+    title: str = Query(..., min_length=2),
     article_service: ArticleService = Depends(get_article_service),
     current_user: UserEntity | None = Depends(get_current_user),
 ):
-    articles = await article_service.search_by_title(query)
+    articles = await article_service.search_by_title(title)
 
     return templates.TemplateResponse(
         request=request,
         name="search.html",
-        context={"articles": articles, "title": query, "auth": current_user},
+        context={"articles": articles, "title": title, "auth": current_user},
     )
 
 

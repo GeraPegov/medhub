@@ -11,11 +11,37 @@
         {% include "_menu.html" %}
         <main class="page-main search-page">
             <header class="search-header">
-                <span class="page-eyebrow">Навигация</span>
-                <h1 class="page-title">Поиск статей</h1>
-                <p class="page-description">Выберите интересующую категорию.</p>
+                <span class="search-eyebrow">Библиотека MedHub</span>
+                <h1 class="search-title">Найдите нужную статью</h1>
+                <p class="search-description">
+                    Введите название или его часть — мы покажем подходящие публикации.
+                </p>
+
+                <form class="title-search-form" action="/articles/search/title" method="get">
+                    <label class="visually-hidden" for="article-title">Название статьи</label>
+                    <div class="search-input-wrap">
+                        <svg class="search-icon" aria-hidden="true" viewBox="0 0 24 24">
+                            <path d="m21 21-4.35-4.35m2.35-5.65a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/>
+                        </svg>
+                        <input
+                            id="article-title"
+                            type="search"
+                            class="search-input"
+                            placeholder="Например, здоровый сон"
+                            name="title"
+                            value="{{ title|default('') }}"
+                            minlength="2"
+                            autocomplete="off"
+                            required
+                        >
+                    </div>
+                    <button class="search-button" type="submit">Найти статью</button>
+                </form>
             </header>
 
+            <div class="category-heading">
+                <span>Или выберите направление</span>
+            </div>
             <nav class="category-menu" aria-label="Категории статей">
                 <a href="/articles/search/category/Питание" class="category-link">Питание</a>
                 <a href="/articles/search/category/Биомеханика" class="category-link">Биомеханика</a>
@@ -52,7 +78,13 @@
                 </article>
                 {% endfor %}
             {% else %}
-                <div class="empty-state">Выберите категорию, чтобы увидеть подходящие статьи.</div>
+                <div class="empty-state">
+                    {% if title is defined %}
+                        По запросу «{{ title }}» ничего не найдено. Попробуйте изменить формулировку.
+                    {% else %}
+                        Введите название статьи или выберите категорию.
+                    {% endif %}
+                </div>
             {% endif %}
             </section>
         </main>

@@ -1,16 +1,16 @@
 import asyncio
 import logging
-import os
+
 from sqlalchemy.ext.asyncio import create_async_engine
 
+import app.infrastructure.database.models  # noqa: F401
 from app.infrastructure.config import settings
 from app.infrastructure.database.connection import (
+    Base,
     create_database_if_not_exists,
     prod_engine,
-    Base
 )
 from app.infrastructure.logging_config import init_logger
-import app.infrastructure.database.models
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +36,10 @@ async def init_test_db_for_admin_services():
 
     await create_database_if_not_exists("test_admin_services")
 
-    engine = create_async_engine(settings.TEST_DB_URL_FOR_ADMIN_SERVICES, echo=False)
+    test_admin_url = settings.TEST_DB_URL_FOR_ADMIN_SERVICES.replace(
+        "postgresql://", "postgresql+asyncpg://", 1
+    )
+    engine = create_async_engine(test_admin_url, echo=False)
     async with engine.begin() as conn:
         # await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)

@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 from redis.asyncio import Redis
 from redis.asyncio.connection import ConnectionPool
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from app.infrastructure.config import settings
@@ -27,6 +28,7 @@ def event_loop():
 async def engine():
     engine = create_async_engine(TEST_DATABASE_URL, echo=False)
     async with engine.begin() as conn:
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS pg_trgm"))
         # await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
     yield engine
@@ -176,5 +178,3 @@ async def test_cache_article_example(db_redis, test_article, test_user1):
     cache = await db_redis.hgetall(f"article:{1}")
 
     return cache
-
-

@@ -1,7 +1,7 @@
 import logging
 from collections.abc import Sequence
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -92,10 +92,19 @@ class ArticleRepository(IArticleRepository):
         return True
 
     async def search_by_title(self, title: str) -> list[ArticleEntity] | None:
+        title = title.strip()
+        similarity = func.strict_word_similarity(title, Article.title)
+
         db_articles = await self.session.execute(
             select(Article)
             .options(selectinload(Article.users))
-            .where(Article.title.ilike(f"%{title}%"))
+            .where(
+                or_(
+                    Article.title.ilike(f"%{title}%"),
+                    Article.title.op("%>>")(title),
+                )
+            )
+            .order_by(similarity.desc(), Article.id.desc())
         )
         articles = db_articles.scalars().all()
         if not articles:
