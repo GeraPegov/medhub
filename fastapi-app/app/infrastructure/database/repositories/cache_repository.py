@@ -9,8 +9,8 @@ from redis.asyncio import Redis
 from redis.exceptions import ConnectionError as RedisConnectionError
 from redis.exceptions import TimeoutError as RedisTimeoutError
 
-from app.domain.entities.article import ArticleEntity
 from app.domain.entities.user import UserEntity
+from app.domain.read_models import ArticleReadModel, CommentReadModel
 
 logger = logging.getLogger(__name__)
 
@@ -42,77 +42,113 @@ class CachedRepository:
         self.connection = connection
 
     @handle_redis_errors(default_return=None)
-    async def increment_view_counter(self, article_id: int):
-        return await self.connection.incr(f"article_counter:{article_id}")
-
-    @handle_redis_errors(default_return=None)
-    async def update_views_counter(self):
-        async for key in self.connection.scan_iter("article_counter:*"):
-            logger.debug("Found pending article view counter: %s", key)
-
-    @handle_redis_errors(default_return=None)
     async def set_cache(
         self,
         record_selection: str,
         unique_record_identifier: str | int,
-        record_details: dict,
+        record_details: dict | list,
         ttl: int = 3600,
     ) -> None:
         cache_key = f"{record_selection}:{unique_record_identifier}"
+        if isinstance(record_details, list):
+            data = json.dumps(record_details)
+            await self.connection.set(cache_key, data, ex=ttl)
+            return
+
         await self.connection.hset(cache_key, mapping=record_details)
         await self.connection.expire(cache_key, ttl)
+
+    @handle_redis_errors(default_return=None)
+    async def get_cached_comments_for_article(
+        self, article_id: int
+    ) -> list[CommentReadModel] | None:
+        raw_comments = await self.connection.get(f"comments:{article_id}")
+        if not raw_comments:
+            return None
+        comments_data = json.loads(raw_comments)
+        return [
+            CommentReadModel(
+                id=comment["id"],
+                content=comment["content"],
+                user_id=comment["user_id"],
+                author_nickname=comment["author_nickname"],
+                author_username=comment["author_username"],
+                created_at=datetime.fromtimestamp(comment["created_at"]),
+                article_id=comment["article_id"],
+            )
+            for comment in comments_data
+        ]
 
     @handle_redis_errors(default_return=None)
     async def get_cached_user(
         self, unique_record_identifier: int | str
     ) -> UserEntity | None:
-        from_cache = cast(
+        users_data = cast(
             dict[str, str],
             await self.connection.hgetall(f"user:{unique_record_identifier}"),
         )
-        if not from_cache:
+        if not users_data:
             return None
         return UserEntity(
-            user_id=int(from_cache["user_id"]),
-            email=from_cache["email"],
-            unique_username=from_cache["unique_username"],
-            nickname=from_cache["nickname"],
-            subscriptions=json.loads(from_cache["subscriptions"]),
+            user_id=int(users_data["user_id"]),
+            email=users_data["email"],
+            unique_username=users_data["unique_username"],
+            nickname=users_data["nickname"],
+            subscriptions=json.loads(users_data["subscriptions"]),
         )
 
     @handle_redis_errors(default_return=None)
-    async def get_cached_article(self, article_id: int) -> ArticleEntity | None:
-        from_cache = cast(
+    async def get_cached_article(self, article_id: int) -> ArticleReadModel | None:
+        articles_data = cast(
             dict[str, str],
             await self.connection.hgetall(f"article:{article_id}"),
         )
-        if not from_cache:
+        if not articles_data:
             return None
 
-        return ArticleEntity(
-            unique_username=from_cache["unique_username"],
-            title=from_cache["title"],
-            content=from_cache["content"],
-            user_id=int(from_cache["user_id"]),
-            nickname=from_cache["nickname"],
-            category=from_cache["category"],
-            created_at=datetime.fromtimestamp(float(from_cache["created_at"])),
-            article_id=int(from_cache["article_id"]),
-            likes=int(from_cache["likes"]),
-            dislikes=int(from_cache["dislikes"]),
+        user_id = int(articles_data["user_id"])
+        return ArticleReadModel(
+            title=articles_data["title"],
+            content=articles_data["content"],
+            user_id=user_id,
+            category=articles_data["category"],
+            created_at=datetime.fromtimestamp(float(articles_data["created_at"])),
+            article_id=int(articles_data["article_id"]),
+            likes=int(articles_data["likes"]),
+            dislikes=int(articles_data["dislikes"]),
+            author_username=articles_data["unique_username"],
+            author_nickname=articles_data["nickname"],
         )
 
     @handle_redis_errors(default_return=None)
     async def delete_user(
         self,
         user: UserEntity,
-    ):
-        result = await self.connection.delete(
+    ) -> None:
+        deleted_keys = await self.connection.delete(
             f"user:{user.user_id}", f"user:{user.unique_username}"
         )
-        return result
+        logger.debug(
+            "Удалён кеш пользователя: user_id=%s username=%s deleted_keys=%s",
+            user.user_id,
+            user.unique_username,
+            deleted_keys,
+        )
 
     @handle_redis_errors(default_return=None)
-    async def delete_article(self, article_id: int) -> int | None:
-        result = await self.connection.delete(f"article:{article_id}")
-        return result
+    async def delete_article(self, article_id: int) -> None:
+        deleted_keys = await self.connection.delete(f"article:{article_id}")
+        logger.debug(
+            "Удалён кеш статьи: article_id=%d, deleted_keys=%s",
+            article_id,
+            deleted_keys,
+        )
+
+    @handle_redis_errors(default_return=None)
+    async def delete_comments(self, article_id: int) -> None:
+        deleted_keys = await self.connection.delete(f"comments:{article_id}")
+        logger.debug(
+            "Удалён кеш комментариев: article_id=%d, deleted_keys=%s",
+            article_id,
+            deleted_keys,
+        )

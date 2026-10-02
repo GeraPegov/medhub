@@ -3,6 +3,7 @@ import logging
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 
+from app.application.services.cache_service import CachedCommentService
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
@@ -14,6 +15,7 @@ from app.domain.exceptions import (
 )
 from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import error_page
+from app.presentation.dependencies.cache import get_cached_comment_service
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
 
@@ -28,6 +30,7 @@ async def create(
     content: str = Form(...),
     csrf_token: str = Form(...),
     comment_service: CommentService = Depends(get_comment_service),
+    cached_comment_service: CachedCommentService = Depends(get_cached_comment_service),
     current_user: UserEntity | None = Depends(get_current_user),
 ):
     try:
@@ -43,6 +46,7 @@ async def create(
             content=content,
             user_id=current_user.user_id,
         )
+        await cached_comment_service.invalidate_comments(article_id)
         logger.info(
             "Создан комментарий: comment_id=%s article_id=%s user_id=%s",
             comment_id,
@@ -67,6 +71,7 @@ async def delete(
     comment_id: int,
     csrf_token: str = Form(...),
     comment_service: CommentService = Depends(get_comment_service),
+    cached_comment_service: CachedCommentService = Depends(get_cached_comment_service),
     current_user: UserEntity | None = Depends(get_current_user),
 ):
     try:
@@ -81,6 +86,7 @@ async def delete(
             comment_id=comment_id,
             user_id=current_user.user_id,
         )
+        await cached_comment_service.invalidate_comments(article_id)
         logger.info(
             "Удалён комментарий: comment_id=%s user_id=%s",
             comment_id,

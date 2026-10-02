@@ -130,7 +130,7 @@
 
 .profile-page .article-title {
     margin: 0 0 16px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 24px;
     overflow-wrap: anywhere;
 }

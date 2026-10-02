@@ -3,19 +3,33 @@ import logging
 from typing import Any
 
 import aiohttp
-from fastapi import APIRouter, Form, Query, Request, Response
+from fastapi import APIRouter, Depends, Form, Query, Request, Response
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
+from app.application.services.cache_service import (
+    CachedArticleService,
+    CachedCommentService,
+    CachedUserService,
+)
+from app.application.services.comment_service import CommentService
 from app.domain.exceptions import (
     AdminApiUnavailableError,
     BadGatewayError,
+    NotFoundCommentError,
     NotFoundRecordsError,
+    NotFoundUserError,
     NotValidCsrfTokenError,
 )
 from app.infrastructure.config import settings
 from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import ensure_csrf_token, error_page
+from app.presentation.dependencies.cache import (
+    get_cached_article_service,
+    get_cached_comment_service,
+    get_cached_user_service,
+)
+from app.presentation.dependencies.comments import get_comment_service
 
 router = APIRouter()
 
@@ -156,7 +170,11 @@ async def register_check(
         response = RedirectResponse("/admin", status_code=303)
 
         response.set_cookie(
-            key="admin_access_token", value=token, httponly=True, samesite="lax", secure=True
+            key="admin_access_token",
+            value=token,
+            httponly=True,
+            samesite="lax",
+            secure=True,
         )
         logger.info("Успешная авторизация с логином = %s", login)
         return response
@@ -236,18 +254,25 @@ async def users_menu(
 
 
 @router.post("/admin/users/{user_id}")
-async def user_delete(request: Request, user_id: int, csrf_token: str = Form(...)):
+async def user_delete(
+    request: Request,
+    user_id: int,
+    csrf_token: str = Form(...),
+    cached_user_service: CachedUserService = Depends(get_cached_user_service),
+):
     try:
         await check_csrf_token(request, csrf_token)
+        user = await cached_user_service.get_user(user_id)
         token = request.cookies.get("admin_access_token")
         await delete_admin_api(
             f"/admin/users/{user_id}", {"Authorization": f"Bearer {token}"}
         )
+        await cached_user_service.invalidate_user(user)
         logger.info("Администратор удалил пользователя: user_id=%s", user_id)
         return RedirectResponse("/admin/users", status_code=303)
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
-    except NotFoundRecordsError:
+    except (NotFoundRecordsError, NotFoundUserError):
         logger.info("Пользователь для удаления не найден: user_id=%s", user_id)
         return JSONResponse(
             content={"detail": "Пользователь не найден"},
@@ -292,7 +317,10 @@ async def articles_menu(
 
 @router.post("/admin/articles/{article_id}")
 async def article_delete(
-    request: Request, article_id: int, csrf_token: str = Form(...)
+    request: Request,
+    article_id: int,
+    csrf_token: str = Form(...),
+    cached_article_service: CachedArticleService = Depends(get_cached_article_service),
 ):
     try:
         await check_csrf_token(request, csrf_token)
@@ -300,6 +328,7 @@ async def article_delete(
         await delete_admin_api(
             f"/admin/articles/{article_id}", {"Authorization": f"Bearer {token}"}
         )
+        await cached_article_service.invalidate_article(article_id)
         logger.info("Администратор удалил статью: article_id=%s", article_id)
         return RedirectResponse("/admin/articles", status_code=303)
     except NotValidCsrfTokenError:
@@ -347,19 +376,25 @@ async def comments_menu(
 
 @router.post("/admin/comments/{comment_id}")
 async def comment_delete(
-    request: Request, comment_id: int, csrf_token: str = Form(...)
+    request: Request,
+    comment_id: int,
+    csrf_token: str = Form(...),
+    comment_service: CommentService = Depends(get_comment_service),
+    cached_comment_service: CachedCommentService = Depends(get_cached_comment_service),
 ):
     try:
         await check_csrf_token(request, csrf_token)
+        article_id = await comment_service.get_article_id(comment_id)
         token = request.cookies.get("admin_access_token")
         await delete_admin_api(
             f"/admin/comments/{comment_id}", {"Authorization": f"Bearer {token}"}
         )
+        await cached_comment_service.invalidate_comments(article_id)
         logger.info("Администратор удалил комментарий: comment_id=%s", comment_id)
         return RedirectResponse("/admin/comments", status_code=303)
     except NotValidCsrfTokenError:
         return error_page(request, "Невалидный CSRF-токен", 403)
-    except NotFoundRecordsError:
+    except (NotFoundCommentError, NotFoundRecordsError):
         logger.info("Комментарий для удаления не найден: comment_id=%s", comment_id)
         return JSONResponse(
             content={"detail": "Комментарий не найден"},

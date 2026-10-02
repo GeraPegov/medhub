@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from app.infrastructure.database.models.article import Article

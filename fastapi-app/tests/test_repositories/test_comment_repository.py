@@ -4,12 +4,12 @@ import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.comment import CommentEntity
 from app.domain.exceptions import (
     NotFoundArticleError,
     NotFoundCommentError,
     NotFoundUserError,
 )
+from app.domain.read_models import CommentReadModel
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.user import User
@@ -29,7 +29,7 @@ def data_comment(user_id: int, article_id: int, **overrides):
 
 
 def assert_comment_matches(
-    comment: CommentEntity,
+    comment: CommentReadModel,
     *,
     comment_id: int,
     article_id: int,
@@ -37,21 +37,19 @@ def assert_comment_matches(
     content: str,
     nickname: str,
     unique_username: str,
-    title_of_article: str,
     created_at: datetime,
 ):
     assert comment.id == comment_id
     assert comment.article_id == article_id
     assert comment.user_id == user_id
     assert comment.content == content
-    assert comment.nickname == nickname
-    assert comment.unique_username == unique_username
-    assert comment.title_of_article == title_of_article
+    assert comment.author_nickname == nickname
+    assert comment.author_username == unique_username
     assert comment.created_at == created_at
 
 
 def assert_comment_matches_model(
-    comment: CommentEntity, user: User, article: Article, model: Comment
+    comment: CommentReadModel, user: User, article: Article, model: Comment
 ):
     assert_comment_matches(
         comment,
@@ -61,26 +59,27 @@ def assert_comment_matches_model(
         content=model.content,
         nickname=user.nickname,
         unique_username=user.unique_username,
-        title_of_article=article.title,
         created_at=model.created_at,
     )
 
 
 @pytest.mark.asyncio
-async def test_create_returns_complete_comment_entity(
+async def test_create_returns_created_comment_id(
     db_session: AsyncSession, test_user1: User, test_article: Article
 ):
     repository = CommentRepository(db_session)
     data = data_comment(test_user1.id, test_article.id)
-    comment = await repository.create(data)
+    comment_id = await repository.create(data)
     stored_comment = (
-        await db_session.execute(select(Comment).where(Comment.id == comment.id))
+        await db_session.execute(select(Comment).where(Comment.id == comment_id))
     ).scalar_one_or_none()
     assert stored_comment is not None
     assert stored_comment.content == data["content"]
-    assert isinstance(comment.created_at, datetime)
+    assert type(comment_id) is int
+    comments = await repository.list_by_article_id(test_article.id)
+    assert comments is not None
     assert_comment_matches_model(
-        comment,
+        comments[0],
         test_user1,
         test_article,
         stored_comment,
@@ -126,7 +125,6 @@ async def test_list_by_article_id_returns_comments_list(
         content=test_comment.content,
         nickname=test_user1.nickname,
         unique_username=test_user1.unique_username,
-        title_of_article=test_article.title,
         created_at=test_comment.created_at,
     )
 
@@ -159,7 +157,6 @@ async def test_list_by_author_returns_comments_list(
         content=test_comment.content,
         nickname=test_user1.nickname,
         unique_username=test_user1.unique_username,
-        title_of_article=test_article.title,
         created_at=test_comment.created_at,
     )
 
@@ -191,7 +188,7 @@ async def test_delete_returns_article_id_and_removes_only_requested_comment(
     ).scalar_one_or_none()
     assert check_comment_after_delete is None
     remaining_ids = (await db_session.execute(select(Comment.id))).scalars().all()
-    assert remaining_ids == [sibling.id]
+    assert remaining_ids == [sibling]
 
 
 @pytest.mark.asyncio
@@ -213,14 +210,14 @@ async def test_delete_rejects_non_owner(
 
 
 @pytest.mark.asyncio
-async def test_to_entity(
+async def test_to_read_model(
     db_session: AsyncSession,
     test_comment: Comment,
     test_user1: User,
     test_article: Article,
 ):
     repository = CommentRepository(db_session)
-    comment = await repository._to_entity([test_comment])
+    comment = repository._to_read_model([test_comment])
 
     assert len(comment) == 1
     assert_comment_matches(
@@ -231,7 +228,6 @@ async def test_to_entity(
         content=test_comment.content,
         nickname=test_user1.nickname,
         unique_username=test_user1.unique_username,
-        title_of_article=test_article.title,
         created_at=test_comment.created_at,
     )
 
@@ -266,10 +262,10 @@ async def test_list_filters_comments_by_requested_id(
 
     if method == "list_by_article_id":
         comments = await repository.list_by_article_id(test_article.id)
-        expected_ids = {test_comment.id, other_author_comment.id}
+        expected_ids = {test_comment.id, other_author_comment}
     else:
         comments = await repository.list_by_author(test_user1.id)
-        expected_ids = {test_comment.id, other_article_comment.id}
+        expected_ids = {test_comment.id, other_article_comment}
 
     assert comments is not None
     assert len(comments) == len(expected_ids)
@@ -284,3 +280,26 @@ async def test_delete_raises_when_comment_does_not_exist(
 
     with pytest.raises(NotFoundCommentError):
         await repository.delete(999, test_user1.id)
+
+
+@pytest.mark.asyncio
+async def test_get_article_id_returns_comment_parent_article(
+    db_session: AsyncSession,
+    test_comment: Comment,
+    test_article: Article,
+):
+    repository = CommentRepository(db_session)
+
+    article_id = await repository.get_article_id(test_comment.id)
+
+    assert article_id == test_article.id
+
+
+@pytest.mark.asyncio
+async def test_get_article_id_raises_when_comment_does_not_exist(
+    db_session: AsyncSession,
+):
+    repository = CommentRepository(db_session)
+
+    with pytest.raises(NotFoundCommentError):
+        await repository.get_article_id(999_999)

@@ -131,7 +131,7 @@
 
 .stat-title {
     margin: 0 0 12px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 18px;
 }
 
@@ -333,7 +333,7 @@
 
 .auth-panel h1 {
     margin: 0 0 26px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
 }
 
 .auth-form {
@@ -457,7 +457,7 @@
 
 .statistics-title {
     margin: 0;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: clamp(30px, 4vw, 42px);
     line-height: 1.1;
     letter-spacing: -0.035em;
@@ -512,7 +512,7 @@
 
 .period-stat__heading h2 {
     margin: 0 0 4px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 16px;
 }
 
@@ -615,7 +615,7 @@
 
 .summary-card__value {
     margin: 0;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 42px;
     font-weight: 800;
     line-height: 1;
@@ -648,7 +648,7 @@
 
 .ranking-card__header h2 {
     margin: 0;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 20px;
     letter-spacing: -0.015em;
 }
@@ -721,7 +721,7 @@
 
 .ranking-item__name {
     overflow: hidden;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 15px;
     font-weight: 750;
     text-overflow: ellipsis;

@@ -77,13 +77,13 @@
                                 <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                             </div>
                             <div class="meta-item">
-                                <span class="author">{{ article.nickname }}</span>
+                                <span class="author">{{ article.author_nickname }}</span>
                             </div>
                             <div class="meta-item">
                                 <span class="category">{{ article.category }}</span>
                             </div>
                         </div>
-                        {% if auth and article.unique_username == auth.unique_username %}
+                        {% if auth and article.author_username == auth.unique_username %}
                             <div class="action-in-card">
                                 <form action="/article/delete/{{ article.article_id }}" method="POST" class="form-change-btn">
                                     <input
@@ -118,13 +118,25 @@
         {% for comment in comments %}
             <div class="comment">
                 <div class="comment-header">
-                    <span class="comment-author">{{ comment.nickname }}</span>                    <span class="comment-date">
+                    <span class="comment-author">{{ comment.author_nickname }}</span>
+                    <a href="/user/profile/{{ comment.author_username }}" class="comment-author">
+                        {{ comment.author_username }}
+                    </a>
+                    <span class="comment-date">
                         {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                     </span>
+                    <a href="/article/{{ comment.article_id }}" class="read-more">
+                        К статье
+                    </a>
                 </div>
-            {% if auth and auth.user_id == user.user_id %}
+            {% if auth and auth.user_id == comment.user_id %}
                 <div class="action-in-card">
-                    <form action="/article/delete/{{ article.id }}" method="POST" class="form-change-btn">
+                    <form action="/comments/{{ comment.id }}/delete" method="POST" class="form-change-btn">
+                        <input
+                            type="hidden"
+                            name="csrf_token"
+                            value="{{ request.session.get('csrf_token', '') }}"
+                        >
                         <button type="submit" class="delete-comment-btn">
                             Удалить
                         </button>

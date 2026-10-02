@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.article import ArticleEntity
+from app.domain.read_models import ArticleReadModel
 
 
 class IArticleRepository(ABC):
@@ -11,7 +11,7 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def search_by_category(self, category: str) -> list[ArticleEntity] | None:
+    async def search_by_category(self, category: str) -> list[ArticleReadModel] | None:
         pass
 
     @abstractmethod
@@ -19,23 +19,23 @@ class IArticleRepository(ABC):
         pass
 
     @abstractmethod
-    async def delete(self, article_id: int, user_id: int) -> bool:
+    async def delete(self, article_id: int, user_id: int) -> None:
         pass
 
     @abstractmethod
-    async def get_by_id(self, article_id: int) -> ArticleEntity:
+    async def get_by_id(self, article_id: int) -> ArticleReadModel:
         pass
 
     @abstractmethod
-    async def all(self) -> list[ArticleEntity] | None:
+    async def all(self) -> list[ArticleReadModel] | None:
         pass
 
     @abstractmethod
-    async def search_by_title(self, title: str) -> list[ArticleEntity]:
+    async def search_by_title(self, title: str) -> list[ArticleReadModel] | None:
         pass
 
     @abstractmethod
-    async def get_user_articles(self, user_id: int) -> list[ArticleEntity]:
+    async def get_user_articles(self, user_id: int) -> list[ArticleReadModel] | None:
         pass
 
     @abstractmethod
@@ -44,15 +44,17 @@ class IArticleRepository(ABC):
         mapping: dict,
         article_id: int,
         user_id: int,
-    ) -> ArticleEntity:
+    ) -> ArticleReadModel:
         pass
 
     @abstractmethod
     async def set_reaction(
         self, article_id: int, user_id: int, reaction: str
-    ) -> ArticleEntity:
+    ) -> ArticleReadModel:
         pass
 
     @abstractmethod
-    async def liked_articles_by_user(self, user_id: int) -> list[ArticleEntity] | None:
+    async def liked_articles_by_user(
+        self, user_id: int
+    ) -> list[ArticleReadModel] | None:
         pass

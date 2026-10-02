@@ -7,8 +7,10 @@ from fastapi.templating import Jinja2Templates
 
 from app.application.dto.article_create_dto import ArticleCreateDTO
 from app.application.services.article_service import ArticleService
-from app.application.services.cache_service import CachedArticleService
-from app.application.services.comment_service import CommentService
+from app.application.services.cache_service import (
+    CachedArticleService,
+    CachedCommentService,
+)
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
     NotFoundArticleError,
@@ -20,8 +22,10 @@ from app.domain.exceptions import (
 from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import ensure_csrf_token, error_page
 from app.presentation.dependencies.articles import get_article_service
-from app.presentation.dependencies.cache import get_cached_article_service
-from app.presentation.dependencies.comments import get_comment_service
+from app.presentation.dependencies.cache import (
+    get_cached_article_service,
+    get_cached_comment_service,
+)
 from app.presentation.dependencies.current_user import get_current_user
 from app.presentation.dependencies.parse_article import parse_article_form
 
@@ -44,7 +48,7 @@ async def show_article(
     request: Request,
     article_id: int,
     cached_article_service: CachedArticleService = Depends(get_cached_article_service),
-    comment_service: CommentService = Depends(get_comment_service),
+    cached_comment_service: CachedCommentService = Depends(get_cached_comment_service),
     current_user: UserEntity | None = Depends(get_current_user),
 ):
     ensure_csrf_token(request)
@@ -54,8 +58,7 @@ async def show_article(
     except NotFoundArticleError:
         return error_page(request, "Статья не найдена", 404)
 
-    await cached_article_service.increment_view_counter(article_id)
-    comments = await comment_service.list_by_article_id(article_id)
+    comments = await cached_comment_service.get_comments_for_article(article_id)
 
     return templates.TemplateResponse(
         request=request,
@@ -74,15 +77,13 @@ async def delete_article(
     article_id: int,
     csrf_token: str = Form(...),
     current_user: UserEntity | None = Depends(get_current_user),
-    article_service: ArticleService = Depends(get_article_service),
     cached_article_service: CachedArticleService = Depends(get_cached_article_service),
 ):
     if current_user is None:
         return current_user_is_none(request)
     try:
         await check_csrf_token(request, csrf_token)
-        await article_service.delete_article(article_id, current_user.user_id)
-        await cached_article_service.delete_article(article_id)
+        await cached_article_service.delete_article(article_id, current_user.user_id)
         logger.info(
             "Удалена статья: article_id=%s user_id=%s",
             article_id,
@@ -193,8 +194,7 @@ async def add_reaction(
         )
     except NotValidCsrfTokenError:
         logger.warning(
-            "Реакция отклонена из-за невалидного CSRF-токена: "
-            "article_id=%s user_id=%s",
+            "Реакция отклонена из-за невалидного CSRF-токена: article_id=%s user_id=%s",
             article_id,
             current_user.user_id,
         )

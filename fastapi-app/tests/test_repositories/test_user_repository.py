@@ -343,7 +343,7 @@ async def test_delete_profile_soft_deletes_user(
 
     result = await repository.delete_profile(user_id)
 
-    assert result is True
+    assert result is None
     is_deleted = (
         await db_session.execute(select(User.is_deleted).where(User.id == user_id))
     ).scalar_one()

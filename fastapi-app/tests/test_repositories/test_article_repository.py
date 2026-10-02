@@ -1,9 +1,11 @@
 import pytest
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.article import ArticleEntity
 from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
+from app.domain.read_models import ArticleReadModel
 from app.infrastructure.database.models.article import Article
+from app.infrastructure.database.models.comment import Comment
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
@@ -22,7 +24,7 @@ def article_data(user_id: int, **overrides) -> dict:
 
 
 def assert_article_matches(
-    article: ArticleEntity,
+    article: ArticleReadModel,
     *,
     article_id: int,
     author: User,
@@ -32,8 +34,8 @@ def assert_article_matches(
 ) -> None:
     assert article.article_id == article_id
     assert article.user_id == author.id
-    assert article.unique_username == author.unique_username
-    assert article.nickname == author.nickname
+    assert article.author_username == author.unique_username
+    assert article.author_nickname == author.nickname
     assert article.title == title
     assert article.content == content
     assert article.category == category
@@ -43,17 +45,19 @@ def assert_article_matches(
 
 
 @pytest.mark.asyncio
-async def test_save_returns_complete_article_entity(
+async def test_save_returns_created_article_id(
     db_session: AsyncSession, test_user1: User
 ):
     repository = ArticleRepository(db_session)
     data = article_data(test_user1.id)
 
-    article = await repository.save(data, test_user1.id)
+    article_id = await repository.save(data, test_user1.id)
 
+    assert type(article_id) is int
+    article = await repository.get_by_id(article_id)
     assert_article_matches(
         article,
-        article_id=article.article_id,
+        article_id=article_id,
         author=test_user1,
         title=data["title"],
         content=data["content"],
@@ -108,8 +112,8 @@ async def test_all_returns_every_article(db_session: AsyncSession, test_user1: U
 
     assert articles is not None
     assert {article.article_id for article in articles} == {
-        first.article_id,
-        second.article_id,
+        first,
+        second,
     }
     assert {article.title for article in articles} == {
         "First article",
@@ -132,7 +136,7 @@ async def test_search_by_title_is_partial_and_case_insensitive(
     articles = await repository.search_by_title("bAsEd")
 
     assert articles is not None
-    assert [article.article_id for article in articles] == [expected.article_id]
+    assert [article.article_id for article in articles] == [expected]
 
 
 @pytest.mark.asyncio
@@ -150,7 +154,7 @@ async def test_search_by_title_tolerates_a_typo(
     articles = await repository.search_by_title("Medcine")
 
     assert articles is not None
-    assert [article.article_id for article in articles] == [expected.article_id]
+    assert [article.article_id for article in articles] == [expected]
 
 
 @pytest.mark.asyncio
@@ -179,7 +183,7 @@ async def test_search_by_category_returns_exact_matches_only(
     articles = await repository.search_by_category("Research")
 
     assert articles is not None
-    assert [article.article_id for article in articles] == [expected.article_id]
+    assert [article.article_id for article in articles] == [expected]
 
 
 @pytest.mark.asyncio
@@ -206,7 +210,7 @@ async def test_get_user_articles_does_not_return_another_authors_articles(
     articles = await repository.get_user_articles(test_user1.id)
 
     assert articles is not None
-    assert [article.article_id for article in articles] == [expected.article_id]
+    assert [article.article_id for article in articles] == [expected]
 
 
 @pytest.mark.asyncio
@@ -270,9 +274,26 @@ async def test_delete_removes_owners_article(
 ):
     repository = ArticleRepository(db_session)
 
-    assert await repository.delete(test_article.id, test_article.user_id) is True
+    assert await repository.delete(test_article.id, test_article.user_id) is None
     with pytest.raises(NotFoundArticleError):
         await repository.get_by_id(test_article.id)
+
+
+@pytest.mark.asyncio
+async def test_delete_article_cascades_its_comments(
+    db_session: AsyncSession,
+    test_article: Article,
+    test_comment: Comment,
+):
+    repository = ArticleRepository(db_session)
+    comment_id = test_comment.id
+
+    await repository.delete(test_article.id, test_article.user_id)
+
+    deleted_comment = (
+        await db_session.execute(select(Comment).where(Comment.id == comment_id))
+    ).scalar_one_or_none()
+    assert deleted_comment is None
 
 
 @pytest.mark.asyncio
@@ -358,13 +379,13 @@ async def test_liked_articles_returns_only_articles_liked_by_user(
     disliked = await repository.save(
         article_data(test_user1.id, title="Disliked article"), test_user1.id
     )
-    await repository.set_reaction(liked.article_id, test_user1.id, "like")
-    await repository.set_reaction(disliked.article_id, test_user1.id, "dislike")
+    await repository.set_reaction(liked, test_user1.id, "like")
+    await repository.set_reaction(disliked, test_user1.id, "dislike")
 
     articles = await repository.liked_articles_by_user(test_user1.id)
 
     assert articles is not None
-    assert [article.article_id for article in articles] == [liked.article_id]
+    assert [article.article_id for article in articles] == [liked]
 
 
 @pytest.mark.asyncio

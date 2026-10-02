@@ -1,6 +1,6 @@
+from app.domain.exceptions import NotFoundUserError, NotValidPasswordError
 from app.domain.interfaces.auth_service import IAuthService
 from app.domain.interfaces.user_repository import IUserRepository
-from app.domain.exceptions import NotValidPasswordError, NotFoundUserError
 
 
 class UserAuthenticationService:

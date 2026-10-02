@@ -9,28 +9,32 @@ from httpx import ASGITransport, AsyncClient
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.application.services.article_service import ArticleService
-from app.application.services.cache_service import CachedArticleService
-from app.application.services.comment_service import CommentService
-from app.domain.entities.article import ArticleEntity
+from app.application.services.cache_service import (
+    CachedArticleService,
+    CachedCommentService,
+)
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import NotFoundArticleError, ReactionAlreadyExistsError
+from app.domain.read_models import ArticleReadModel, CommentReadModel
 from app.presentation.api.endpoints import articles
 from app.presentation.dependencies.articles import get_article_service
-from app.presentation.dependencies.cache import get_cached_article_service
-from app.presentation.dependencies.comments import get_comment_service
+from app.presentation.dependencies.cache import (
+    get_cached_article_service,
+    get_cached_comment_service,
+)
 from app.presentation.dependencies.current_user import get_current_user
 
 
 @pytest.fixture
-def article() -> ArticleEntity:
-    return ArticleEntity(
+def article() -> ArticleReadModel:
+    return ArticleReadModel(
         article_id=7,
         title="Evidence based medicine",
         content="A sufficiently detailed article body.",
         user_id=42,
         category="Research",
-        unique_username="author",
-        nickname="Author",
+        author_username="author",
+        author_nickname="Author",
         likes=3,
         dislikes=1,
         created_at=datetime(2026, 8, 31, 12, 0),
@@ -49,6 +53,19 @@ def current_user() -> UserEntity:
 
 
 @pytest.fixture
+def comment(article: ArticleReadModel) -> CommentReadModel:
+    return CommentReadModel(
+        id=13,
+        user_id=42,
+        article_id=article.article_id,
+        content="Visible comment",
+        created_at=datetime(2026, 9, 30, 13, 15),
+        author_username="author",
+        author_nickname="Author",
+    )
+
+
+@pytest.fixture
 def article_service() -> AsyncMock:
     return AsyncMock(spec=ArticleService)
 
@@ -59,8 +76,8 @@ def cached_article_service() -> AsyncMock:
 
 
 @pytest.fixture
-def comment_service() -> AsyncMock:
-    return AsyncMock(spec=CommentService)
+def cached_comment_service() -> AsyncMock:
+    return AsyncMock(spec=CachedCommentService)
 
 
 @pytest.fixture
@@ -68,7 +85,7 @@ async def article_client(
     current_user: UserEntity,
     article_service: AsyncMock,
     cached_article_service: AsyncMock,
-    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
 ):
     app = FastAPI()
     app.add_middleware(SessionMiddleware, secret_key="test-session-secret")
@@ -83,7 +100,9 @@ async def article_client(
     app.dependency_overrides[get_cached_article_service] = lambda: (
         cached_article_service
     )
-    app.dependency_overrides[get_comment_service] = lambda: comment_service
+    app.dependency_overrides[get_cached_comment_service] = lambda: (
+        cached_comment_service
+    )
 
     async with AsyncClient(
         transport=ASGITransport(app=app),
@@ -111,33 +130,37 @@ def valid_article_form(csrf_token: str) -> dict[str, str]:
 
 
 @pytest.mark.asyncio
-async def test_show_article_renders_article_and_updates_view_counter(
+async def test_show_article_renders_article(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
+    comment: CommentReadModel,
     cached_article_service: AsyncMock,
-    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
 ):
     client, _ = article_client
     cached_article_service.get_article.return_value = article
-    comment_service.list_by_article_id.return_value = None
+    cached_comment_service.get_comments_for_article.return_value = [comment]
 
     response = await client.get(f"/article/{article.article_id}")
 
     assert response.status_code == 200
     assert article.title in response.text
     assert article.content in response.text
+    assert comment.content in response.text
+    assert comment.author_nickname in response.text
+    assert f"/user/profile/{comment.author_username}" in response.text
+    assert f"/comments/{comment.id}/delete" in response.text
     cached_article_service.get_article.assert_awaited_once_with(article.article_id)
-    cached_article_service.increment_view_counter.assert_awaited_once_with(
+    cached_comment_service.get_comments_for_article.assert_awaited_once_with(
         article.article_id
     )
-    comment_service.list_by_article_id.assert_awaited_once_with(article.article_id)
 
 
 @pytest.mark.asyncio
 async def test_show_article_returns_404_without_side_effects_when_missing(
     article_client,
     cached_article_service: AsyncMock,
-    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
 ):
     client, _ = article_client
     cached_article_service.get_article.side_effect = NotFoundArticleError
@@ -146,16 +169,14 @@ async def test_show_article_returns_404_without_side_effects_when_missing(
 
     assert response.status_code == 404
     assert "Статья не найдена" in response.text
-    cached_article_service.increment_view_counter.assert_not_awaited()
-    comment_service.list_by_article_id.assert_not_awaited()
+    cached_comment_service.get_comments_for_article.assert_not_awaited()
 
 
 @pytest.mark.asyncio
 async def test_delete_article_deletes_database_and_cache_for_authenticated_owner(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     current_user: UserEntity,
-    article_service: AsyncMock,
     cached_article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -167,17 +188,15 @@ async def test_delete_article_deletes_database_and_cache_for_authenticated_owner
 
     assert response.status_code == 303
     assert response.headers["location"] == "/user/profile/author"
-    article_service.delete_article.assert_awaited_once_with(
+    cached_article_service.delete_article.assert_awaited_once_with(
         article.article_id, current_user.user_id
     )
-    cached_article_service.delete_article.assert_awaited_once_with(article.article_id)
 
 
 @pytest.mark.asyncio
 async def test_delete_article_redirects_anonymous_user_without_deleting(
     article_client,
-    article: ArticleEntity,
-    article_service: AsyncMock,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
 ):
     client, auth_state = article_client
@@ -189,15 +208,13 @@ async def test_delete_article_redirects_anonymous_user_without_deleting(
 
     assert response.status_code == 303
     assert response.headers["location"] == "/auth"
-    article_service.delete_article.assert_not_awaited()
     cached_article_service.delete_article.assert_not_awaited()
 
 
 @pytest.mark.asyncio
 async def test_delete_article_rejects_invalid_csrf_before_deleting(
     article_client,
-    article: ArticleEntity,
-    article_service: AsyncMock,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -208,33 +225,31 @@ async def test_delete_article_rejects_invalid_csrf_before_deleting(
 
     assert response.status_code == 403
     assert "Невалидный CSRF-токен" in response.text
-    article_service.delete_article.assert_not_awaited()
     cached_article_service.delete_article.assert_not_awaited()
 
 
 @pytest.mark.asyncio
 async def test_delete_article_returns_404_and_preserves_cache_when_database_misses(
     article_client,
-    article: ArticleEntity,
-    article_service: AsyncMock,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
 ):
     client, _ = article_client
     token = await get_csrf_token(client)
-    article_service.delete_article.side_effect = NotFoundArticleError
+    cached_article_service.delete_article.side_effect = NotFoundArticleError
 
     response = await client.post(
         f"/article/delete/{article.article_id}", data={"csrf_token": token}
     )
 
     assert response.status_code == 404
-    cached_article_service.delete_article.assert_not_awaited()
+    cached_article_service.delete_article.assert_awaited_once()
 
 
 @pytest.mark.asyncio
 async def test_change_page_is_available_only_to_article_owner(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -250,11 +265,14 @@ async def test_change_page_is_available_only_to_article_owner(
 @pytest.mark.asyncio
 async def test_change_page_rejects_non_owner(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, _ = article_client
-    article_service.get_by_id.return_value = replace(article, user_id=999)
+    article_service.get_by_id.return_value = replace(
+        article,
+        user_id=999,
+    )
 
     response = await client.get(f"/article/change/{article.article_id}")
 
@@ -265,7 +283,7 @@ async def test_change_page_rejects_non_owner(
 @pytest.mark.asyncio
 async def test_change_page_redirects_anonymous_user_without_querying_article(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, auth_state = article_client
@@ -281,7 +299,7 @@ async def test_change_page_redirects_anonymous_user_without_querying_article(
 @pytest.mark.asyncio
 async def test_change_page_returns_404_for_missing_article(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -295,14 +313,17 @@ async def test_change_page_returns_404_for_missing_article(
 @pytest.mark.asyncio
 async def test_final_change_updates_article_and_cache(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     current_user: UserEntity,
     article_service: AsyncMock,
     cached_article_service: AsyncMock,
 ):
     client, _ = article_client
     token = await get_csrf_token(client)
-    updated = replace(article, title="Updated article")
+    updated = replace(
+        article,
+        title="Updated article",
+    )
     article_service.change_article.return_value = updated
 
     response = await client.post(
@@ -324,7 +345,7 @@ async def test_final_change_updates_article_and_cache(
 @pytest.mark.asyncio
 async def test_final_change_does_not_touch_cache_when_article_is_missing(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
     cached_article_service: AsyncMock,
 ):
@@ -344,7 +365,7 @@ async def test_final_change_does_not_touch_cache_when_article_is_missing(
 @pytest.mark.asyncio
 async def test_reaction_returns_updated_counters(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     current_user: UserEntity,
     cached_article_service: AsyncMock,
 ):
@@ -375,7 +396,7 @@ async def test_reaction_returns_updated_counters(
 )
 async def test_reaction_maps_domain_errors_to_http_responses(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
     error: type[Exception],
     status_code: int,
@@ -396,7 +417,7 @@ async def test_reaction_maps_domain_errors_to_http_responses(
 @pytest.mark.asyncio
 async def test_reaction_requires_authentication(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
 ):
     client, auth_state = article_client
@@ -413,7 +434,7 @@ async def test_reaction_requires_authentication(
 @pytest.mark.asyncio
 async def test_reaction_rejects_invalid_csrf(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     cached_article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -439,13 +460,13 @@ async def test_reaction_rejects_unknown_reaction_value(article_client):
 @pytest.mark.asyncio
 async def test_search_by_title_delegates_query_and_renders_results(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, _ = article_client
     article_service.search_by_title.return_value = [article]
 
-    response = await client.get("/articles/search/title", params={"query": "evidence"})
+    response = await client.get("/articles/search/title", params={"title": "evidence"})
 
     assert response.status_code == 200
     assert article.title in response.text
@@ -467,7 +488,7 @@ async def test_search_by_title_validates_minimum_query_length(
 @pytest.mark.asyncio
 async def test_search_by_category_delegates_category_and_renders_results(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     article_service: AsyncMock,
 ):
     client, _ = article_client
@@ -494,7 +515,7 @@ async def test_submit_page_redirects_anonymous_user(article_client):
 @pytest.mark.asyncio
 async def test_create_article_submits_valid_dto_and_redirects_to_profile(
     article_client,
-    article: ArticleEntity,
+    article: ArticleReadModel,
     current_user: UserEntity,
     article_service: AsyncMock,
 ):

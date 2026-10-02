@@ -5,17 +5,20 @@ from redis.asyncio import Redis
 
 from app.application.services.cache_service import (
     CachedArticleService,
+    CachedCommentService,
     CachedUserService,
 )
 from app.infrastructure.database.repositories.article_repository import (
     ArticleRepository,
 )
 from app.infrastructure.database.repositories.cache_repository import CachedRepository
-from app.infrastructure.database.repositories.logic_repository import LogicRepository
+from app.infrastructure.database.repositories.comment_repository import (
+    CommentRepository,
+)
 from app.infrastructure.database.repositories.user_repository import UserRepository
 from app.presentation.dependencies.articles import get_article_repository
 from app.presentation.dependencies.auth import get_user_repository
-from app.presentation.dependencies.logic import get_logic_repository
+from app.presentation.dependencies.comments import get_comment_repository
 
 redis_pool = None
 
@@ -44,10 +47,15 @@ async def get_cached_user_service(
 async def get_cached_article_service(
     cache: CachedRepository = Depends(get_cache_repository),
     article_repository: ArticleRepository = Depends(get_article_repository),
-    logic_repository: LogicRepository = Depends(get_logic_repository),
 ) -> CachedArticleService:
     return CachedArticleService(
         cache=cache,
         article_repository=article_repository,
-        logic_repository=logic_repository,
     )
+
+
+async def get_cached_comment_service(
+    cache: CachedRepository = Depends(get_cache_repository),
+    comment_repository: CommentRepository = Depends(get_comment_repository),
+) -> CachedCommentService:
+    return CachedCommentService(cache=cache, comment_repository=comment_repository)

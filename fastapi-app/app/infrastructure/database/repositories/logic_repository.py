@@ -3,10 +3,10 @@ from datetime import datetime, timedelta
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import func, select
 
+from app.domain.exceptions import PublicationLimitError
 from app.domain.interfaces.logic_repository import ILogicRepository
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.comment import Comment
-from app.domain.exceptions import PublicationLimitError
 
 
 class LogicRepository(ILogicRepository):

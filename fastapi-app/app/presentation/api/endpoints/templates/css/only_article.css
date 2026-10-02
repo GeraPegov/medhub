@@ -21,10 +21,11 @@
 
 .article-page .article-title {
     margin: 0 0 18px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: clamp(30px, 5vw, 44px);
     line-height: 1.15;
     overflow-wrap: anywhere;
+    color: #334155;
 }
 
 .article-page .article-meta {
@@ -48,13 +49,17 @@
     text-decoration: none;
 }
 
+
+
 .article-page .article-content {
     margin-top: 32px;
     padding-top: 28px;
     border-top: 1px solid var(--color-border);
     color: #334155;
-    font-size: 17px;
-    line-height: 1.8;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
@@ -122,7 +127,7 @@
 
 .comments-block h2 {
     margin: 0 0 22px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
 }
 
 .comment-section,

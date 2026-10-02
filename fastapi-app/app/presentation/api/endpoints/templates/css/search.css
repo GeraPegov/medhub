@@ -36,7 +36,7 @@
 
 .search-title {
     margin: 0;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: clamp(28px, 5vw, 40px);
     line-height: 1.12;
     letter-spacing: -0.025em;
@@ -195,7 +195,7 @@
 
 .article-title {
     margin: 0 0 14px;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: 22px;
     line-height: 1.35;
     overflow-wrap: anywhere;

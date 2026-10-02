@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.domain.exceptions import PublicationLimitError
 from app.infrastructure.database.models.article import Article
 from app.infrastructure.database.models.user import User
 from app.infrastructure.database.repositories.article_repository import (
@@ -40,14 +41,15 @@ async def test_publication_limit_counts_only_articles_created_today(
             test_user1.id,
         )
 
-    assert await logic_repository.can_publish_today(test_user1.id) is True
+    await logic_repository.can_publish_article_today(test_user1.id)
 
     await article_repository.save(
         article_data(test_user1.id, "Today's third article"),
         test_user1.id,
     )
 
-    assert await logic_repository.can_publish_today(test_user1.id) is False
+    with pytest.raises(PublicationLimitError):
+        await logic_repository.can_publish_article_today(test_user1.id)
 
 
 @pytest.mark.asyncio
@@ -62,5 +64,6 @@ async def test_publication_limit_is_scoped_to_author(
             test_user1.id,
         )
 
-    assert await logic_repository.can_publish_today(test_user1.id) is False
-    assert await logic_repository.can_publish_today(test_user2.id) is True
+    with pytest.raises(PublicationLimitError):
+        await logic_repository.can_publish_article_today(test_user1.id)
+    await logic_repository.can_publish_article_today(test_user2.id)

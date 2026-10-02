@@ -1,11 +1,15 @@
 from datetime import datetime
 from unittest.mock import AsyncMock
 
+import aiohttp
 import pytest
 
 from app.application.dto.article_create_dto import ArticleCreateDTO
+from app.application.services import article_service as article_service_module
 from app.application.services.article_service import ArticleService
-from app.domain.entities.article import ArticleEntity
+from app.domain.exceptions import PublicationLimitError
+from app.domain.read_models import ArticleReadModel
+
 
 @pytest.fixture
 def article_repository() -> AsyncMock:
@@ -16,16 +20,17 @@ def article_repository() -> AsyncMock:
 def logic_repository() -> AsyncMock:
     return AsyncMock()
 
+
 @pytest.fixture
-def article() -> ArticleEntity:
-    return ArticleEntity(
+def article() -> ArticleReadModel:
+    return ArticleReadModel(
         article_id=7,
         title="Test article",
         content="Detailed test article content.",
         user_id=42,
         category="Research",
-        unique_username="author",
-        nickname="Author",
+        author_username="author",
+        author_nickname="Author",
         likes=3,
         dislikes=1,
         created_at=datetime(2026, 8, 31, 12, 0),
@@ -41,23 +46,28 @@ def service(
 
 @pytest.mark.asyncio
 async def test_submit_article_saves_complete_mapping_when_limit_allows(
+    monkeypatch,
     service: ArticleService,
     article_repository: AsyncMock,
     logic_repository: AsyncMock,
-    article: ArticleEntity,
 ):
+    def unavailable_admin_api(*args, **kwargs):
+        raise aiohttp.ClientConnectionError
+
+    monkeypatch.setattr(
+        article_service_module.aiohttp, "request", unavailable_admin_api
+    )
     dto = ArticleCreateDTO(
         title="Test article",
         content="Detailed test article content.",
         category="Research",
     )
-    logic_repository.can_publish_today.return_value = True
-    article_repository.save.return_value = article
+    article_repository.save.return_value = 7
 
     result = await service.submit_article(dto, user_id=42)
 
-    assert result is article
-    logic_repository.can_publish_today.assert_awaited_once_with(user_id=42)
+    assert result == 7
+    logic_repository.can_publish_article_today.assert_awaited_once_with(42)
     article_repository.save.assert_awaited_once_with(
         {
             "title": dto.title,
@@ -71,21 +81,28 @@ async def test_submit_article_saves_complete_mapping_when_limit_allows(
 
 @pytest.mark.asyncio
 async def test_submit_article_does_not_save_when_daily_limit_is_reached(
+    monkeypatch,
     service: ArticleService,
     article_repository: AsyncMock,
     logic_repository: AsyncMock,
 ):
+    def unavailable_admin_api(*args, **kwargs):
+        raise aiohttp.ClientConnectionError
+
+    monkeypatch.setattr(
+        article_service_module.aiohttp, "request", unavailable_admin_api
+    )
     dto = ArticleCreateDTO(
         title="Test article",
         content="Detailed test article content.",
         category="Research",
     )
-    logic_repository.can_publish_today.return_value = False
+    logic_repository.can_publish_article_today.side_effect = PublicationLimitError
 
-    result = await service.submit_article(dto, user_id=42)
+    with pytest.raises(PublicationLimitError):
+        await service.submit_article(dto, user_id=42)
 
-    assert result is None
-    logic_repository.can_publish_today.assert_awaited_once_with(user_id=42)
+    logic_repository.can_publish_article_today.assert_awaited_once_with(42)
     article_repository.save.assert_not_awaited()
 
 
@@ -93,7 +110,7 @@ async def test_submit_article_does_not_save_when_daily_limit_is_reached(
 async def test_change_article_maps_dto_and_forwards_identity(
     service: ArticleService,
     article_repository: AsyncMock,
-    article: ArticleEntity,
+    article: ArticleReadModel,
 ):
     dto = ArticleCreateDTO(
         title="Updated title",
@@ -121,7 +138,6 @@ async def test_change_article_maps_dto_and_forwards_identity(
     ("service_method", "repository_method", "arguments", "expected"),
     [
         ("search_by_category", "search_by_category", ("Research",), ["article"]),
-        ("delete_article", "delete", (7, 42), True),
         ("show_all_articles", "all", (), ["article"]),
         ("search_by_title", "search_by_title", ("evidence",), ["article"]),
         ("list_user_articles", "get_user_articles", (42,), ["article"]),

@@ -22,8 +22,8 @@
                             <span class="date">{{ article.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
                         </div>
                         <div class="meta-item">
-                            <span class="author">{{ article.nickname }}</span>
-                            <a href="/user/profile/{{ article.unique_username }}" class="author">{{ article.unique_username }}</a>
+                            <span class="author">{{ article.author_nickname }}</span>
+                            <a href="/user/profile/{{ article.author_username }}" class="author">{{ article.author_username }}</a>
                         </div>
                         <div class="meta-item">
                             <span class="category">{{ article.category }}</span>

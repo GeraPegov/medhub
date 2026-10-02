@@ -5,6 +5,7 @@ from fastapi import FastAPI, Request
 from httpx import ASGITransport, AsyncClient
 from starlette.middleware.sessions import SessionMiddleware
 
+from app.application.services.cache_service import CachedCommentService
 from app.application.services.comment_service import CommentService
 from app.domain.entities.user import UserEntity
 from app.domain.exceptions import (
@@ -13,6 +14,7 @@ from app.domain.exceptions import (
     PublicationLimitError,
 )
 from app.presentation.api.endpoints import comments
+from app.presentation.dependencies.cache import get_cached_comment_service
 from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import get_current_user
 
@@ -23,7 +25,12 @@ def comment_service() -> AsyncMock:
 
 
 @pytest.fixture
-async def comment_client(comment_service: AsyncMock):
+def cached_comment_service() -> AsyncMock:
+    return AsyncMock(spec=CachedCommentService)
+
+
+@pytest.fixture
+async def comment_client(comment_service: AsyncMock, cached_comment_service: AsyncMock):
     app = FastAPI()
     app.add_middleware(SessionMiddleware, secret_key="test-session-secret")
     app.include_router(comments.router)
@@ -36,6 +43,9 @@ async def comment_client(comment_service: AsyncMock):
     )
     app.dependency_overrides[get_current_user] = lambda: user
     app.dependency_overrides[get_comment_service] = lambda: comment_service
+    app.dependency_overrides[get_cached_comment_service] = lambda: (
+        cached_comment_service
+    )
 
     @app.get("/test/csrf")
     async def csrf_token(request: Request):
@@ -52,7 +62,10 @@ async def comment_client(comment_service: AsyncMock):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("error", [NotFoundUserError, NotFoundArticleError])
 async def test_create_returns_404_when_user_or_article_is_missing(
-    comment_client, comment_service: AsyncMock, error: type[Exception]
+    comment_client,
+    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
+    error: type[Exception],
 ):
     client, token = comment_client
     comment_service.create.side_effect = error
@@ -68,11 +81,14 @@ async def test_create_returns_404_when_user_or_article_is_missing(
     comment_service.create.assert_awaited_once_with(
         article_id=7, content="Test comment", user_id=42
     )
+    cached_comment_service.invalidate_comments.assert_not_awaited()
 
 
 @pytest.mark.asyncio
 async def test_create_returns_429_when_comment_limit_is_reached(
-    comment_client, comment_service: AsyncMock
+    comment_client,
+    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
 ):
     client, token = comment_client
     comment_service.create.side_effect = PublicationLimitError
@@ -86,11 +102,33 @@ async def test_create_returns_429_when_comment_limit_is_reached(
     comment_service.create.assert_awaited_once_with(
         article_id=7, content="Test comment", user_id=42
     )
+    cached_comment_service.invalidate_comments.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_create_invalidates_article_comments_cache(
+    comment_client,
+    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
+):
+    client, token = comment_client
+    comment_service.create.return_value = 13
+
+    response = await client.post(
+        "/comments/7/create",
+        data={"content": "Test comment", "csrf_token": token},
+    )
+
+    assert response.status_code == 303
+    assert response.headers["location"] == "/article/7"
+    cached_comment_service.invalidate_comments.assert_awaited_once_with(7)
 
 
 @pytest.mark.asyncio
 async def test_delete_redirects_to_article_returned_by_service(
-    comment_client, comment_service: AsyncMock
+    comment_client,
+    comment_service: AsyncMock,
+    cached_comment_service: AsyncMock,
 ):
     client, token = comment_client
     comment_service.delete.return_value = 7
@@ -100,3 +138,4 @@ async def test_delete_redirects_to_article_returned_by_service(
     assert response.status_code == 303
     assert response.headers["location"] == "/article/7"
     comment_service.delete.assert_awaited_once_with(comment_id=13, user_id=42)
+    cached_comment_service.invalidate_comments.assert_awaited_once_with(7)

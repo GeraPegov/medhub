@@ -5,7 +5,7 @@
     --color-surface: #f1f5f9;
     --color-white: #ffffff;
     --color-border: #cbd5e1;
-    --color-text: #1f2937;
+    --color-text: #334155;
     --color-muted: #64748b;
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
@@ -116,7 +116,7 @@ a {
 
 .page-title {
     margin: 0;
-    color: var(--color-sidebar);
+    color: var(--color-text);
     font-size: clamp(28px, 4vw, 38px);
     line-height: 1.15;
 }

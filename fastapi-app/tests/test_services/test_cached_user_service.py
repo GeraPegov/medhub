@@ -51,12 +51,38 @@ async def test_update_user_refreshes_cache(
         "subscriptions": json.dumps(list(user.subscriptions)),
     }
 
-    assert result is True
+    assert result is None
 
     cache_repository.delete_user.assert_awaited_once_with(user)
     cache_repository.set_cache.assert_awaited_once_with(
         "user", user.user_id, data, 3600
     )
+
+
+@pytest.mark.asyncio
+async def test_delete_user_soft_deletes_database_and_invalidates_cache(
+    cached_user_service: CachedUserService,
+    user: UserEntity,
+    cache_repository: AsyncMock,
+    user_repository: AsyncMock,
+):
+    await cached_user_service.delete_user(user)
+
+    user_repository.delete_profile.assert_awaited_once_with(user.user_id)
+    cache_repository.delete_user.assert_awaited_once_with(user)
+
+
+@pytest.mark.asyncio
+async def test_invalidate_user_does_not_delete_database_record(
+    cached_user_service: CachedUserService,
+    user: UserEntity,
+    cache_repository: AsyncMock,
+    user_repository: AsyncMock,
+):
+    await cached_user_service.invalidate_user(user)
+
+    user_repository.delete_profile.assert_not_awaited()
+    cache_repository.delete_user.assert_awaited_once_with(user)
 
 
 @pytest.mark.asyncio

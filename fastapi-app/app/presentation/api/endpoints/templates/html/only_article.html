@@ -22,7 +22,7 @@
                 <div class="article-meta">
                     <div class="meta-item">
                         <span class="meta-label">Автор:</span>
-                        <span class="meta-author">{{ article.nickname }} <a href='/user/profile/{{article.unique_username}}'>{{ article.unique_username }}</a></span>
+                        <span class="meta-author">{{ article.author_nickname }} <a href='/user/profile/{{ article.author_username }}'>{{ article.author_username }}</a></span>
                     </div>
                     <div class="meta-item">
                         <span class="meta-label">Дата публикации: </span>
@@ -89,8 +89,8 @@
                 {% for comment in comments %}
                 <div class="comment">
                     <div class="comment-header">
-                        <span class="comment-author">{{ comment.nickname }}</span>
-                        <a href="/user/profile/{{ comment.unique_username }}" class="comment-author">{{ comment.unique_username }}</a>
+                        <span class="comment-author">{{ comment.author_nickname }}</span>
+                        <a href="/user/profile/{{ comment.author_username }}" class="comment-author">{{ comment.author_username }}</a>
                         <span class="comment-date">
                             {{ comment.created_at.strftime('%d.%m.%Y %H:%M') }}
                         </span>

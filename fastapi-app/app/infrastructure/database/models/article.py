@@ -50,13 +50,6 @@ class Article(Base, AsyncAttrs):
         server_default=text("0"),
         nullable=False,
     )
-    views_counter: Mapped[int] = mapped_column(
-        Integer,
-        default=0,
-        server_default=text("0"),
-        nullable=False,
-    )
-
     reactions: Mapped[list["Reaction"]] = relationship(
         "Reaction", back_populates="articles"
     )

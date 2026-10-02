@@ -6,7 +6,7 @@
 
 ## Стек
 
-Python 3.11+, FastAPI, SQLAlchemy Async, asyncpg, PostgreSQL, Redis, Alembic, Pydantic, Jinja2, Uvicorn, APScheduler, pytest и Ruff. В Docker используется Python 3.13.
+Python 3.11+, FastAPI, SQLAlchemy Async, asyncpg, PostgreSQL, Redis, Alembic, Pydantic, Jinja2, Uvicorn, pytest и Ruff. В Docker используется Python 3.13.
 
 Пользовательские пароли хешируются Argon2. JWT хранится в HttpOnly cookie `access_token`. Сессия `medhub_session` используется в том числе для CSRF-токенов; её подпись требует `itsdangerous` и отдельного `SECRET_KEY_MIDDLEWARE`.
 
@@ -21,7 +21,7 @@ Python 3.11+, FastAPI, SQLAlchemy Async, asyncpg, PostgreSQL, Redis, Alembic, Py
 | `alembic` | Миграции общей для Python и Go базы |
 | `tests` | Тесты сервисов, репозиториев и HTTP-обработчиков |
 
-Точка входа — `main.py`. В `lifespan` создаётся Redis connection pool и запускается APScheduler; при остановке ресурсы закрываются.
+Точка входа — `main.py`. В `lifespan` создаётся Redis connection pool; при остановке он закрывается.
 
 ## Локальная разработка
 
@@ -141,4 +141,4 @@ ruff format --check .
 
 Отчёт покрытия Python-кода включён в настройки pytest. Эти команды описывают способ проверки; статус прохождения зависит от текущего состояния проекта и окружения.
 
-Общие ограничения, включая незавершённую обработку просмотров и инвалидирование кеша после административных операций, перечислены в [главном README](../README.md#текущее-состояние-и-ограничения).
+Общие ограничения, включая инвалидирование кеша после административных операций, перечислены в [главном README](../README.md#текущее-состояние-и-ограничения).

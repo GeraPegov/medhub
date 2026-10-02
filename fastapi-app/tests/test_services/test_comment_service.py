@@ -64,6 +64,19 @@ async def test_delete_returns_article_id(
 
 
 @pytest.mark.asyncio
+async def test_get_article_id_delegates_to_repository(
+    service: CommentService,
+    comment_repository: AsyncMock,
+):
+    comment_repository.get_article_id.return_value = 7
+
+    result = await service.get_article_id(13)
+
+    assert result == 7
+    comment_repository.get_article_id.assert_awaited_once_with(13)
+
+
+@pytest.mark.asyncio
 async def test_delete_does_not_delete_when_user_is_missing(
     service: CommentService,
     comment_repository: AsyncMock,

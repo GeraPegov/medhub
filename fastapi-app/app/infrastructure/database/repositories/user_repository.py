@@ -130,19 +130,19 @@ class UserRepository(IUserRepository):
 
         return None
 
-    async def delete_profile(self, user_id: int) -> bool:
+    async def delete_profile(self, user_id: int) -> None:
         user_orm = await self.session.execute(
             update(User)
             .where(User.id == user_id)
             .values(is_deleted=True)
             .returning(User.id)
         )
-        user = user_orm.scalar_one_or_none()
-        if user is None:
+        deleted_user_id = user_orm.scalar_one_or_none()
+        if deleted_user_id is None:
             logger.info("Профиль для удаления не найден: user_id=%s", user_id)
             raise NotFoundUserError
         await self.session.commit()
-        return user is not None
+        logger.info("Пользователь user_id=%d был удален из базы данных", user_id)
 
     async def _to_entity(self, model: User) -> UserEntity:
 

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.entities.comment import CommentEntity
+from app.domain.read_models import CommentReadModel
 
 
 class ICommentRepository(ABC):
@@ -11,11 +11,13 @@ class ICommentRepository(ABC):
         pass
 
     @abstractmethod
-    async def list_by_article_id(self, article_id: int) -> list[CommentEntity] | None:
+    async def list_by_article_id(
+        self, article_id: int
+    ) -> list[CommentReadModel] | None:
         pass
 
     @abstractmethod
-    async def list_by_author(self, author_id: int) -> list[CommentEntity] | None:
+    async def list_by_author(self, author_id: int) -> list[CommentReadModel] | None:
         pass
 
     @abstractmethod
@@ -24,4 +26,8 @@ class ICommentRepository(ABC):
 
     @abstractmethod
     async def delete(self, comment_id: int, user_id: int) -> int:
+        pass
+
+    @abstractmethod
+    async def get_article_id(self, comment_id: int) -> int:
         pass

@@ -1,7 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
 
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,24 +11,8 @@ import app.presentation.dependencies.cache as state
 from app.infrastructure.config import settings
 from app.infrastructure.logging_config import init_logger
 from app.presentation.api.router import api_router
-from app.presentation.dependencies.scheduler import scheduler_service_context
 
-scheduler = AsyncIOScheduler()
 logger = logging.getLogger(__name__)
-
-
-async def update_views_counter():
-    async with scheduler_service_context() as service:
-        logger.info("Запущено обновление счётчиков просмотров")
-        try:
-            await service.update_views_counter()
-        except Exception:
-            logger.exception("Не удалось обновить счётчики просмотров")
-            raise
-        logger.info("Обновление счётчиков просмотров завершено")
-
-
-redis_pool = None
 
 
 @asynccontextmanager
@@ -44,12 +27,9 @@ async def lifespan(app: FastAPI):
         socket_connect_timeout=1.0,
         retry_on_timeout=False,
     )
-    scheduler.add_job(update_views_counter, trigger="interval", hours=12)
-    scheduler.start()
     logger.info("Запуск приложения")
     yield
     logger.info("Остановка приложения")
-    scheduler.shutdown()
     if state.redis_pool is not None:
         await state.redis_pool.aclose()
         state.redis_pool = None

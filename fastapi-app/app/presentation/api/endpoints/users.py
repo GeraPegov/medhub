@@ -1,5 +1,4 @@
 import logging
-import re
 
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
@@ -10,7 +9,8 @@ from app.application.services.cache_service import CachedUserService
 from app.application.services.comment_service import CommentService
 from app.application.services.user_service import UserService
 from app.domain.entities.user import UserEntity
-from app.domain.exceptions import NotFoundUserError
+from app.domain.exceptions import NotFoundUserError, NotValidCsrfTokenError
+from app.presentation.api.endpoints.auth import check_csrf_token
 from app.presentation.api.helpers import ensure_csrf_token, error_page
 from app.presentation.dependencies.articles import get_article_service
 from app.presentation.dependencies.auth import get_user_service
@@ -19,7 +19,6 @@ from app.presentation.dependencies.comments import get_comment_service
 from app.presentation.dependencies.current_user import (
     get_current_user,
 )
-from app.presentation.api.endpoints.auth import check_csrf_token
 
 templates = Jinja2Templates("app/presentation/api/endpoints/templates/html")
 
@@ -55,6 +54,7 @@ async def articles(
     auth: UserEntity = Depends(get_current_user),
 ):
     try:
+        ensure_csrf_token(request)
         user = await cache_service.get_user(unique_username)
         articles = await article_service.list_user_articles(user.user_id)
         return templates.TemplateResponse(
@@ -75,6 +75,7 @@ async def comments(
     auth: UserEntity = Depends(get_current_user),
 ):
     try:
+        ensure_csrf_token(request)
         user = await cache_service.get_user(unique_username)
         comments = await comment_service.show_by_author(user.user_id)
 
@@ -190,13 +191,18 @@ async def liked(
 async def delete_profile(
     request: Request,
     csrf_token: str = Form(...),
-    auth: UserEntity = Depends(get_current_user),
-    user_service: UserService = Depends(get_user_service),
+    auth: UserEntity | None = Depends(get_current_user),
+    cached_user_service: CachedUserService = Depends(get_cached_user_service),
 ):
+    if auth is None:
+        return RedirectResponse(url="/auth", status_code=303)
+
     try:
         await check_csrf_token(request, csrf_token)
-        await user_service.delete_profile(auth.user_id)
+        await cached_user_service.delete_user(auth)
         logger.info("Пользователь удалил профиль: user_id=%s", auth.user_id)
         return RedirectResponse(url="/", status_code=303)
+    except NotValidCsrfTokenError:
+        return error_page(request, "Невалидный CSRF-токен", 403)
     except NotFoundUserError:
         return error_page(request, "Пользователь не найден", 404)

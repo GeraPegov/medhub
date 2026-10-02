@@ -4,19 +4,19 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.application.services.cache_service import CachedArticleService
-from app.domain.entities.article import ArticleEntity
+from app.domain.read_models import ArticleReadModel
 
 
 @pytest.fixture
-def article() -> ArticleEntity:
-    return ArticleEntity(
+def article() -> ArticleReadModel:
+    return ArticleReadModel(
         article_id=7,
         title="Cached article",
         content="Detailed cached article content.",
         user_id=42,
         category="Research",
-        unique_username="author",
-        nickname="Author",
+        author_username="author",
+        author_nickname="Author",
         likes=5,
         dislikes=2,
         created_at=datetime(2026, 8, 31, 12, 0),
@@ -34,17 +34,11 @@ def article_repository() -> AsyncMock:
 
 
 @pytest.fixture
-def logic_repository() -> AsyncMock:
-    return AsyncMock()
-
-
-@pytest.fixture
 def cached_article_service(
     cache_repository: AsyncMock,
     article_repository: AsyncMock,
-    logic_repository: AsyncMock,
 ) -> CachedArticleService:
-    return CachedArticleService(cache_repository, article_repository, logic_repository)
+    return CachedArticleService(cache_repository, article_repository)
 
 
 @pytest.mark.asyncio
@@ -52,7 +46,7 @@ async def test_get_article_from_cache(
     cached_article_service: CachedArticleService,
     cache_repository: AsyncMock,
     article_repository: AsyncMock,
-    article: ArticleEntity,
+    article: ArticleReadModel,
 ):
     cache_repository.get_cached_article.return_value = article
     result = await cached_article_service.get_article(article.article_id)
@@ -69,7 +63,7 @@ async def test_get_article_from_repository(
     cached_article_service: CachedArticleService,
     cache_repository: AsyncMock,
     article_repository: AsyncMock,
-    article: ArticleEntity,
+    article: ArticleReadModel,
 ):
     cache_repository.get_cached_article.return_value = None
     article_repository.get_by_id.return_value = article
@@ -100,7 +94,7 @@ async def test_get_article_from_repository(
 async def test_update_article_refreshes_cache(
     cached_article_service: CachedArticleService,
     cache_repository: AsyncMock,
-    article: ArticleEntity,
+    article: ArticleReadModel,
 ):
     cache_repository.delete_article.return_value = None
 
@@ -127,48 +121,43 @@ async def test_update_article_refreshes_cache(
 
 
 @pytest.mark.asyncio
-async def test_delete_article_returns_cache_result(
+async def test_delete_article_deletes_database_and_invalidates_article_and_comments(
     cached_article_service: CachedArticleService,
     cache_repository: AsyncMock,
-    article: ArticleEntity,
+    article_repository: AsyncMock,
+    article: ArticleReadModel,
 ):
-    cache_repository.delete_article.return_value = 1
+    result = await cached_article_service.delete_article(
+        article.article_id, article.user_id
+    )
 
-    result = await cached_article_service.delete_article(article.article_id)
-
-    assert result == 1
+    assert result is None
+    article_repository.delete.assert_awaited_once_with(
+        article.article_id, article.user_id
+    )
     cache_repository.delete_article.assert_awaited_once_with(article.article_id)
+    cache_repository.delete_comments.assert_awaited_once_with(article.article_id)
 
 
 @pytest.mark.asyncio
-async def test_increment_view_counter_returns_cache_result(
+async def test_invalidate_article_only_deletes_cache(
     cached_article_service: CachedArticleService,
     cache_repository: AsyncMock,
-    article: ArticleEntity,
+    article_repository: AsyncMock,
+    article: ArticleReadModel,
 ):
-    cache_repository.increment_view_counter.return_value = 6
+    await cached_article_service.invalidate_article(article.article_id)
 
-    result = await cached_article_service.increment_view_counter(article.article_id)
-
-    assert result == 6
-    cache_repository.increment_view_counter.assert_awaited_once_with(article.article_id)
-
-
-@pytest.mark.asyncio
-async def test_update_views_counter_delegates_to_cache(
-    cached_article_service: CachedArticleService,
-    cache_repository: AsyncMock,
-):
-    await cached_article_service.update_views_counter()
-
-    cache_repository.update_views_counter.assert_awaited_once_with()
+    article_repository.delete.assert_not_awaited()
+    cache_repository.delete_article.assert_awaited_once_with(article.article_id)
+    cache_repository.delete_comments.assert_awaited_once_with(article.article_id)
 
 
 @pytest.mark.asyncio
 async def test_add_reaction_returns_reaction_counts(
     cached_article_service: CachedArticleService,
     article_repository: AsyncMock,
-    article: ArticleEntity,
+    article: ArticleReadModel,
 ):
     update_article = AsyncMock()
     cached_article_service.update_article = update_article
